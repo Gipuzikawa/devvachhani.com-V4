@@ -1,0 +1,37 @@
+/* ── Effects: borders, radii, shadow, motion ───────────────────────────
+   Archival / bordered system: hairline rules do most of the dividing work.
+   Radii are near-zero (this is an index, not an app). Shadow is used only
+   for lifted states, and it is soft + warm, never a hard drop. */
+
+:root {
+  /* Borders */
+  --bd-hair:   1px solid var(--border-hairline);
+  --bd-strong: 1px solid var(--border-strong);
+  --bd-accent: 1.5px solid var(--border-accent);
+  --bd-w:      1px;
+
+  /* Radii — sharp by default */
+  --r-0: 0px;
+  --r-1: 2px;
+  --r-2: 4px;
+  --r-pill: 999px;
+
+  /* Shadow — warm, low, only for lift */
+  --shadow-lift: 0 2px 0 rgba(25, 21, 16, 0.06),
+                 0 10px 30px -12px rgba(25, 21, 16, 0.18);
+  --shadow-inset-top: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+
+  /* Motion — GSAP-friendly durations & eases (also usable in CSS) */
+  --dur-fast:   0.18s;  /* @kind other */
+  --dur-base:   0.4s;   /* @kind other */
+  --dur-slow:   0.7s;   /* @kind other */
+  --dur-reveal: 0.9s;   /* @kind other */
+
+  /* Eases mirror the GSAP names used in scroll work */
+  --ease-out:      cubic-bezier(0.22, 1, 0.36, 1);   /* @kind other */
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);   /* @kind other */
+  --ease-emph:     cubic-bezier(0.16, 1, 0.3, 1);    /* @kind other */
+
+  /* Reveal transform distance */
+  --reveal-rise: 24px;  /* @kind spacing */
+}

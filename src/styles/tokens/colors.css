@@ -1,0 +1,50 @@
+/* ── Color ─────────────────────────────────────────────────────────────
+   Warm monochrome: cream/paper grounds, warm off-black ink, one electric
+   cobalt signal. Neutrals carry a faint warm (yellow) tint so the palette
+   never reads clinical. Values are hand-tuned, not snapped to a scale. */
+
+:root {
+  /* Paper — warm light grounds (lightest → deepest cream) */
+  --paper-0: #FBF9F4;   /* page canvas, brightest */
+  --paper-1: #F5F1E8;   /* default surface */
+  --paper-2: #EDE8DB;   /* recessed / alt band */
+  --paper-3: #E3DCCB;   /* hairline fills, hovers */
+
+  /* Ink — warm off-blacks & grays (deepest → lightest) */
+  --ink-0:  #191510;    /* near-black, primary text */
+  --ink-1:  #2C271F;    /* headings on dark */
+  --ink-2:  #4A4437;    /* secondary text */
+  --ink-3:  #6E675A;    /* muted / meta text */
+  --ink-4:  #948C7C;    /* faint / disabled */
+  --ink-5:  #C4BCAC;    /* hairline strokes on paper */
+
+  /* Electric cobalt — the single accent. Use sparingly: links, active
+     states, one highlighted figure per view. */
+  --cobalt:      #1B3FE6;
+  --cobalt-deep: #142FB0;   /* pressed / on-hover */
+  --cobalt-tint: #E2E4FB;   /* faint fill behind accent */
+
+  /* ── Semantic aliases — reference these, not the raw ramps ───────── */
+  --bg-canvas:      var(--paper-0);
+  --bg-surface:     var(--paper-1);
+  --bg-recessed:    var(--paper-2);
+  --bg-invert:      var(--ink-0);
+
+  --text-strong:    var(--ink-0);
+  --text-body:      var(--ink-1);
+  --text-secondary: var(--ink-2);
+  --text-muted:     var(--ink-3);
+  --text-faint:     var(--ink-4);
+  --text-invert:    var(--paper-0);
+  --text-accent:    var(--cobalt);
+
+  --border-strong:  var(--ink-0);
+  --border-hairline: var(--ink-5);
+  --border-accent:  var(--cobalt);
+
+  --accent:         var(--cobalt);
+  --accent-press:   var(--cobalt-deep);
+  --accent-wash:    var(--cobalt-tint);
+
+  --focus-ring:     var(--cobalt);
+}

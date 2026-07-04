@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="designSystem/tokens/fonts.css">
+  <link rel="stylesheet" href="designSystem/tokens/colors.css">
+  <link rel="stylesheet" href="designSystem/tokens/typography.css">
+  <link rel="stylesheet" href="designSystem/tokens/spacing.css">
+  <link rel="stylesheet" href="designSystem/tokens/effects.css">
+  <link rel="stylesheet" href="designSystem/tokens/base.css">
+  <link rel="stylesheet" href="designSystem/styles.css">
+  <script src="designSystem/_ds_bundle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg-canvas); }
+    ::selection { background: var(--accent-wash); }
+    #dv-stage { position: relative; overflow-x: clip; will-change: contents; }
+    [data-view] { min-height: 60vh; }
+  </style>
+</helmet>
+<div id="dv-app" data-screen-label="Portfolio" style="min-height:100vh;background:var(--bg-canvas);color:var(--text-body);font-family:var(--font-serif)">
+
+  <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.SiteNav" dc-props="{{ navProps }}" hint-size="100%,72px"></x-import>
+
+  <div id="dv-stage">
+
+    <!-- ══════════════ HOME ══════════════ -->
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div data-view="home">
+      <section style="padding:clamp(64px,12vh,150px) var(--page-margin) clamp(48px,9vh,90px);max-width:var(--measure-wide);margin:0 auto">
+        <div data-tx style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:28px;font-family:var(--font-mono);font-size:var(--t-micro);letter-spacing:var(--track-label);text-transform:uppercase">
+          <span style="color:var(--text-accent)">Portfolio — 2026</span>
+          <span style="color:var(--text-muted)">STEM · Embedded · Software</span>
+        </div>
+        <h1 data-tx style="font-family:var(--font-serif);font-size:var(--t-mega);font-weight:var(--w-light);line-height:var(--lh-tight);letter-spacing:var(--track-mega);margin:0;color:var(--text-strong)">Measuring the invisible, <em style="font-style:italic;color:var(--text-accent)">one</em> experiment at a time.</h1>
+        <p data-tx style="max-width:48ch;margin-top:30px;font-family:var(--font-serif);font-size:var(--t-md);color:var(--text-secondary);line-height:var(--lh-normal)">I&rsquo;m Dev &mdash; a student building instruments, software, and small machines to understand how the physical world actually works. This is a catalogue of that work.</p>
+        <div data-tx style="display:flex;gap:16px;margin-top:36px;align-items:center;flex-wrap:wrap">
+          <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.Button" variant="accent" href="#work" icon-right="→" hint-size="auto,44px">Browse projects</x-import>
+          <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.TextLink" variant="arrow" href="#contact" hint-size="auto,20px">Get in touch</x-import>
+        </div>
+      </section>
+
+      <section style="padding:clamp(20px,4vh,44px) var(--page-margin) 0;max-width:var(--measure-wide);margin:0 auto">
+        <div data-tx>
+          <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.SectionHeading" index="01" eyebrow="Selected work" title="Projects & experiments" hint-size="100%,120px"></x-import>
+        </div>
+        <div data-tx style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:32px">
+          <sc-for list="{{ projects }}" as="p" hint-placeholder-count="3">
+            <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.ProjectCard" dc-props="{{ p }}" layout="tile" href="#work" hint-size="100%,240px"></x-import>
+          </sc-for>
+        </div>
+        <div data-tx style="margin-top:28px">
+          <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.TextLink" variant="arrow" href="#work" hint-size="auto,20px">See the full archive</x-import>
+        </div>
+      </section>
+
+      <section style="padding:clamp(64px,10vh,120px) var(--page-margin) clamp(24px,6vh,64px);max-width:var(--measure-wide);margin:0 auto">
+        <div data-tx>
+          <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.SectionHeading" index="02" eyebrow="About" title="Who's behind the index" hint-size="100%,120px"></x-import>
+        </div>
+        <div data-tx style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:56px;margin-top:32px;align-items:start">
+          <div>
+            <p style="font-family:var(--font-serif);font-size:var(--t-md);line-height:var(--lh-relaxed);color:var(--text-body);margin:0;max-width:var(--measure-read)">I&rsquo;m a STEM student drawn to the seam where physics meets software &mdash; the point where an idea turns into an instrument you can actually measure with.</p>
+            <div style="margin-top:22px">
+              <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.TextLink" variant="arrow" href="#about" hint-size="auto,20px">More about me</x-import>
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--border-hairline)">
+            <div style="display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--border-hairline)"><span style="font-family:var(--font-mono);font-size:var(--t-micro);letter-spacing:var(--track-label);text-transform:uppercase;color:var(--text-muted)">Focus</span><span style="font-family:var(--font-serif);font-size:var(--t-sm);color:var(--text-body);text-align:right">Embedded · control · software</span></div>
+            <div style="display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--border-hairline)"><span style="font-family:var(--font-mono);font-size:var(--t-micro);letter-spacing:var(--track-label);text-transform:uppercase;color:var(--text-muted)">Looking for</span><span style="font-family:var(--font-serif);font-size:var(--t-sm);color:var(--text-accent);text-align:right">University &amp; research</span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+    </sc-if>
+
+    <!-- ══════════════ WORK ══════════════ -->
+    <sc-if value="{{ isWork }}">
+    <div data-view="work">
+      <main style="padding:clamp(56px,9vh,110px) var(--page-margin) 0;max-width:var(--measure-wide);margin:0 auto">
+        <div data-tx>
+          <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.SectionHeading" index="03 entries" eyebrow="The archive" title="Projects & experiments" hint-size="100%,120px"></x-import>
+        </div>
+        <p data-tx style="max-width:56ch;margin-top:22px;font-family:var(--font-serif);font-size:var(--t-md);color:var(--/modetext-secondary);line-height:var(--lh-normal)">Instruments, software, and small machines &mdash; built end to end. Filter by discipline, or switch between the index and the grid.</p>
+        <div data-tx style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;align-items:center;margin:34px 0 8px">
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ disciplines }}" as="d" hint-placeholder-count="4">
+              <button type="button" onClick="{{ d.onClick }}" style="{{ d.style }}" style-hover="border-color:var(--border-strong);color:var(--text-body)">{{ d.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button type="button" onClick="{{ setRow }}" style="{{ rowChipStyle }}">Rows</button>
+            <button type="button" onClick="{{ setGrid }}" style="{{ gridChipStyle }}">Grid</button>
+          </div>
+        </div>
+        <div data-tx style="margin-top:20px;padding-bottom:24px;display:grid;grid-template-columns:{{ gridCols }};gap:{{ gridGap }}">
+          <sc-for list="{{ visible }}" as="p" hint-placeholder-count="3">
+            <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.ProjectCard" dc-props="{{ p }}" layout="{{ layout }}" href="#work" hint-size="100%,140px"></x-import>
+          </sc-for>
+        </div>
+      </main>
+    </div>
+    </sc-if>
+
+    <!-- ══════════════ WRITING ══════════════ -->
+    <sc-if value="{{ isWriting }}">
+    <div data-view="writing">
+      <main style="padding:clamp(56px,9vh,110px) var(--page-margin) 0;max-width:860px;margin:0 auto">
+        <div data-tx>
+          <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.SectionHeading" eyebrow="Writing — index" title="Essays, notebooks & field notes" hint-size="100%,120px"></x-import>
+        </div>
+        <p data-tx style="max-width:54ch;margin-top:22px;font-family:var(--font-serif);font-size:var(--t-md);color:var(--text-secondary);line-height:var(--lh-normal)">Thinking out loud about physics, computation, and the odd machine. Roughly monthly, always in progress.</p>
+        <div data-tx style="margin-top:44px;border-top:1px solid var(--border-strong);border-bottom:1px solid var(--border-hairline);padding:56px 0;text-align:center">
+          <div style="font-family:var(--font-mono);font-size:var(--t-micro);letter-spacing:var(--track-label);text-transform:uppercase;color:var(--text-accent)">Forthcoming</div>
+          <h3 style="font-family:var(--font-serif);font-size:var(--t-xl);font-weight:var(--w-light);line-height:var(--lh-snug);color:var(--text-strong);margin:16px auto 0;max-width:20ch">The first field notes are being written.</h3>
+          <p style="font-family:var(--font-serif);font-size:var(--t-body);color:var(--text-secondary);line-height:var(--lh-normal);margin:14px auto 0;max-width:52ch">Essays and notebooks on the projects in the archive &mdash; instrumentation, control theory, and building with AI &mdash; are on the way. Until then, the work itself is the record.</p>
+          <div style="margin-top:28px;display:flex;justify-content:center">
+            <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.Button" variant="outline" href="#work" icon-right="→" hint-size="auto,44px">Read the project archive instead</x-import>
+          </div>
+        </div>
+        <div data-tx style="margin-top:56px">
+          <div style="font-family:var(--font-mono);font-size:var(--t-micro);letter-spacing:var(--track-label);text-transform:uppercase;color:var(--text-muted);padding-bottom:16px;border-bottom:1px solid var(--border-hairline)">On the desk</div>
+          <sc-for list="{{ planned }}" as="t" hint-placeholder-count="3">
+            <div style="display:flex;gap:20px;align-items:baseline;padding:22px 0;border-bottom:1px solid var(--border-hairline)">
+              <span style="font-family:var(--font-mono);font-size:var(--t-meta);color:var(--text-faint);flex-shrink:0">{{ t.no }}</span>
+              <div>
+                <div style="font-family:var(--font-mono);font-size:var(--t-micro);letter-spacing:var(--track-wide);text-transform:uppercase;color:var(--text-accent)">{{ t.kind }}</div>
+                <h4 style="font-family:var(--font-serif);font-size:var(--t-lg);font-weight:var(--w-regular);line-height:var(--lh-snug);color:var(--text-strong);margin:8px 0 0;max-width:34ch">{{ t.title }}</h4>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </main>
+    </div>
+    </sc-if>
+
+    <!-- ══════════════ ABOUT ══════════════ -->
+    <sc-if value="{{ isAbout }}">
+    <div data-view="about">
+      <main style="padding:clamp(56px,9vh,110px) var(--page-margin) 0;max-width:var(--measure-wide);margin:0 auto">
+        <div data-tx>
+          <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.SectionHeading" index="01" eyebrow="About" title="Who's behind the index" hint-size="100%,120px"></x-import>
+        </div>
+        <div data-tx style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:56px;margin-top:36px;align-items:start">
+          <div>
+            <p style="font-family:var(--font-serif);font-size:var(--t-lg);line-height:var(--lh-relaxed);color:var(--text-body);margin:0;max-width:var(--measure-read)">I&rsquo;m Dev &mdash; a STEM student drawn to the seam where physics meets software, the point where an idea turns into an instrument you can actually measure with.</p>
+            <p style="font-family:var(--font-serif);font-size:var(--t-body);line-height:var(--lh-relaxed);color:var(--text-secondary);margin:22px 0 0;max-width:var(--measure-read)">I like building things end to end: the airframe and the stabiliser that keeps it level, the database behind a busy reception desk, the infrastructure that makes an AI assistant genuinely useful. I care most about work that stays legible &mdash; where you can trace how every piece was reasoned through, from first principle to final solder joint.</p>
+            <p style="font-family:var(--font-serif);font-size:var(--t-body);line-height:var(--lh-relaxed);color:var(--text-secondary);margin:20px 0 0;max-width:var(--measure-read)">Right now I&rsquo;m looking toward university and research &mdash; places where that instinct to build and measure has room to grow.</p>
+          </div>
+          <div style="border-top:1px solid var(--border-strong)">
+            <sc-for list="{{ facts }}" as="f" hint-placeholder-count="4">
+              <div style="display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--border-hairline)">
+                <span style="font-family:var(--font-mono);font-size:var(--t-micro);letter-spacing:var(--track-label);text-transform:uppercase;color:var(--text-muted)">{{ f.k }}</span>
+                <span style="font-family:var(--font-serif);font-size:var(--t-sm);color:{{ f.color }};text-align:right">{{ f.v }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div data-tx style="margin-top:clamp(64px,10vh,110px)">
+          <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.SectionHeading" index="02" eyebrow="Toolkit" title="What I build with" hint-size="100%,120px"></x-import>
+        </div>
+        <div data-tx style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:40px;margin-top:32px">
+          <sc-for list="{{ skillGroups }}" as="g" hint-placeholder-count="3">
+            <div>
+              <div style="font-family:var(--font-mono);font-size:var(--t-micro);letter-spacing:var(--track-label);text-transform:uppercase;color:var(--text-muted);padding-bottom:14px;border-bottom:1px solid var(--border-hairline);margin-bottom:18px">{{ g.label }}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <sc-for list="{{ g.tags }}" as="t" hint-placeholder-count="4">
+                  <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.Tag" variant="outline" hint-size="auto,26px">{{ t }}</x-import>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div data-tx style="margin-top:clamp(64px,10vh,110px)">
+          <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.SectionHeading" index="03" eyebrow="Approach" title="How I work" hint-size="100%,120px"></x-import>
+        </div>
+        <div data-tx style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;margin-top:32px;background:var(--border-hairline);border:1px solid var(--border-hairline)">
+          <sc-for list="{{ principles }}" as="p" hint-placeholder-count="3">
+            <div style="background:var(--bg-canvas);padding:28px 26px">
+              <div style="font-family:var(--font-mono);font-size:var(--t-meta);color:var(--text-accent)">{{ p.no }}</div>
+              <h4 style="font-family:var(--font-serif);font-size:var(--t-lg);font-weight:var(--w-regular);line-height:var(--lh-snug);color:var(--text-strong);margin:14px 0 0">{{ p.title }}</h4>
+              <p style="font-family:var(--font-serif);font-size:var(--t-sm);line-height:var(--lh-normal);color:var(--text-secondary);margin:10px 0 0">{{ p.body }}</p>
+            </div>
+          </sc-for>
+        </div>
+      </main>
+    </div>
+    </sc-if>
+
+  </div>
+
+  <!-- ── Contact / colophon (persistent shell) ── -->
+  <div id="contact" style="margin-top:clamp(72px,11vh,132px);scroll-margin-top:88px">
+    <x-import component-from-global-scope="DevVachhaniDesignSystem_a1e1ac.SiteFooter" dc-props="{{ footerProps }}" hint-size="100%,340px"></x-import>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;animate&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Motion&quot; }
+}">
+class Component extends DCLogic {
+  ORDER = ['home', 'about', 'work', 'writing'];
+
+  constructor(props) {
+    super(props);
+    let v = 'home';
+    try {
+      const h = (location.hash || '').replace('#', '');
+      if (['home', 'about', 'work', 'writing'].includes(h)) v = h;
+      else if (h === 'top') v = 'home';
+    } catch (e) {}
+    this.state = { view: v, filter: 'All', layout: 'row' };
+    this._busy = false;
+    this._first = true;
+  }
+
+  componentDidMount() {
+    this.bindNav();
+    this.bindHash();
+    requestAnimationFrame(() => this.introAnimate(0));
+  }
+  componentWillUnmount() {
+    if (this._onHash) window.removeEventListener('hashchange', this._onHash);
+  }
+
+  motionOn() {
+    if (this.props.animate === false) return false;
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+    return true;
+  }
+
+  bindHash() {
+    this._onHash = () => {
+      let h = (location.hash || '').replace('#', '');
+      if (h === 'top' || h === '') h = 'home';
+      if (h === 'contact') return; // let it scroll
+      if (['home', 'about', 'work', 'writing'].includes(h) && h !== this.state.view) {
+        this.go(h);
+      }
+    };
+    window.addEventListener('hashchange', this._onHash);
+  }
+
+  // Delegated click capture: intercept the wordmark (#top) and any in-app
+  // section link (#home/#about/#work/#writing) to run the animated swap.
+  bindNav() {
+    const root = document.getElementById('dv-app');
+    if (!root) return;
+    root.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      let target = a.getAttribute('href').replace('#', '');
+      if (target === 'top') target = 'home';
+      if (target === 'contact') return; // allow default smooth scroll to footer
+      if (!this.ORDER.includes(target)) return;
+      e.preventDefault();
+      this.go(target);
+    }, true);
+  }
+
+  gsapReady(cb, tries) {
+    if (window.gsap) return cb(window.gsap);
+    if ((tries || 0) < 50) setTimeout(() => this.gsapReady(cb, (tries || 0) + 1), 80);
+  }
+
+  viewEls() {
+    const stage = document.getElementById('dv-stage');
+    if (!stage) return [];
+    const view = stage.querySelector('[data-view]');
+    return view ? Array.from(view.querySelectorAll('[data-tx]')) : [];
+  }
+
+  introAnimate(tries) {
+    if (!this.motionOn()) { this.viewEls().forEach(e => e.style.opacity = 1); this._first = false; return; }
+    this.gsapReady((gsap) => {
+      const els = this.viewEls();
+      if (!els.length) { if ((tries||0) < 20) setTimeout(() => this.introAnimate((tries||0)+1), 60); return; }
+      gsap.fromTo(els, { opacity: 0, y: 26 },
+        { opacity: 1, y: 0, duration: 0.85, ease: 'expo.out', stagger: 0.08 });
+      this._first = false;
+    });
+  }
+
+  // Fully self-contained so it doesn't depend on componentDidUpdate (this
+  // runtime doesn't fire it reliably). _busy is an instance flag, not state.
+  go(target) {
+    if (target === this.state.view || this._busy) return;
+    const goingRight = this.ORDER.indexOf(target) > this.ORDER.indexOf(this.state.view);
+
+    // Slide the freshly-rendered view in from the side we're heading toward.
+    const runIn = () => {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        try { window.scrollTo(0, 0); } catch (e) {}
+        const els = this.viewEls();
+        if (!this.motionOn() || !window.gsap || !els.length) {
+          els.forEach(e => { e.style.opacity = 1; e.style.transform = 'none'; });
+          this._busy = false;
+          return;
+        }
+        const fromX = goingRight ? 170 : -170;
+        window.gsap.fromTo(els, { x: fromX, opacity: 0 },
+          { x: 0, opacity: 1, duration: 0.62, ease: 'expo.out', stagger: 0.055,
+            onComplete: () => { this._busy = false; } });
+      }));
+    };
+
+    const commit = () => {
+      try { history.replaceState(null, '', '#' + target); } catch (e) {}
+      this.setState({ view: target });
+      runIn();
+    };
+
+    this._busy = true;
+    const els = this.viewEls();
+    if (!this.motionOn() || !window.gsap || !els.length) { commit(); return; }
+
+    // Disperse current elements in three directions: up, down, and toward
+    // the side we're leaving; then swap and slide the new view in.
+    const tl = window.gsap.timeline({ onComplete: commit });
+    els.forEach((el, i) => {
+      const bucket = i % 3;
+      const v = { opacity: 0, duration: 0.42, ease: 'power2.in' };
+      if (bucket === 0) v.y = -90;
+      else if (bucket === 1) v.y = 90;
+      else v.x = goingRight ? -170 : 170;
+      tl.to(el, v, i * 0.02);
+    });
+  }
+
+  chipStyle(active) {
+    return 'font-family:var(--font-mono);font-size:var(--t-micro);letter-spacing:var(--track-wide);'
+      + 'text-transform:uppercase;cursor:pointer;padding:7px 12px;border-radius:var(--r-1);'
+      + 'transition:all var(--dur-fast) var(--ease-out);'
+      + 'border:1px solid ' + (active ? 'var(--border-strong)' : 'var(--border-hairline)') + ';'
+      + 'background:' + (active ? 'var(--ink-0)' : 'transparent') + ';'
+      + 'color:' + (active ? 'var(--text-invert)' : 'var(--text-muted)') + ';';
+  }
+
+  renderVals() {
+    const view = this.state.view;
+    const projects = [
+      { index: '01', title: 'RC F-35 — VTOL',
+        summary: 'A radio-controlled F-35 with custom flight-stabilisation firmware on a Teensy — vertical take-off, hover, and transition to forward flight.',
+        tags: ['Teensy', 'Flight control', 'VTOL', 'C++'] },
+      { index: '02', title: 'Corporate guest registration',
+        summary: 'A visitor check-in system for a corporate reception — Flask backend, relational database, and a clean Bootstrap interface for front-desk staff.',
+        tags: ['Flask', 'SQL', 'Bootstrap', 'Full-stack'] },
+      { index: '03', title: 'DCS companion app',
+        summary: 'A companion app for Digital Combat Simulator, built end-to-end with an AI-assisted workflow and a solid inference and prompt infrastructure underneath.',
+        tags: ['AI infra', 'Tooling', 'Product'] },
+    ];
+    const catMatch = {
+      Embedded: ['Teensy', 'Flight control', 'VTOL', 'C++'],
+      Software: ['Flask', 'SQL', 'Bootstrap', 'Full-stack'],
+      AI: ['AI infra', 'Tooling', 'Product'],
+    };
+    const cats = ['All', 'Embedded', 'Software', 'AI'];
+    const filter = this.state.filter;
+    const layout = this.state.layout;
+    const visible = filter === 'All' ? projects
+      : projects.filter(p => p.tags.some(t => (catMatch[filter] || []).includes(t)));
+    const disciplines = cats.map(c => ({
+      label: c, style: this.chipStyle(filter === c),
+      onClick: () => this.setState({ filter: c }),
+    }));
+
+    const skillGroups = [
+      { label: 'Embedded & hardware', tags: ['Teensy', 'C++', 'Flight control', 'Sensor fusion', 'PCB bring-up'] },
+      { label: 'Software', tags: ['Python', 'Flask', 'SQL', 'JavaScript', 'Bootstrap'] },
+      { label: 'AI & tooling', tags: ['AI-assisted dev', 'LLM infrastructure', 'Prompt design', 'Git'] },
+    ];
+    const facts = [
+      { k: 'Focus', v: 'Embedded \u00B7 control \u00B7 software', color: 'var(--text-body)' },
+      { k: 'Currently', v: 'Building & tinkering', color: 'var(--text-body)' },
+      { k: 'Based', v: 'United Kingdom', color: 'var(--text-body)' },
+      { k: 'Looking for', v: 'University & research', color: 'var(--text-accent)' },
+    ];
+    const principles = [
+      { no: '01', title: 'Build it end to end', body: 'Airframe to firmware, schema to interface — I want to understand the whole path, not just one layer of it.' },
+      { no: '02', title: 'Keep it legible', body: 'Work should be traceable. Anyone should be able to follow how each decision was reasoned through.' },
+      { no: '03', title: 'Measure, then trust', body: 'A claim is only as good as the instrument behind it. I test before I believe my own results.' },
+    ];
+    const planned = [
+      { no: '01', kind: 'Field note', title: 'Keeping an F-35 level: what a Teensy actually does 400 times a second.' },
+      { no: '02', kind: 'Build log', title: 'From spreadsheet to schema: designing the guest-registration database.' },
+      { no: '03', kind: 'Essay', title: 'Good AI infrastructure is boring — and that is the point.' },
+    ];
+
+    const navProps = {
+      brand: 'Dev Vachhani',
+      active: view === 'home' ? null : '#' + view,
+      links: [
+        { label: 'About', href: '#about' },
+        { label: 'Work', href: '#work' },
+        { label: 'Writing', href: '#writing' },
+      ],
+      cta: { label: 'Contact', href: '#contact' },
+    };
+    const footerProps = {
+      signoff: 'Let\u2019s build something.',
+      email: 'hello@devvachhani.com',
+      invert: true,
+      links: [
+        { label: 'GitHub', href: '#' },
+        { label: 'LinkedIn', href: '#' },
+        { label: 'Email', href: 'mailto:hello@devvachhani.com' },
+      ],
+      meta: '\u00A9 2026 Dev Vachhani',
+    };
+
+    return {
+      isHome: view === 'home', isWork: view === 'work',
+      isWriting: view === 'writing', isAbout: view === 'about',
+      projects, visible, disciplines,
+      setRow: () => this.setState({ layout: 'row' }),
+      setGrid: () => this.setState({ layout: 'grid' }),
+      rowChipStyle: this.chipStyle(layout === 'row'),
+      gridChipStyle: this.chipStyle(layout === 'grid'),
+      layout,
+      gridCols: layout === 'grid' ? 'repeat(auto-fit,minmax(300px,1fr))' : '1fr',
+      gridGap: layout === 'grid' ? '16px' : '12px',
+      skillGroups, facts, principles, planned,
+      navProps, footerProps,
+    };
+  }
+}
+</script>
+</body>
+</html>

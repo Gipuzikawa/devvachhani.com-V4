@@ -1,0 +1,12 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   DevVachhani — Design tokens entry point.
+   Mirrors design-export/designSystem/styles.css. Keep this file as
+   @import lines only — edit the token files themselves for value changes.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@import './tokens/fonts.css';
+@import './tokens/colors.css';
+@import './tokens/typography.css';
+@import './tokens/spacing.css';
+@import './tokens/effects.css';
+@import './tokens/base.css';

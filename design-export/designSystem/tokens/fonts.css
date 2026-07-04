@@ -1,0 +1,10 @@
+/* ── Webfonts ──────────────────────────────────────────────────────────
+   Newsreader — transitional serif with optical sizing + true italics.
+   Display + body voice of the system.
+   IBM Plex Mono — technical monospace. Eyebrows, metadata, index labels.
+
+   Substitution note: both are served from Google Fonts (no local binaries
+   were provided). Swap the @font-face src for self-hosted woff2 in
+   production if you want to drop the CDN dependency. */
+
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap');

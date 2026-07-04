@@ -1,0 +1,24 @@
+/* ── Spacing & layout ──────────────────────────────────────────────────
+   8-based rhythm with a couple of half-steps for hairline-tight archival
+   layouts. Content max-widths tuned for a dense index + a comfortable
+   long-read measure. */
+
+:root {
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  24px;
+  --s-6:  32px;
+  --s-7:  48px;
+  --s-8:  64px;
+  --s-9:  96px;
+  --s-10: 128px;
+  --s-11: 176px;
+
+  /* Layout frame */
+  --page-margin:  clamp(20px, 5vw, 72px);
+  --measure-wide: 1240px;   /* index / grid max width */
+  --measure-read: 660px;    /* long-read prose measure */
+  --gutter:       24px;
+}

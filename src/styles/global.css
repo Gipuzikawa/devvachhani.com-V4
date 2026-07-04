@@ -1,0 +1,16 @@
+/* Page-level rules that lived inline in the original Home.dc.html <style>
+   block — kept separate from tokens/base.css (the design system's own
+   reset) since these are app-shell concerns, not design-system defaults. */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-canvas);
+}
+
+::selection {
+  background: var(--accent-wash);
+}
