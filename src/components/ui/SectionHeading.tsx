@@ -1,4 +1,6 @@
 import type { CSSProperties } from 'react';
+import { useSplitReveal } from '../../hooks/useSplitReveal';
+import { useDecode } from '../../hooks/useDecode';
 
 interface SectionHeadingProps {
   index?: string;
@@ -6,15 +8,22 @@ interface SectionHeadingProps {
   title?: string;
   align?: 'left' | 'center';
   rule?: boolean;
+  /** Self-animates by default — set false when a parent choreographs it. */
+  animate?: boolean;
   style?: CSSProperties;
 }
 
 /**
  * SectionHeading — the archival section marker. A mono index number +
  * eyebrow sit above a serif title, divided from the content below by a
- * full hairline rule. This is the primary rhythm device across the site.
+ * full hairline rule. This is the primary rhythm device across the site,
+ * so it carries the signature entrance itself: the mono line *prints*
+ * (decode) and the serif title is *set* (masked line rise).
  */
-export function SectionHeading({ index, eyebrow, title, align = 'left', rule = true, style }: SectionHeadingProps) {
+export function SectionHeading({ index, eyebrow, title, align = 'left', rule = true, animate = true, style }: SectionHeadingProps) {
+  const metaRef = useDecode<HTMLDivElement>();
+  const titleRef = useSplitReveal<HTMLHeadingElement>();
+
   return (
     <header
       style={{
@@ -30,6 +39,7 @@ export function SectionHeading({ index, eyebrow, title, align = 'left', rule = t
     >
       {(index || eyebrow) && (
         <div
+          ref={animate ? metaRef : undefined}
           style={{
             display: 'flex',
             alignItems: 'baseline',
@@ -41,12 +51,21 @@ export function SectionHeading({ index, eyebrow, title, align = 'left', rule = t
             textTransform: 'uppercase',
           }}
         >
-          {index && <span style={{ color: 'var(--text-accent)', fontWeight: 'var(--w-medium)' as CSSProperties['fontWeight'] }}>{index}</span>}
-          {eyebrow && <span style={{ color: 'var(--text-muted)' }}>{eyebrow}</span>}
+          {index && (
+            <span data-decode={animate ? '' : undefined} style={{ color: 'var(--text-accent)', fontWeight: 'var(--w-medium)' as CSSProperties['fontWeight'] }}>
+              {index}
+            </span>
+          )}
+          {eyebrow && (
+            <span data-decode={animate ? '' : undefined} style={{ color: 'var(--text-muted)' }}>
+              {eyebrow}
+            </span>
+          )}
         </div>
       )}
       {title && (
         <h2
+          ref={animate ? titleRef : undefined}
           style={{
             fontSize: 'var(--t-xl)',
             fontWeight: 'var(--w-regular)' as CSSProperties['fontWeight'],

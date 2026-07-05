@@ -216,9 +216,7 @@ export function ProjectPage() {
 
       {/* ── 01 Overview ── */}
       <section style={{ marginTop: 'clamp(56px,9vh,100px)' }}>
-        <div data-reveal>
-          <SectionHeading index="01" eyebrow="Overview" title="Tools & skills" />
-        </div>
+        <SectionHeading index="01" eyebrow="Overview" title="Tools & skills" />
         <div ref={toolsRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 40, marginTop: 32 }}>
           {[...project.toolGroups, { label: 'Skills demonstrated', items: project.skills }].map((g) => (
             <div key={g.label}>
@@ -239,9 +237,7 @@ export function ProjectPage() {
 
       {/* ── 02 Production timeline ── */}
       <section style={{ marginTop: 'clamp(64px,10vh,110px)' }}>
-        <div data-reveal>
-          <SectionHeading index="02" eyebrow="Production timeline" title="How it came together" />
-        </div>
+        <SectionHeading index="02" eyebrow="Production timeline" title="How it came together" />
         <div ref={tlRef} style={{ position: 'relative', paddingLeft: PAD, marginTop: 48 }}>
           {/* spine + cobalt progress line */}
           <span aria-hidden="true" style={{ position: 'absolute', left: SPINE_X, top: 4, bottom: 4, width: 1, background: 'var(--border-hairline)' }} />
@@ -258,9 +254,7 @@ export function ProjectPage() {
 
       {/* ── 03 Final product ── */}
       <section style={{ marginTop: 'clamp(24px,4vh,48px)' }}>
-        <div data-reveal>
-          <SectionHeading index="03" eyebrow="Final product" title="The finished machine" />
-        </div>
+        <SectionHeading index="03" eyebrow="Final product" title="The finished machine" />
         <div ref={pinRef} style={{ padding: '48px 0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 48, alignItems: 'start' }}>
             <div data-final-figure>
@@ -284,9 +278,7 @@ export function ProjectPage() {
 
       {/* ── 04 Reflections ── */}
       <section style={{ marginTop: 'clamp(48px,8vh,90px)', paddingBottom: 'clamp(48px,8vh,90px)' }}>
-        <div data-reveal>
-          <SectionHeading index="04" eyebrow="Reflections" title="What the build taught" />
-        </div>
+        <SectionHeading index="04" eyebrow="Reflections" title="What the build taught" />
         <div ref={reflRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 40, marginTop: 32 }}>
           {[
             { label: 'What went well', body: project.reflections.wentWell },
