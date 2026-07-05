@@ -67,6 +67,8 @@ If the current branch is `main`, or was already merged, stop and create a new fe
 
 - Write clear commit messages describing the *why*, not just the *what*
 - Keep commits focused on a single change
+- Use titles chore, feat, docs when commiting (e.g. Message 'feat(mvp): implement Units 4-8')
+
 
 **Pull requests**
 
