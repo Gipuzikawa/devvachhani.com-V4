@@ -50,7 +50,7 @@ The Home hero runs a one-off `useGSAP` timeline (line-mask reveal + staggered me
 
 ## Design tokens
 
-`src/styles/tokens/*.css` are a direct copy of `design-export/designSystem/tokens/*.css` (colors, typography, spacing, effects, fonts, base reset). `src/styles/tokens.css` mirrors the original `styles.css` `@import` list. `src/styles/global.css` holds page-shell rules that lived inline in the original `Home.dc.html` (`scroll-behavior: smooth`, `::selection`, canvas background).
+`src/styles/tokens/*.css` are a direct copy of `design-export/designSystem/tokens/*.css` (colors, typography, spacing, effects, fonts, base reset) — except `fonts.css`, which now declares self-hosted `@font-face` rules over latin woff2 files in `public/fonts/` (the exact binaries Google Fonts served for the original `@import`), so the site makes zero external requests at runtime. `src/styles/tokens.css` mirrors the original `styles.css` `@import` list. `src/styles/global.css` holds page-shell rules that lived inline in the original `Home.dc.html` (`scroll-behavior: smooth`, `::selection`, canvas background).
 
 ## Data
 

@@ -1,5 +1,8 @@
-import { useState, type CSSProperties } from 'react';
+import { useRef, useState, type CSSProperties } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { gsap } from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { DUR, EASE, prefersReducedMotion } from '../../motion/core';
 import type { NavLink as NavLinkData } from '../../types';
 
 interface SiteNavProps {
@@ -15,8 +18,24 @@ interface SiteNavProps {
  * wash with backdrop blur so content scrolls under it cleanly.
  */
 export function SiteNav({ brand = 'Dev Vachhani', links = [], cta, style }: SiteNavProps) {
+  const ref = useRef<HTMLElement>(null);
+
+  /* One-off entrance on first load (the nav persists across routes): the
+     wordmark settles, the cobalt tick stamps in, the index links follow. */
+  useGSAP(
+    () => {
+      if (prefersReducedMotion()) return;
+      const tl = gsap.timeline({ defaults: { ease: EASE.emph } });
+      tl.from('[data-nav-brand]', { y: -14, opacity: 0, duration: DUR.slow })
+        .from('[data-nav-tick]', { scale: 0, duration: DUR.base, ease: EASE.out }, '-=0.35')
+        .from('[data-nav-item]', { y: -10, opacity: 0, duration: DUR.base, stagger: 0.06 }, '-=0.3');
+    },
+    { scope: ref },
+  );
+
   return (
     <nav
+      ref={ref}
       style={{
         position: 'sticky',
         top: 0,
@@ -34,7 +53,9 @@ export function SiteNav({ brand = 'Dev Vachhani', links = [], cta, style }: Site
     >
       <Link to="/" style={{ display: 'flex', alignItems: 'baseline', gap: '10px', textDecoration: 'none' }}>
         <span
+          data-nav-brand
           style={{
+            display: 'inline-block',
             fontFamily: 'var(--font-serif)',
             fontSize: 'var(--t-md)',
             fontWeight: 'var(--w-medium)' as CSSProperties['fontWeight'],
@@ -44,7 +65,7 @@ export function SiteNav({ brand = 'Dev Vachhani', links = [], cta, style }: Site
         >
           {brand}
         </span>
-        <span aria-hidden="true" style={{ width: '7px', height: '7px', background: 'var(--accent)', display: 'inline-block', transform: 'translateY(-2px)' }} />
+        <span data-nav-tick aria-hidden="true" style={{ width: '7px', height: '7px', background: 'var(--accent)', display: 'inline-block', transform: 'translateY(-2px)' }} />
       </Link>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
@@ -53,6 +74,7 @@ export function SiteNav({ brand = 'Dev Vachhani', links = [], cta, style }: Site
         ))}
         {cta && (
           <a
+            data-nav-item
             href={cta.href}
             style={{
               fontFamily: 'var(--font-mono)',
@@ -78,6 +100,7 @@ function NavItem({ link }: { link: NavLinkData }) {
   const [hover, setHover] = useState(false);
   return (
     <NavLink
+      data-nav-item
       to={link.href}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}

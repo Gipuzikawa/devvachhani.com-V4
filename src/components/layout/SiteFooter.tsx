@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from 'react';
+import { useReveal } from '../../hooks/useReveal';
 import type { FooterLink } from '../../types';
 
 interface SiteFooterProps {
@@ -31,8 +32,14 @@ export function SiteFooter({
   const fg = invert ? 'var(--text-invert)' : 'var(--text-strong)';
   const muted = invert ? 'color-mix(in srgb, var(--text-invert) 60%, transparent)' : 'var(--text-muted)';
 
+  /* Once-per-visit entrance (the footer persists across routes). Trigger
+     positions are kept honest by the ScrollTrigger.refresh() that
+     RouteTransition runs on every route change. */
+  const ref = useReveal<HTMLElement>();
+
   return (
     <footer
+      ref={ref}
       id="contact"
       style={{
         background: invert ? 'var(--bg-invert)' : 'transparent',
@@ -45,10 +52,14 @@ export function SiteFooter({
     >
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px', justifyContent: 'space-between', alignItems: 'flex-end', maxWidth: 'var(--measure-wide)', margin: '0 auto' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <h2 style={{ fontSize: 'var(--t-xxl)', fontWeight: 'var(--w-light)' as CSSProperties['fontWeight'], letterSpacing: 'var(--track-tight)', lineHeight: 'var(--lh-tight)', color: fg }}>
+          <h2
+            data-reveal
+            style={{ fontSize: 'var(--t-xxl)', fontWeight: 'var(--w-light)' as CSSProperties['fontWeight'], letterSpacing: 'var(--track-tight)', lineHeight: 'var(--lh-tight)', color: fg }}
+          >
             {signoff}
           </h2>
           <a
+            data-reveal
             href={`mailto:${email}`}
             style={{
               fontFamily: 'var(--font-serif)',
@@ -64,7 +75,7 @@ export function SiteFooter({
             {email}
           </a>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'flex-start' }}>
+        <div data-reveal style={{ display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'flex-start' }}>
           {links.map((l) => (
             <FooterLinkItem key={l.label} link={l} fg={fg} />
           ))}
