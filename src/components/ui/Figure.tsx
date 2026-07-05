@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
-import type { ProjectFigure } from '../../types';
+import type { FigureData } from '../../types';
 
-interface FigureProps extends ProjectFigure {
+interface FigureProps extends FigureData {
   style?: CSSProperties;
 }
 

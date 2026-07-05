@@ -6,6 +6,7 @@ import { About } from './pages/About';
 import { Work } from './pages/Work';
 import { ProjectPage } from './pages/ProjectPage';
 import { Writing } from './pages/Writing';
+import { ArticlePage } from './pages/ArticlePage';
 
 export function App() {
   return (
@@ -18,6 +19,7 @@ export function App() {
           <Route path="/work" element={<Work />} />
           <Route path="/work/:slug" element={<ProjectPage />} />
           <Route path="/writing" element={<Writing />} />
+          <Route path="/writing/:slug" element={<ArticlePage />} />
         </Route>
       </Routes>
     </>

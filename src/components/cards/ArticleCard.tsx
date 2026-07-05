@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from 'react';
+import { Link } from 'react-router-dom';
 import type { ArticleData } from '../../types';
 
 interface ArticleCardProps extends ArticleData {
@@ -16,8 +17,8 @@ export function ArticleCard({ title, dek, date, readTime, category, href = '#', 
   const [hover, setHover] = useState(false);
 
   return (
-    <a
-      href={href}
+    <Link
+      to={href}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{
@@ -66,6 +67,6 @@ export function ArticleCard({ title, dek, date, readTime, category, href = '#', 
         {title}
       </h3>
       {dek && <p style={{ fontSize: 'var(--t-body)', color: 'var(--text-secondary)', lineHeight: 'var(--lh-normal)', maxWidth: '56ch' }}>{dek}</p>}
-    </a>
+    </Link>
   );
 }

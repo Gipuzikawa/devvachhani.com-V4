@@ -8,8 +8,9 @@ export interface ProjectData {
   slug?: string;
 }
 
-export interface ProjectFigure {
-  /** Figure number within the project (Fig. 01, 02, …). */
+/** A figure plate — shared by project pages and articles. */
+export interface FigureData {
+  /** Figure number within the page (Fig. 01, 02, …). */
   index: number;
   title: string;
   /** width / height; frames reserve this space so figures never reflow text. */
@@ -22,7 +23,7 @@ export interface ProjectMilestone {
   date: string;
   title: string;
   body: string;
-  figure: ProjectFigure;
+  figure: FigureData;
 }
 
 export interface ProjectDetail {
@@ -36,7 +37,7 @@ export interface ProjectDetail {
   toolGroups: { label: string; items: string[] }[];
   skills: string[];
   milestones: ProjectMilestone[];
-  finalFigure: ProjectFigure;
+  finalFigure: FigureData;
   specs: { k: string; v: string }[];
   reflections: {
     wentWell: string;
@@ -52,6 +53,29 @@ export interface ArticleData {
   date?: string;
   readTime?: string;
   category?: string;
+  /** Present only when a reading page exists. */
+  slug?: string;
+}
+
+/* Article bodies are typed blocks, not Markdown — the reactive reading
+   features (TOC, progress, figure triggers) bind to a first-class content
+   contract, and no parser dependency is needed. */
+export type ArticleBlock =
+  | { type: 'paragraph'; text: string; dropCap?: boolean }
+  | { type: 'heading'; id: string; text: string }
+  | { type: 'figure'; figure: FigureData }
+  | { type: 'pullquote'; text: string };
+
+export interface ArticleDetail {
+  slug: string;
+  title: string;
+  dek: string;
+  date: string;
+  readTime: string;
+  category: string;
+  /** 'placeholder' renders the discreet placeholder notice. */
+  status: 'placeholder' | 'live';
+  blocks: ArticleBlock[];
 }
 
 export interface NavLink {

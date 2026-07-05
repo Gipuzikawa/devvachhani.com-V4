@@ -19,7 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - F-35 project detail page (`/work/rc-f35-vtol`): scroll-driven vertical production timeline (cobalt progress spine, nodes that activate at the read line, per-milestone figures), pinned "hold and reveal" final-product section with a scrubbed spec table, and a reflections section — populated from `Placeholders/Example_Project.md` with an explicit placeholder-content notice. The page is the template other projects will be derived from.
 - `usePinned` hook — pin-and-hold choreography (desktop-only, static below 900px and under reduced motion).
 - `Figure` component — archival figure plate that reserves its aspect ratio; renders an honest empty-plate placeholder until a real image exists.
-- Richer project content model (`ProjectDetail`, `ProjectMilestone`, `ProjectFigure` types; `projectDetails` in `content.ts`).
+- Richer project content model (`ProjectDetail`, `ProjectMilestone`, `FigureData` types; `projectDetails` in `content.ts`).
+- Article reading page (`/writing/f35-development-update`): scroll-linked reading-progress hairline, sticky mini-TOC whose active section tracks the read line (kept under reduced motion — it's information, not decoration), cobalt drop cap, ruled pull quote, parallax figure plates. Body paragraphs deliberately never animate — motion must not fight reading.
+- Typed article content model (`ArticleBlock` union + `ArticleDetail`) — structured TS blocks rather than Markdown, so the reactive features bind to a first-class contract with no parser dependency.
+- Writing index now lists the placeholder article via `ArticleCard` (wired to the reading page), replacing the "Forthcoming" plate; the "on the desk" list remains.
 
 ### Changed
 
@@ -29,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ported personalized content (projects, about copy, principles, planned writing) from the prototype's hand-authored data.
 - Migrate all page animations (Home hero timeline, Home/About/Work/Writing reveals) onto the new motion foundation; grids now enter as choreographed staggered groups instead of per-item triggers firing simultaneously.
 - Hero and reveal tweens now use the design-token ease curves (`ds-emph` etc.) instead of the approximate `expo.out`.
-- `ProjectCard` navigates with a React Router `Link` instead of a raw `<a>`, so card → project-page navigation stays in the SPA (no full reload, route transition plays).
+- `ProjectCard` and `ArticleCard` navigate with a React Router `Link` instead of a raw `<a>`, so card → detail navigation stays in the SPA (no full reload, route transition plays).
 
 ### Fixed
 
