@@ -1,4 +1,5 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
 type Variant = 'solid' | 'accent' | 'outline' | 'ghost';
 type Size = 'sm' | 'md' | 'lg';
@@ -100,6 +101,15 @@ export function Button({
   );
 
   if (href) {
+    // Internal routes go through the router so navigation stays in the SPA;
+    // hash and external hrefs keep native anchor behavior.
+    if (href.startsWith('/')) {
+      return (
+        <Link to={href} style={base} onClick={onClick} {...handlers}>
+          {content}
+        </Link>
+      );
+    }
     return (
       <a href={href} style={base} onClick={onClick} {...handlers}>
         {content}

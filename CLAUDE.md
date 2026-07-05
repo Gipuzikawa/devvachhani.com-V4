@@ -13,7 +13,7 @@ The app was migrated from a Claude Design (claude.ai/design) prototype export in
 - **Framework:** Vite + React 19 + TypeScript
 - **Routing:** React Router (real routes: `/`, `/about`, `/work`, `/writing`)
 - **Styling:** plain CSS with custom-property design tokens (no CSS framework) — see Design System below
-- **Motion:** GSAP + ScrollTrigger via `@gsap/react`'s `useGSAP()`. `src/motion/core.ts` is the single plugin-registration point, exports token-mirrored `DUR`/`EASE` constants (backed by `CustomEase` curves from the CSS tokens), and owns the one `prefersReducedMotion()` check — never call `gsap.registerPlugin` or `matchMedia('prefers-reduced-motion')` elsewhere. Entrance hooks: `useReveal` (per-item, for lists), `useStagger` (group, for grids), `useParallax` (scrub drift). Draw all timing from `DUR`/`EASE`; if a new value is needed, add it to `src/styles/tokens/effects.css` first.
+- **Motion:** GSAP + ScrollTrigger via `@gsap/react`'s `useGSAP()`. `src/motion/core.ts` is the single plugin-registration point, exports token-mirrored `DUR`/`EASE` constants (backed by `CustomEase` curves from the CSS tokens), and owns the one `prefersReducedMotion()` check — never call `gsap.registerPlugin` or `matchMedia('prefers-reduced-motion')` elsewhere. Entrance hooks: `useReveal` (per-item, for lists), `useStagger` (group, for grids), `useParallax` (scrub drift), `usePinned` (pin-and-hold, desktop-only). Draw all timing from `DUR`/`EASE`; if a new value is needed, add it to `src/styles/tokens/effects.css` first.
 - **Content:** static TypeScript data (`src/data/content.ts`) — no CMS/backend yet
 
 ## Design System

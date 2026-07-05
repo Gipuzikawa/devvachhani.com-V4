@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from 'react';
+import { Link } from 'react-router-dom';
 import type { ProjectData } from '../../types';
 
 interface ProjectCardProps extends ProjectData {
@@ -18,8 +19,8 @@ export function ProjectCard({ index, title, summary, tags = [], year, href = '#'
   const isRow = layout === 'row';
 
   return (
-    <a
-      href={href}
+    <Link
+      to={href}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{
@@ -106,6 +107,6 @@ export function ProjectCard({ index, title, summary, tags = [], year, href = '#'
           ↗
         </span>
       </div>
-    </a>
+    </Link>
   );
 }

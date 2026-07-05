@@ -1,6 +1,7 @@
 import { useRef, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { DUR, EASE, prefersReducedMotion } from '../../motion/core';
 
@@ -17,6 +18,12 @@ export function RouteTransition({ children }: { children: ReactNode }) {
 
   useGSAP(
     () => {
+      /* The page under us just changed height; persistent triggers (the
+         footer's reveal) must recompute against the new layout. Page-scoped
+         triggers were just created with fresh positions, so this is cheap
+         and harmless for them. */
+      ScrollTrigger.refresh();
+
       if (prefersReducedMotion()) return;
       gsap.fromTo(
         ref.current,

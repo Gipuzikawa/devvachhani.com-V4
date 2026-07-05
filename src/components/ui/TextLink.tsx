@@ -1,4 +1,5 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
 type Variant = 'underline' | 'arrow' | 'plain';
 type Tone = 'accent' | 'ink';
@@ -44,8 +45,8 @@ export function TextLink({ children, href = '#', variant = 'underline', tone = '
     base.transition = 'background-size var(--dur-base) var(--ease-out)';
   }
 
-  return (
-    <a href={href} style={base} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+  const content = (
+    <>
       {children}
       {variant === 'arrow' && (
         <span
@@ -59,6 +60,23 @@ export function TextLink({ children, href = '#', variant = 'underline', tone = '
           →
         </span>
       )}
+    </>
+  );
+
+  const handlers = { onMouseEnter: () => setHover(true), onMouseLeave: () => setHover(false) };
+
+  // Internal routes go through the router so navigation stays in the SPA;
+  // hash and external hrefs keep native anchor behavior.
+  if (href.startsWith('/')) {
+    return (
+      <Link to={href} style={base} {...handlers}>
+        {content}
+      </Link>
+    );
+  }
+  return (
+    <a href={href} style={base} {...handlers}>
+      {content}
     </a>
   );
 }

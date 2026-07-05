@@ -69,7 +69,7 @@ export function Work() {
       >
         {visible.map((p) => (
           <div key={p.index}>
-            <ProjectCard {...p} layout={layout === 'grid' ? 'tile' : 'row'} href="/work" />
+            <ProjectCard {...p} layout={layout === 'grid' ? 'tile' : 'row'} href={p.slug ? `/work/${p.slug}` : '/work'} />
           </div>
         ))}
       </div>

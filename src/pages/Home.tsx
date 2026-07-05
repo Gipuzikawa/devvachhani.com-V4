@@ -80,7 +80,7 @@ export function Home() {
         <div ref={projGrid} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 16, marginTop: 32 }}>
           {projects.map((p) => (
             <div key={p.index}>
-              <ProjectCard {...p} href="/work" />
+              <ProjectCard {...p} href={p.slug ? `/work/${p.slug}` : '/work'} />
             </div>
           ))}
         </div>
