@@ -4,6 +4,7 @@ import { ScrollToTop } from './components/layout/ScrollToTop';
 import { Home } from './pages/Home';
 import { About } from './pages/About';
 import { Work } from './pages/Work';
+import { ProjectPage } from './pages/ProjectPage';
 import { Writing } from './pages/Writing';
 
 export function App() {
@@ -15,6 +16,7 @@ export function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/work" element={<Work />} />
+          <Route path="/work/:slug" element={<ProjectPage />} />
           <Route path="/writing" element={<Writing />} />
         </Route>
       </Routes>

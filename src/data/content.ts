@@ -1,4 +1,4 @@
-import type { ProjectData } from '../types';
+import type { ProjectData, ProjectDetail } from '../types';
 
 /** Real content, ported from design-export/Home.dc.html's renderVals(). */
 
@@ -9,6 +9,7 @@ export const projects: ProjectData[] = [
     summary:
       'A radio-controlled F-35 with custom flight-stabilisation firmware on a Teensy — vertical take-off, hover, and transition to forward flight.',
     tags: ['Teensy', 'Flight control', 'VTOL', 'C++'],
+    slug: 'rc-f35-vtol',
   },
   {
     index: '02',
@@ -23,6 +24,95 @@ export const projects: ProjectData[] = [
     summary:
       'A companion app for Digital Combat Simulator, built end-to-end with an AI-assisted workflow and a solid inference and prompt infrastructure underneath.',
     tags: ['AI infra', 'Tooling', 'Product'],
+  },
+];
+
+/* ── Project detail pages ──────────────────────────────────────────────
+   Transcribed from Placeholders/Example_Project.md. Body copy is lorem —
+   deliberately, clearly placeholder while the real build log is written.
+   The `status: 'placeholder'` flag renders an explicit notice on the page
+   so this is never presented as real work. */
+
+export const projectDetails: ProjectDetail[] = [
+  {
+    slug: 'rc-f35-vtol',
+    index: '01',
+    title: 'RC F-35 — VTOL',
+    year: '2026',
+    status: 'placeholder',
+    intro:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum feugiat metus sed nisl fermentum, sed dignissim nisl tincidunt. Donec ultricies est sed nibh tincidunt, vitae efficitur neque pellentesque.',
+    toolGroups: [
+      { label: 'Software', items: ['SolidWorks', 'Fusion 360', 'Bambu Studio', 'Cura', 'Autodesk CFD', 'VS Code'] },
+      { label: 'Hardware', items: ['Bambu Lab P1S', 'Ender 3 V2', 'Digital callipers', 'Soldering station', 'Bench power supply'] },
+      { label: 'Components', items: ['Brushless motor', 'ESC', 'LiPo battery', 'Flight controller', '9g servos', 'Carbon-fibre spars', 'PLA / PETG'] },
+    ],
+    skills: [
+      'CAD design',
+      'Mechanical engineering',
+      'Rapid prototyping',
+      'Electronics integration',
+      'Aerodynamic design',
+      'Project management',
+      'Testing & iteration',
+      'Technical documentation',
+    ],
+    milestones: [
+      {
+        date: 'January 2026',
+        title: 'Project planning',
+        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae ligula sed lectus feugiat cursus. Integer sed tincidunt nisl, non scelerisque turpis vel ligula.',
+        figure: { index: 1, title: 'Initial concept sketches' },
+      },
+      {
+        date: 'February 2026',
+        title: 'CAD development',
+        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum purus at lacus dignissim. Donec pretium lacus vitae mi tristique, sed vestibulum risus tempor.',
+        figure: { index: 2, title: 'First CAD prototype' },
+      },
+      {
+        date: 'March 2026',
+        title: 'Prototype manufacturing',
+        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam tincidunt sem quis ligula facilisis luctus. Mauris posuere erat sed mauris commodo, vitae interdum est viverra.',
+        figure: { index: 3, title: 'First physical prototype' },
+      },
+      {
+        date: 'April 2026',
+        title: 'Electronics installation',
+        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec elit nec massa tristique malesuada. Integer et eros at lorem dignissim interdum, quis eleifend ligula neque vitae justo.',
+        figure: { index: 4, title: 'Electronics integration' },
+      },
+      {
+        date: 'May 2026',
+        title: 'Testing & refinement',
+        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet justo at turpis vulputate luctus. Suspendisse potenti; morbi tristique malesuada risus, vitae tempus augue cursus vel.',
+        figure: { index: 5, title: 'Prototype testing' },
+      },
+      {
+        date: 'June 2026',
+        title: 'Final assembly',
+        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi volutpat augue nec sapien faucibus. Cras tincidunt est at odio fermentum, quis feugiat augue consequat.',
+        figure: { index: 6, title: 'Completed airframe' },
+      },
+    ],
+    finalFigure: { index: 7, title: 'Hero photograph', aspect: 16 / 9 },
+    specs: [
+      { k: 'Wingspan', v: 'Lorem ipsum' },
+      { k: 'Length', v: 'Lorem ipsum' },
+      { k: 'Weight', v: 'Lorem ipsum' },
+      { k: 'Material', v: 'Lorem ipsum' },
+      { k: 'Battery', v: 'Lorem ipsum' },
+      { k: 'Flight time', v: 'Lorem ipsum' },
+    ],
+    reflections: {
+      wentWell:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vitae urna ac lacus facilisis porta, sed dapibus mauris vitae consequat luctus.',
+      challenges:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec condimentum ligula sed urna tristique, vitae porta lectus luctus.',
+      improvements: ['Lorem ipsum dolor sit amet', 'Consectetur adipiscing elit', 'Sed do eiusmod tempor', 'Incididunt ut labore'],
+      closing:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse potenti; donec sed elit at risus volutpat egestas.',
+    },
   },
 ];
 
