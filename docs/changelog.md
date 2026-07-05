@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Article reading page (`/writing/f35-development-update`): scroll-linked reading-progress hairline, sticky mini-TOC whose active section tracks the read line (kept under reduced motion — it's information, not decoration), cobalt drop cap, ruled pull quote, parallax figure plates. Body paragraphs deliberately never animate — motion must not fight reading.
 - Typed article content model (`ArticleBlock` union + `ArticleDetail`) — structured TS blocks rather than Markdown, so the reactive features bind to a first-class contract with no parser dependency.
 - Writing index now lists the placeholder article via `ArticleCard` (wired to the reading page), replacing the "Forthcoming" plate; the "on the desk" list remains.
+- Shell motion: one-off nav entrance on first load (wordmark settles, cobalt tick stamps in, index links follow) and a once-per-visit footer reveal — both in the shared entrance vocabulary.
 
 ### Changed
 
@@ -32,7 +33,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ported personalized content (projects, about copy, principles, planned writing) from the prototype's hand-authored data.
 - Migrate all page animations (Home hero timeline, Home/About/Work/Writing reveals) onto the new motion foundation; grids now enter as choreographed staggered groups instead of per-item triggers firing simultaneously.
 - Hero and reveal tweens now use the design-token ease curves (`ds-emph` etc.) instead of the approximate `expo.out`.
-- `ProjectCard` and `ArticleCard` navigate with a React Router `Link` instead of a raw `<a>`, so card → detail navigation stays in the SPA (no full reload, route transition plays).
+- `ProjectCard` and `ArticleCard` navigate with a React Router `Link` instead of a raw `<a>`, so card → detail navigation stays in the SPA (no full reload, route transition plays). `Button` and `TextLink` do the same for internal (`/…`) hrefs while keeping native anchors for hash/external links.
+- Fonts are self-hosted woff2 (latin subset) in `public/fonts/` instead of the Google Fonts CDN — zero external requests at runtime.
+- `RouteTransition` calls `ScrollTrigger.refresh()` on route change so persistent triggers (the footer reveal) stay honest against the new page height.
 
 ### Fixed
 
