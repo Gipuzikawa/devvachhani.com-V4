@@ -1,28 +1,30 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { gsap } from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { Button } from '../components/ui/Button';
 import { TextLink } from '../components/ui/TextLink';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { ProjectCard } from '../components/cards/ProjectCard';
-import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useStagger } from '../hooks/useStagger';
+import { DUR, EASE, prefersReducedMotion } from '../motion/core';
 import { projects, facts } from '../data/content';
 
 const M = 'var(--page-margin)';
 
 export function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
-  const projGrid = useScrollReveal<HTMLDivElement>([]);
+  const projGrid = useStagger<HTMLDivElement>();
 
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
-      tl.from('[data-hero-line] > span', { yPercent: 120, duration: 1.1, stagger: 0.09 })
-        .from('[data-hero-meta]', { opacity: 0, y: 16, duration: 0.7 }, '-=0.5')
-        .from('[data-hero-cta]', { opacity: 0, y: 16, duration: 0.6 }, '-=0.4');
-    }, heroRef);
-    return () => ctx.revert();
-  }, []);
+  useGSAP(
+    () => {
+      if (prefersReducedMotion()) return;
+      const tl = gsap.timeline({ defaults: { ease: EASE.emph } });
+      tl.from('[data-hero-line] > span', { yPercent: 120, duration: DUR.hero, stagger: 0.09 })
+        .from('[data-hero-meta]', { opacity: 0, y: 16, duration: DUR.slow }, '-=0.5')
+        .from('[data-hero-cta]', { opacity: 0, y: 16, duration: DUR.slow }, '-=0.4');
+    },
+    { scope: heroRef },
+  );
 
   return (
     <main>
@@ -77,7 +79,7 @@ export function Home() {
         <SectionHeading index="01" eyebrow="Selected work" title="Projects & experiments" />
         <div ref={projGrid} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 16, marginTop: 32 }}>
           {projects.map((p) => (
-            <div data-reveal key={p.index}>
+            <div key={p.index}>
               <ProjectCard {...p} href="/work" />
             </div>
           ))}

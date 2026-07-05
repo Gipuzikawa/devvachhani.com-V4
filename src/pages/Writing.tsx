@@ -1,12 +1,12 @@
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { Button } from '../components/ui/Button';
-import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useReveal } from '../hooks/useReveal';
 import { planned } from '../data/content';
 
 const M = 'var(--page-margin)';
 
 export function Writing() {
-  const plannedRef = useScrollReveal<HTMLDivElement>([]);
+  const plannedRef = useReveal<HTMLDivElement>();
 
   return (
     <main style={{ padding: `clamp(56px,9vh,110px) ${M} 0`, maxWidth: '860px', margin: '0 auto' }}>
