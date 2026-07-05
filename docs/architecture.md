@@ -7,7 +7,7 @@ Pages (src/pages/)
   ↓ composes
 Components (src/components/{ui,cards,layout,motion}/)
   ↓ animated by
-Hooks (src/hooks/) — GSAP + ScrollTrigger scroll motion
+Hooks (src/hooks/) + motion core (src/motion/core.ts) — GSAP + ScrollTrigger
   ↓ styled with
 Design tokens (src/styles/) — CSS custom properties
   ↓ fed by
@@ -25,15 +25,23 @@ React Router with real, crawlable routes: `/` (Home), `/about`, `/work`, `/writi
 - `components/ui/` — `Button`, `TextLink`, `Tag`, `SectionHeading`: the core primitives, ported 1:1 from the original design system's compiled output (`design-export/designSystem/_ds_bundle.js`).
 - `components/cards/` — `ProjectCard`, `ArticleCard`.
 - `components/layout/` — `SiteNav`, `SiteFooter`, `Layout`, `ScrollToTop`.
-- `components/motion/` — `Reveal`: a dependency-free (IntersectionObserver) scroll-entrance wrapper, kept as a fallback pattern per the original design system's own documented intent. Pages currently use the GSAP-backed `useScrollReveal` hook instead, for ScrollTrigger's finer control (once-only triggers, viewport thresholds).
+- `components/motion/` — `RouteTransition`: enter-only page transition wrapping the routed `Outlet`. (The old dependency-free `Reveal` wrapper was retired when the motion foundation landed — two parallel entrance systems was one too many; the GSAP hook layer is the single system now.)
 
 ## Motion
 
-`src/hooks/useScrollReveal.ts` and `useParallax.ts` are ported from the original design kit's `gsap-helpers.jsx` (`design-export/designSystem/_ds_bundle.js`), adapted to import `gsap`/`gsap/ScrollTrigger` from npm instead of a CDN `<script>` tag. `useScrollReveal` fades+rises any `[data-reveal]` descendant of the ref'd container as it scrolls into view; `useParallax` is available but not currently used on any page.
+`src/motion/core.ts` is the foundation everything animates through. It is the **only** place that calls `gsap.registerPlugin` (ScrollTrigger, CustomEase, useGSAP); it exports `DUR`/`EASE`/`REVEAL_RISE` constants that mirror the CSS motion tokens in `src/styles/tokens/effects.css` (the token eases are registered as named `CustomEase` curves — `ds-out`, `ds-in-out`, `ds-emph` — so CSS transitions and GSAP tweens share the literal same curves); and it exports `prefersReducedMotion()`, the single JS-side reduced-motion check. Rules for anything new: register plugins in core only, draw timing from `DUR`/`EASE` only (add a CSS token first if a new value is needed), and consult `prefersReducedMotion()` instead of calling `matchMedia` directly — reduced-motion users get content in its final state, never gated.
 
-The Home page's hero also runs a one-off GSAP timeline (line-reveal + staggered meta/CTA fade) directly in `Home.tsx`, matching the original kit's `HomeScreen` hero animation.
+All GSAP lifecycle runs through `@gsap/react`'s `useGSAP()` (StrictMode-safe cleanup, scoped selector queries) — no manual `useEffect` + `gsap.context()`.
 
-**Known simplification:** the original `.dc.html` prototype animated *page swaps* with a 3-direction disperse-out/slide-in transition, because it was a single-page hash-router with no real navigation. Real routes make that architecture moot — page changes here are a plain route swap with scroll-reveal-on-mount for content, not a custom transition. Revisit only if a bespoke page-transition (e.g. via Framer Motion) is explicitly wanted.
+The hook layer (`src/hooks/`):
+
+- `useReveal` — canonical per-item scroll entrance: each `[data-reveal]` descendant of the ref'd container fades+rises as *it* crosses the viewport. For vertical lists and long flows.
+- `useStagger` — orchestrated group entrance: the container's direct children enter as one staggered sequence when the *container* crosses the viewport. For grids/rows. Accepts `dependencies` to re-run on state change (the Work page's filter uses this to re-enter the visible set).
+- `useParallax` — scrub-linked vertical drift; available but not yet used on any page (earmarked for Article/project-page figures).
+
+The Home hero runs a one-off `useGSAP` timeline (line-mask reveal + staggered meta/CTA fade) directly in `Home.tsx` — the reference for the "designed" feel.
+
+**Route transitions:** the original `.dc.html` prototype animated page swaps with a 3-direction disperse-out/slide-in transition (it was a hash-router SPA). That was deliberately dropped with real routes; what exists now is a deliberately *enter-only* transition (`RouteTransition` in `Layout`): the incoming page fades+rises over `--dur-slow`, no exit choreography (exit animations delay navigation). It is keyed by pathname so same-component navigations (e.g. between two future project slugs) still re-enter.
 
 ## Design tokens
 
