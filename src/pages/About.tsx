@@ -1,14 +1,14 @@
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { Tag } from '../components/ui/Tag';
-import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useStagger } from '../hooks/useStagger';
 import { facts, skillGroups, principles } from '../data/content';
 
 const M = 'var(--page-margin)';
 
 export function About() {
-  const factsRef = useScrollReveal<HTMLDivElement>([]);
-  const skillsRef = useScrollReveal<HTMLDivElement>([]);
-  const principlesRef = useScrollReveal<HTMLDivElement>([]);
+  const factsRef = useStagger<HTMLDivElement>();
+  const skillsRef = useStagger<HTMLDivElement>();
+  const principlesRef = useStagger<HTMLDivElement>();
 
   return (
     <main style={{ padding: `clamp(56px,9vh,110px) ${M} 0`, maxWidth: 'var(--measure-wide)', margin: '0 auto' }}>
@@ -32,7 +32,7 @@ export function About() {
 
         <div ref={factsRef} style={{ borderTop: '1px solid var(--border-strong)' }}>
           {facts.map((f) => (
-            <div data-reveal key={f.k} style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '16px 0', borderBottom: '1px solid var(--border-hairline)' }}>
+            <div key={f.k} style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '16px 0', borderBottom: '1px solid var(--border-hairline)' }}>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--t-micro)', letterSpacing: 'var(--track-label)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
                 {f.k}
               </span>
@@ -49,7 +49,7 @@ export function About() {
       </div>
       <div ref={skillsRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 40, marginTop: 32 }}>
         {skillGroups.map((g) => (
-          <div data-reveal key={g.label}>
+          <div key={g.label}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--t-micro)', letterSpacing: 'var(--track-label)', textTransform: 'uppercase', color: 'var(--text-muted)', paddingBottom: 14, borderBottom: '1px solid var(--border-hairline)', marginBottom: 18 }}>
               {g.label}
             </div>
@@ -72,7 +72,7 @@ export function About() {
         style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 1, marginTop: 32, background: 'var(--border-hairline)', border: '1px solid var(--border-hairline)' }}
       >
         {principles.map((p) => (
-          <div data-reveal key={p.no} style={{ background: 'var(--bg-canvas)', padding: '28px 26px' }}>
+          <div key={p.no} style={{ background: 'var(--bg-canvas)', padding: '28px 26px' }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--t-meta)', color: 'var(--text-accent)' }}>{p.no}</div>
             <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--t-lg)', fontWeight: 400, lineHeight: 'var(--lh-snug)', color: 'var(--text-strong)', margin: '14px 0 0' }}>
               {p.title}

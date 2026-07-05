@@ -1,7 +1,8 @@
 import { useState, type CSSProperties } from 'react';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { ProjectCard } from '../components/cards/ProjectCard';
-import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useStagger } from '../hooks/useStagger';
+import { DUR } from '../motion/core';
 import { projects, disciplines, disciplineTags } from '../data/content';
 
 const M = 'var(--page-margin)';
@@ -25,7 +26,9 @@ function chipStyle(active: boolean): CSSProperties {
 export function Work() {
   const [filter, setFilter] = useState('All');
   const [layout, setLayout] = useState<'row' | 'grid'>('row');
-  const gridRef = useScrollReveal<HTMLDivElement>([filter, layout]);
+  // Re-runs on filter/layout change: the visible set re-enters as one quick
+  // group instead of each card re-firing its own scroll reveal.
+  const gridRef = useStagger<HTMLDivElement>({ y: 14, duration: DUR.slow, each: 0.06, dependencies: [filter, layout] });
 
   const visible = filter === 'All' ? projects : projects.filter((p) => p.tags?.some((t) => (disciplineTags[filter] ?? []).includes(t)));
 
@@ -65,7 +68,7 @@ export function Work() {
         }}
       >
         {visible.map((p) => (
-          <div data-reveal key={p.index}>
+          <div key={p.index}>
             <ProjectCard {...p} layout={layout === 'grid' ? 'tile' : 'row'} href="/work" />
           </div>
         ))}
