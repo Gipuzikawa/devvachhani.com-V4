@@ -1,5 +1,7 @@
 import { useState, type CSSProperties } from 'react';
 import { useReveal } from '../../hooks/useReveal';
+import { useSplitReveal } from '../../hooks/useSplitReveal';
+import { useDecode } from '../../hooks/useDecode';
 import type { FooterLink } from '../../types';
 
 interface SiteFooterProps {
@@ -34,8 +36,11 @@ export function SiteFooter({
 
   /* Once-per-visit entrance (the footer persists across routes). Trigger
      positions are kept honest by the ScrollTrigger.refresh() that
-     RouteTransition runs on every route change. */
+     RouteTransition runs on every route change. The sign-off carries the
+     signature (set line-by-line); the colophon prints. */
   const ref = useReveal<HTMLElement>();
+  const signoffRef = useSplitReveal<HTMLHeadingElement>();
+  const colophonRef = useDecode<HTMLDivElement>();
 
   return (
     <footer
@@ -53,7 +58,7 @@ export function SiteFooter({
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px', justifyContent: 'space-between', alignItems: 'flex-end', maxWidth: 'var(--measure-wide)', margin: '0 auto' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <h2
-            data-reveal
+            ref={signoffRef}
             style={{ fontSize: 'var(--t-xxl)', fontWeight: 'var(--w-light)' as CSSProperties['fontWeight'], letterSpacing: 'var(--track-tight)', lineHeight: 'var(--lh-tight)', color: fg }}
           >
             {signoff}
@@ -82,6 +87,7 @@ export function SiteFooter({
         </div>
       </div>
       <div
+        ref={colophonRef}
         style={{
           maxWidth: 'var(--measure-wide)',
           margin: '0 auto',
@@ -99,8 +105,8 @@ export function SiteFooter({
           color: muted,
         }}
       >
-        <span>{meta}</span>
-        <span>Set in Newsreader & IBM Plex Mono</span>
+        <span data-decode>{meta}</span>
+        <span data-decode>Set in Newsreader & IBM Plex Mono</span>
       </div>
     </footer>
   );
