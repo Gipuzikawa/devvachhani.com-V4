@@ -41,7 +41,8 @@ export function ProjectCard({ index, title, summary, tags = [], year, href = '#'
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--t-micro)', letterSpacing: 'var(--track-label)', color: 'var(--text-accent)' }}>
+        {/* data-decode is inert unless an ancestor runs useDecode (the Work index does) */}
+        <span data-decode style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--t-micro)', letterSpacing: 'var(--track-label)', color: 'var(--text-accent)' }}>
           {index}
         </span>
         {!isRow && year && (

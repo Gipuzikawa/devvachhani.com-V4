@@ -6,7 +6,8 @@ import { TextLink } from '../components/ui/TextLink';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { ProjectCard } from '../components/cards/ProjectCard';
 import { useStagger } from '../hooks/useStagger';
-import { DUR, EASE, prefersReducedMotion } from '../motion/core';
+import { useMagnetic } from '../hooks/useMagnetic';
+import { DUR, EASE, DECODE_CHARS, SplitText, prefersReducedMotion } from '../motion/core';
 import { projects, facts } from '../data/content';
 
 const M = 'var(--page-margin)';
@@ -14,14 +15,69 @@ const M = 'var(--page-margin)';
 export function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
   const projGrid = useStagger<HTMLDivElement>();
+  const ctaMagnet = useMagnetic<HTMLDivElement>({ strength: 0.25 });
 
+  /* ── The opening set-piece ──────────────────────────────────────────
+     The index sets itself in type: the mono metas *print* (scramble-
+     settle), then the headline is *set* — every character rises into its
+     line from behind the line's own clip. Once the type has settled the
+     split reverts, so the DOM (and any later reflow) sees plain text.
+     Scrolling away, the lines peel upward at different rates — the page
+     starts performing from the very first gesture. */
   useGSAP(
-    () => {
+    (_, contextSafe) => {
       if (prefersReducedMotion()) return;
-      const tl = gsap.timeline({ defaults: { ease: EASE.emph } });
-      tl.from('[data-hero-line] > span', { yPercent: 120, duration: DUR.hero, stagger: 0.09 })
-        .from('[data-hero-meta]', { opacity: 0, y: 16, duration: DUR.slow }, '-=0.5')
-        .from('[data-hero-cta]', { opacity: 0, y: 16, duration: DUR.slow }, '-=0.4');
+
+      /* Staging: nothing shows until the fonts have settled, so the split
+         measures real metrics. Fonts are self-hosted — the wait is a frame
+         or two, not a flash. */
+      gsap.set('[data-hero-headline]', { autoAlpha: 0 });
+      gsap.set('[data-hero-meta] [data-hero-decode]', { opacity: 0 });
+      gsap.set(['[data-hero-lead]', '[data-hero-cta]'], { opacity: 0, y: 16 });
+
+      document.fonts.ready.then(
+        contextSafe!(() => {
+          /* Split the line spans themselves (not the h1): revert() restores
+             each span's innerHTML, so the spans persist for the recede
+             scrub below to keep pointing at live elements. */
+          const lines = gsap.utils.toArray<HTMLElement>('[data-hero-line]', heroRef.current);
+          if (lines.length === 0) return;
+          const split = SplitText.create(lines, { type: 'chars' });
+          gsap.set(split.chars, { yPercent: 120 });
+          gsap.set('[data-hero-headline]', { autoAlpha: 1 });
+
+          const tl = gsap.timeline({ defaults: { ease: EASE.emph }, onComplete: () => split.revert() });
+
+          gsap.utils.toArray<HTMLElement>('[data-hero-meta] [data-hero-decode]', heroRef.current).forEach((el, i) => {
+            const text = el.textContent ?? '';
+            el.setAttribute('aria-label', text);
+            tl.to(el, { opacity: 1, duration: DUR.fast, ease: EASE.out }, i * 0.14).to(
+              el,
+              {
+                duration: DUR.slow,
+                ease: 'none',
+                scrambleText: { text, chars: DECODE_CHARS, speed: 0.4 },
+                onComplete: () => el.removeAttribute('aria-label'),
+              },
+              i * 0.14,
+            );
+          });
+
+          tl.to(split.chars, { yPercent: 0, duration: DUR.hero, stagger: 0.014 }, 0.25)
+            .to('[data-hero-lead]', { opacity: 1, y: 0, duration: DUR.slow }, '-=0.55')
+            .to('[data-hero-cta]', { opacity: 1, y: 0, duration: DUR.slow }, '-=0.45');
+        }),
+      );
+
+      /* The recede — each headline line drifts up a little faster than the
+         one above it as the hero scrolls out; the meta line leads. Pure
+         transform/opacity, scrub-linked to the reader's own hand. */
+      const scrub = { trigger: heroRef.current, start: 'top top', end: 'bottom top', scrub: true } as const;
+      gsap.utils.toArray<HTMLElement>('[data-hero-line]', heroRef.current).forEach((line, i) => {
+        gsap.to(line, { yPercent: -14 * (i + 1), ease: 'none', scrollTrigger: { ...scrub } });
+      });
+      gsap.to('[data-hero-meta]', { yPercent: -80, ease: 'none', scrollTrigger: { ...scrub } });
+      gsap.to(heroRef.current, { opacity: 0.25, ease: 'none', scrollTrigger: { ...scrub } });
     },
     { scope: heroRef },
   );
@@ -42,33 +98,43 @@ export function Home() {
             textTransform: 'uppercase',
           }}
         >
-          <span style={{ color: 'var(--text-accent)' }}>Portfolio — 2026</span>
-          <span style={{ color: 'var(--text-muted)' }}>STEM · Embedded · Software</span>
+          <span data-hero-decode style={{ color: 'var(--text-accent)' }}>
+            Portfolio — 2026
+          </span>
+          <span data-hero-decode style={{ color: 'var(--text-muted)' }}>
+            STEM · Embedded · Software
+          </span>
         </div>
 
-        <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--t-mega)', fontWeight: 300, lineHeight: 'var(--lh-tight)', letterSpacing: 'var(--track-mega)', margin: 0, color: 'var(--text-strong)' }}>
+        <h1
+          data-hero-headline
+          style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--t-mega)', fontWeight: 300, lineHeight: 'var(--lh-tight)', letterSpacing: 'var(--track-mega)', margin: 0, color: 'var(--text-strong)' }}
+        >
           <span data-hero-line style={{ display: 'block', overflow: 'hidden' }}>
-            <span style={{ display: 'inline-block' }}>Measuring the</span>
+            Measuring the
           </span>
           <span data-hero-line style={{ display: 'block', overflow: 'hidden' }}>
-            <span style={{ display: 'inline-block' }}>
-              invisible, <em style={{ fontStyle: 'italic', color: 'var(--text-accent)' }}>one</em>
-            </span>
+            invisible, <em style={{ fontStyle: 'italic', color: 'var(--text-accent)' }}>one</em>
           </span>
           <span data-hero-line style={{ display: 'block', overflow: 'hidden' }}>
-            <span style={{ display: 'inline-block' }}>experiment at a time.</span>
+            experiment at a time.
           </span>
         </h1>
 
-        <p style={{ maxWidth: '48ch', marginTop: 30, fontFamily: 'var(--font-serif)', fontSize: 'var(--t-md)', color: 'var(--text-secondary)', lineHeight: 'var(--lh-normal)' }}>
+        <p
+          data-hero-lead
+          style={{ maxWidth: '48ch', marginTop: 30, fontFamily: 'var(--font-serif)', fontSize: 'var(--t-md)', color: 'var(--text-secondary)', lineHeight: 'var(--lh-normal)' }}
+        >
           I’m Dev — a student building instruments, software, and small machines to understand how the physical world actually works. This is a
           catalogue of that work.
         </p>
 
         <div data-hero-cta style={{ display: 'flex', gap: 16, marginTop: 36, alignItems: 'center', flexWrap: 'wrap' }}>
-          <Button variant="accent" href="/work" iconRight="→">
-            Browse projects
-          </Button>
+          <div ref={ctaMagnet} style={{ display: 'inline-block' }}>
+            <Button variant="accent" href="/work" iconRight="→">
+              Browse projects
+            </Button>
+          </div>
           <TextLink variant="arrow" href="#contact">
             Get in touch
           </TextLink>
@@ -95,7 +161,7 @@ export function Home() {
         <SectionHeading index="02" eyebrow="About" title="Who's behind the index" />
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.5fr) minmax(0,1fr)', gap: 56, marginTop: 32, alignItems: 'start' }}>
           <div>
-            <p style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--t-md)', lineHeight: 'var(--lh-relaxed)', color: 'var(--text-body)', margin: 0, maxWidth: 'var(--measure-read)' }}>
+            <p style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--t-md)', lineHeight: 'var(--lh-normal)', color: 'var(--text-secondary)', margin: 0, maxWidth: 'var(--measure-read)' }}>
               I’m a STEM student drawn to the seam where physics meets software — the point where an idea turns into an instrument you can actually
               measure with.
             </p>

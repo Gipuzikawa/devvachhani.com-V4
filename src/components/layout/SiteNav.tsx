@@ -1,7 +1,8 @@
 import { useRef, useState, type CSSProperties } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
+import { useMagnetic } from '../../hooks/useMagnetic';
 import { DUR, EASE, prefersReducedMotion } from '../../motion/core';
 import type { NavLink as NavLinkData } from '../../types';
 
@@ -19,6 +20,9 @@ interface SiteNavProps {
  */
 export function SiteNav({ brand = 'Dev Vachhani', links = [], cta, style }: SiteNavProps) {
   const ref = useRef<HTMLElement>(null);
+  const ctaMagnet = useMagnetic<HTMLAnchorElement>({ strength: 0.3 });
+  const { pathname } = useLocation();
+  const firstRoute = useRef(true);
 
   /* One-off entrance on first load (the nav persists across routes): the
      wordmark settles, the cobalt tick stamps in, the index links follow. */
@@ -31,6 +35,21 @@ export function SiteNav({ brand = 'Dev Vachhani', links = [], cta, style }: Site
         .from('[data-nav-item]', { y: -10, opacity: 0, duration: DUR.base, stagger: 0.06 }, '-=0.3');
     },
     { scope: ref },
+  );
+
+  /* The tick re-stamps on every navigation — the one brand atom quietly
+     acknowledging each move through the index. Skipped on first load,
+     which belongs to the entrance timeline above. */
+  useGSAP(
+    () => {
+      if (firstRoute.current) {
+        firstRoute.current = false;
+        return;
+      }
+      if (prefersReducedMotion()) return;
+      gsap.fromTo('[data-nav-tick]', { scale: 0.4 }, { scale: 1, duration: DUR.slow, ease: EASE.spring });
+    },
+    { scope: ref, dependencies: [pathname] },
   );
 
   return (
@@ -74,6 +93,7 @@ export function SiteNav({ brand = 'Dev Vachhani', links = [], cta, style }: Site
         ))}
         {cta && (
           <a
+            ref={ctaMagnet}
             data-nav-item
             href={cta.href}
             style={{

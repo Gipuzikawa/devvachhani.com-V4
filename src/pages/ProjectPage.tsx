@@ -10,7 +10,10 @@ import { useReveal } from '../hooks/useReveal';
 import { useStagger } from '../hooks/useStagger';
 import { useParallax } from '../hooks/useParallax';
 import { usePinned } from '../hooks/usePinned';
-import { DUR, EASE, prefersReducedMotion } from '../motion/core';
+import { useSplitReveal } from '../hooks/useSplitReveal';
+import { useDecode } from '../hooks/useDecode';
+import { useInkResolve } from '../hooks/useInkResolve';
+import { DUR, EASE, DECODE_CHARS, prefersReducedMotion } from '../motion/core';
 import { projectDetails } from '../data/content';
 import type { ProjectMilestone } from '../types';
 
@@ -62,9 +65,10 @@ function BackLink() {
 /** One timeline entry: node + date on the spine, then title, figure, body. */
 function MilestoneEntry({ m }: { m: ProjectMilestone }) {
   const figRef = useParallax<HTMLDivElement>(12);
+  const titleRef = useSplitReveal<HTMLHeadingElement>();
 
   return (
-    <article data-milestone data-reveal style={{ position: 'relative', paddingBottom: 'clamp(56px, 9vh, 96px)' }}>
+    <article data-milestone style={{ position: 'relative', paddingBottom: 'clamp(56px, 9vh, 96px)' }}>
       <span
         data-node
         aria-hidden="true"
@@ -83,6 +87,7 @@ function MilestoneEntry({ m }: { m: ProjectMilestone }) {
         {m.date}
       </div>
       <h3
+        ref={titleRef}
         style={{
           fontFamily: 'var(--font-serif)',
           fontSize: 'var(--t-lg)',
@@ -94,10 +99,13 @@ function MilestoneEntry({ m }: { m: ProjectMilestone }) {
       >
         {m.title}
       </h3>
-      <div ref={figRef} style={{ margin: '24px 0 0', maxWidth: 620 }}>
-        <Figure {...m.figure} />
+      <div data-reveal style={{ margin: '24px 0 0', maxWidth: 620 }}>
+        <div ref={figRef}>
+          <Figure {...m.figure} />
+        </div>
       </div>
       <p
+        data-reveal
         style={{
           fontFamily: 'var(--font-serif)',
           fontSize: 'var(--t-body)',
@@ -117,17 +125,27 @@ export function ProjectPage() {
   const { slug } = useParams();
   const project = projectDetails.find((p) => p.slug === slug);
 
-  const headRef = useStagger<HTMLElement>({ each: 0.08 });
+  const headRef = useStagger<HTMLDivElement>({ each: 0.08 });
+  const titleRef = useSplitReveal<HTMLHeadingElement>({ by: 'chars', each: 0.03, immediate: true, delay: 0.2 });
   const mainRef = useReveal<HTMLElement>();
+  const decodeRef = useDecode<HTMLDivElement>();
   const toolsRef = useStagger<HTMLDivElement>();
   const reflRef = useStagger<HTMLDivElement>();
+  const closingRef = useInkResolve<HTMLParagraphElement>();
   const tlRef = useRef<HTMLDivElement>(null);
   const pinRef = usePinned<HTMLDivElement>({
     build: (tl, root) => {
-      // The hold: the hero figure settles while the spec rows print in.
+      // The hold: the hero figure settles while the spec rows print in —
+      // each value scrambles under the reader's scrub, so the data feels
+      // like it's being read off the instrument.
       const fig = root.querySelector('[data-final-figure]');
       if (fig) tl.fromTo(fig, { y: 28 }, { y: 0, ease: 'none' }, 0);
       tl.fromTo(root.querySelectorAll('[data-spec]'), { opacity: 0, y: 18 }, { opacity: 1, y: 0, stagger: 0.12, ease: 'none' }, 0);
+      root.querySelectorAll<HTMLElement>('[data-spec-v]').forEach((v, i) => {
+        const text = v.textContent ?? '';
+        if (!text.trim()) return;
+        tl.to(v, { duration: 0.35, ease: 'none', scrambleText: { text, chars: DECODE_CHARS, speed: 0.3 } }, 0.05 + i * 0.12);
+      });
     },
   });
 
@@ -154,15 +172,24 @@ export function ProjectPage() {
         const node = ms.querySelector<HTMLElement>('[data-node]');
         const date = ms.querySelector<HTMLElement>('[data-date]');
         if (!node || !date) return;
+        /* The date *prints* the first time its node activates; after that,
+           activation is just the color flip (re-scrambling on every pass
+           would fight the reading). */
+        let printed = false;
         const set = (active: boolean) => {
           gsap.to(node, {
             backgroundColor: active ? cobalt : canvas,
             borderColor: active ? cobalt : hairline,
             scale: active ? 1.25 : 1,
-            duration: DUR.fast,
-            ease: EASE.out,
+            duration: active ? DUR.base : DUR.fast,
+            ease: active ? EASE.spring : EASE.out,
           });
           gsap.to(date, { color: active ? cobalt : muted, duration: DUR.fast, ease: EASE.out });
+          if (active && !printed) {
+            printed = true;
+            const text = date.textContent ?? '';
+            gsap.to(date, { duration: DUR.slow, ease: 'none', scrambleText: { text, chars: DECODE_CHARS, speed: 0.4 } });
+          }
         };
         ScrollTrigger.create({ trigger: ms, start: 'top 60%', onEnter: () => set(true), onLeaveBack: () => set(false) });
       });
@@ -174,20 +201,24 @@ export function ProjectPage() {
 
   return (
     <main ref={mainRef} style={{ padding: `clamp(48px,7vh,90px) ${M} 0`, maxWidth: 'var(--measure-wide)', margin: '0 auto' }}>
+      <div ref={decodeRef}>
       {/* ── Header ── */}
-      <header ref={headRef} style={{ display: 'flex', flexDirection: 'column', gap: 22, maxWidth: 900 }}>
-        <div>
-          <BackLink />
-        </div>
-        <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'baseline' }}>
-          <span style={{ ...mono, color: 'var(--text-accent)', fontWeight: 500 }}>
-            Entry {project.index} — {project.year}
-          </span>
-          {project.status === 'placeholder' && (
-            <Tag variant="accent">Placeholder content — build log in progress</Tag>
-          )}
+      <header style={{ display: 'flex', flexDirection: 'column', gap: 22, maxWidth: 900 }}>
+        <div ref={headRef} style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
+          <div>
+            <BackLink />
+          </div>
+          <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'baseline' }}>
+            <span data-decode style={{ ...mono, color: 'var(--text-accent)', fontWeight: 500 }}>
+              Entry {project.index} — {project.year}
+            </span>
+            {project.status === 'placeholder' && (
+              <Tag variant="accent">Placeholder content — build log in progress</Tag>
+            )}
+          </div>
         </div>
         <h1
+          ref={titleRef}
           style={{
             fontFamily: 'var(--font-serif)',
             fontSize: 'var(--t-xxl)',
@@ -201,6 +232,7 @@ export function ProjectPage() {
           {project.title}
         </h1>
         <p
+          data-reveal
           style={{
             fontFamily: 'var(--font-serif)',
             fontSize: 'var(--t-md)',
@@ -216,9 +248,7 @@ export function ProjectPage() {
 
       {/* ── 01 Overview ── */}
       <section style={{ marginTop: 'clamp(56px,9vh,100px)' }}>
-        <div data-reveal>
-          <SectionHeading index="01" eyebrow="Overview" title="Tools & skills" />
-        </div>
+        <SectionHeading index="01" eyebrow="Overview" title="Tools & skills" />
         <div ref={toolsRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 40, marginTop: 32 }}>
           {[...project.toolGroups, { label: 'Skills demonstrated', items: project.skills }].map((g) => (
             <div key={g.label}>
@@ -239,9 +269,7 @@ export function ProjectPage() {
 
       {/* ── 02 Production timeline ── */}
       <section style={{ marginTop: 'clamp(64px,10vh,110px)' }}>
-        <div data-reveal>
-          <SectionHeading index="02" eyebrow="Production timeline" title="How it came together" />
-        </div>
+        <SectionHeading index="02" eyebrow="Production timeline" title="How it came together" />
         <div ref={tlRef} style={{ position: 'relative', paddingLeft: PAD, marginTop: 48 }}>
           {/* spine + cobalt progress line */}
           <span aria-hidden="true" style={{ position: 'absolute', left: SPINE_X, top: 4, bottom: 4, width: 1, background: 'var(--border-hairline)' }} />
@@ -258,9 +286,7 @@ export function ProjectPage() {
 
       {/* ── 03 Final product ── */}
       <section style={{ marginTop: 'clamp(24px,4vh,48px)' }}>
-        <div data-reveal>
-          <SectionHeading index="03" eyebrow="Final product" title="The finished machine" />
-        </div>
+        <SectionHeading index="03" eyebrow="Final product" title="The finished machine" />
         <div ref={pinRef} style={{ padding: '48px 0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 48, alignItems: 'start' }}>
             <div data-final-figure>
@@ -274,7 +300,7 @@ export function ProjectPage() {
                   style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '16px 0', borderBottom: '1px solid var(--border-hairline)' }}
                 >
                   <span style={{ ...mono, color: 'var(--text-muted)' }}>{s.k}</span>
-                  <span style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--t-sm)', color: 'var(--text-body)', textAlign: 'right' }}>{s.v}</span>
+                  <span data-spec-v style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--t-sm)', color: 'var(--text-body)', textAlign: 'right' }}>{s.v}</span>
                 </div>
               ))}
             </div>
@@ -284,9 +310,7 @@ export function ProjectPage() {
 
       {/* ── 04 Reflections ── */}
       <section style={{ marginTop: 'clamp(48px,8vh,90px)', paddingBottom: 'clamp(48px,8vh,90px)' }}>
-        <div data-reveal>
-          <SectionHeading index="04" eyebrow="Reflections" title="What the build taught" />
-        </div>
+        <SectionHeading index="04" eyebrow="Reflections" title="What the build taught" />
         <div ref={reflRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 40, marginTop: 32 }}>
           {[
             { label: 'What went well', body: project.reflections.wentWell },
@@ -307,7 +331,7 @@ export function ProjectPage() {
             </div>
             {project.reflections.improvements.map((it, i) => (
               <div key={it} style={{ display: 'flex', gap: 14, alignItems: 'baseline', padding: '8px 0' }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--t-meta)', color: 'var(--text-accent)' }}>
+                <span data-decode style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--t-meta)', color: 'var(--text-accent)' }}>
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <span style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--t-body)', color: 'var(--text-secondary)' }}>{it}</span>
@@ -316,7 +340,7 @@ export function ProjectPage() {
           </div>
         </div>
         <p
-          data-reveal
+          ref={closingRef}
           style={{
             fontFamily: 'var(--font-serif)',
             fontSize: 'var(--t-md)',
@@ -333,6 +357,7 @@ export function ProjectPage() {
           <BackLink />
         </div>
       </section>
+      </div>
     </main>
   );
 }

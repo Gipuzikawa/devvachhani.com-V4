@@ -32,6 +32,7 @@
   --ease-out:      cubic-bezier(0.22, 1, 0.36, 1);   /* @kind other */
   --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);   /* @kind other */
   --ease-emph:     cubic-bezier(0.16, 1, 0.3, 1);    /* @kind other */
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1); /* @kind other — settles with one overshoot; magnetic returns, stamps */
 
   /* Reveal transform distance */
   --reveal-rise: 24px;  /* @kind spacing */
