@@ -8,6 +8,8 @@ import { Figure } from '../components/ui/Figure';
 import { useReveal } from '../hooks/useReveal';
 import { useStagger } from '../hooks/useStagger';
 import { useParallax } from '../hooks/useParallax';
+import { useSplitReveal } from '../hooks/useSplitReveal';
+import { useDecode } from '../hooks/useDecode';
 import { articleDetails } from '../data/content';
 import type { ArticleBlock, FigureData } from '../types';
 
@@ -130,34 +132,41 @@ function Block({ block, first }: { block: ArticleBlock; first: boolean }) {
       );
     }
     case 'pullquote':
-      return (
-        <blockquote
-          data-reveal
-          style={{
-            margin: 'clamp(40px,6vh,56px) 0 0',
-            padding: '26px 0',
-            borderTop: '1px solid var(--border-strong)',
-            borderBottom: '1px solid var(--border-hairline)',
-            fontFamily: 'var(--font-serif)',
-            fontSize: 'var(--t-md)',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            lineHeight: 'var(--lh-snug)',
-            color: 'var(--text-strong)',
-          }}
-        >
-          <span aria-hidden="true" style={{ color: 'var(--text-accent)' }}>
-            “
-          </span>
-          {block.text}
-          <span aria-hidden="true" style={{ color: 'var(--text-accent)' }}>
-            ”
-          </span>
-        </blockquote>
-      );
+      return <PullQuote text={block.text} />;
     case 'figure':
       return <ArticleFigure figure={block.figure} />;
   }
+}
+
+/** A pull quote is display type, so it gets the signature: lines set
+    themselves into place between the rules. */
+function PullQuote({ text }: { text: string }) {
+  const ref = useSplitReveal<HTMLQuoteElement>();
+  return (
+    <blockquote
+      ref={ref}
+      style={{
+        margin: 'clamp(40px,6vh,56px) 0 0',
+        padding: '26px 0',
+        borderTop: '1px solid var(--border-strong)',
+        borderBottom: '1px solid var(--border-hairline)',
+        fontFamily: 'var(--font-serif)',
+        fontSize: 'var(--t-md)',
+        fontStyle: 'italic',
+        fontWeight: 300,
+        lineHeight: 'var(--lh-snug)',
+        color: 'var(--text-strong)',
+      }}
+    >
+      <span aria-hidden="true" style={{ color: 'var(--text-accent)' }}>
+        “
+      </span>
+      {text}
+      <span aria-hidden="true" style={{ color: 'var(--text-accent)' }}>
+        ”
+      </span>
+    </blockquote>
+  );
 }
 
 export function ArticlePage() {
@@ -166,7 +175,10 @@ export function ArticlePage() {
   const wide = useWide();
 
   const [activeId, setActiveId] = useState('');
-  const headRef = useStagger<HTMLElement>({ each: 0.08 });
+  const headRef = useStagger<HTMLDivElement>({ each: 0.08 });
+  const headReveal = useReveal<HTMLElement>();
+  const metaRef = useDecode<HTMLDivElement>();
+  const titleRef = useSplitReveal<HTMLHeadingElement>({ immediate: true, delay: 0.15 });
   const bodyRef = useReveal<HTMLDivElement>();
   const barRef = useRef<HTMLDivElement>(null);
   const progressScope = useRef<HTMLDivElement>(null);
@@ -234,17 +246,20 @@ export function ArticlePage() {
 
       <main style={{ padding: `clamp(48px,7vh,90px) ${M} clamp(48px,8vh,90px)`, maxWidth: 'var(--measure-wide)', margin: '0 auto' }}>
         {/* ── Header ── */}
-        <header ref={headRef} style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 860 }}>
-          <div>
-            <BackLink />
-          </div>
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'baseline' }}>
-            <span style={{ ...mono, color: 'var(--text-accent)', fontWeight: 500 }}>{article.category}</span>
-            <span style={{ ...mono, color: 'var(--text-muted)' }}>{article.date}</span>
-            <span style={{ ...mono, color: 'var(--text-faint)' }}>{article.readTime} read</span>
-            {article.status === 'placeholder' && <Tag variant="accent">Placeholder content</Tag>}
+        <header ref={headReveal} style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 860 }}>
+          <div ref={headRef} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div>
+              <BackLink />
+            </div>
+            <div ref={metaRef} style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'baseline' }}>
+              <span data-decode style={{ ...mono, color: 'var(--text-accent)', fontWeight: 500 }}>{article.category}</span>
+              <span data-decode style={{ ...mono, color: 'var(--text-muted)' }}>{article.date}</span>
+              <span data-decode style={{ ...mono, color: 'var(--text-faint)' }}>{article.readTime} read</span>
+              {article.status === 'placeholder' && <Tag variant="accent">Placeholder content</Tag>}
+            </div>
           </div>
           <h1
+            ref={titleRef}
             style={{
               fontFamily: 'var(--font-serif)',
               fontSize: 'var(--t-xxl)',
@@ -258,7 +273,10 @@ export function ArticlePage() {
           >
             {article.title}
           </h1>
-          <p style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--t-md)', lineHeight: 'var(--lh-normal)', color: 'var(--text-secondary)', margin: 0, maxWidth: '52ch' }}>
+          <p
+            data-reveal
+            style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--t-md)', lineHeight: 'var(--lh-normal)', color: 'var(--text-secondary)', margin: 0, maxWidth: '52ch' }}
+          >
             {article.dek}
           </p>
         </header>
