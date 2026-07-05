@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Focus-zoom cycle on the F-35 production timeline (`useFocusZoom` hook): each milestone card zooms into focus — scale and ink scrub up as it approaches the 60% read line, landing at full scale at the same moment its spine node stamps cobalt — holds completely static through the reading band (body copy never moves while read), then recedes and dims once read, handing focus to the next card. Transform/opacity only; skipped under reduced motion (cards render at final state).
+
 - The "set & print" reactive-text signature (the kinetic pass): serif display text is *set* — it rises into place from behind per-line masks (`useSplitReveal`, GSAP SplitText) — and mono labels are *printed* — they scramble-settle through catalogue glyphs (`useDecode`, GSAP ScrambleText). Both plugins ship free inside the existing gsap install; zero new dependencies.
 - `useInkResolve` hook — a lead paragraph's lines sit faint and resolve to full ink as the read line sweeps them (color-only, no reflow). Used on the About lead and the F-35 closing reflection.
 - `useMagnetic` hook — cursor lean for small interactive atoms (hero CTA, nav CTA); fine-pointer hover devices only, static on touch and under reduced motion.
