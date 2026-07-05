@@ -62,4 +62,4 @@ The Home hero runs a one-off `useGSAP` timeline (line-mask reveal + staggered me
 
 ## Not yet built
 
-See `docs/project_status.md` for the full list — most notably, there's no `Article` page yet since no real essays exist (Writing is a "Forthcoming" state, matching the original design).
+See `docs/project_status.md` for the full list — most notably, the Article reading page and the F-35 project page both ship but with clearly-labelled placeholder content, since no real essays or build logs exist yet.

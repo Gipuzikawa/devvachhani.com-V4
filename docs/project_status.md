@@ -3,9 +3,9 @@
 ## Shipped
 
 - Vite + React + TypeScript scaffold, building and type-checking cleanly (`npm run build`, `npx tsc -b --noEmit`).
-- Four real routes: Home, About, Work, Writing — persistent nav + footer shell.
+- Six real routes: Home, About, Work, Work/:slug (project detail), Writing, Writing/:slug (article reading page) — persistent nav + footer shell.
 - Design tokens ported and wired up (fonts, colors, typography, spacing, effects, base reset).
-- 9 core components ported (`Button`, `TextLink`, `Tag`, `SectionHeading`, `ProjectCard`, `ArticleCard`, `SiteNav`, `SiteFooter`, `Reveal`).
+- 9 core components ported (`Button`, `TextLink`, `Tag`, `SectionHeading`, `ProjectCard`, `ArticleCard`, `SiteNav`, `SiteFooter`), plus `Figure` (archival figure plate). The original 9th, `Reveal`, was retired when the motion foundation landed (see below).
 - Motion foundation: `src/motion/core.ts` (single GSAP plugin registration, token-mirrored `DUR`/`EASE` constants backed by `CustomEase` curves, one central `prefers-reduced-motion` check) + typed hooks `useReveal`/`useStagger`/`useParallax`/`usePinned`, all running through `@gsap/react`'s `useGSAP()`. The old `useScrollReveal` hook and dependency-free `Reveal` component are retired — one entrance system now.
 - F-35 project detail page (`/work/rc-f35-vtol`): scroll-driven vertical timeline (cobalt spine draws with reading position, nodes/dates activate at the read line, parallax figure plates), pinned final-product hold with scrubbed spec table, reflections grid. Verified in a real browser at desktop + 375px mobile (no pin, static content) and under emulated reduced motion; unknown slugs redirect to `/work`; zero console errors.
 - Article reading page (`/writing/f35-development-update`): scroll-linked reading-progress hairline, sticky mini-TOC with deterministic active-section tracking (correct under instant jumps, kept under reduced motion as information), cobalt drop cap, ruled pull quote, parallax figures; Writing index lists the article via `ArticleCard`. Same browser verification matrix as the project page.
@@ -23,4 +23,3 @@
 - **No contact form** — the footer's `Contact` link is a plain `mailto:` link, matching the original design.
 - **No tests.** Nothing automated beyond `tsc` type-checking.
 - **No real favicon/brand mark** — currently the default Vite placeholder. The design system explicitly says "no logo supplied, don't invent one" — needs a real asset from the user, or an explicit decision to keep the plain wordmark-only brand with no favicon glyph.
-- **`useParallax` hook exists but is unused** — now rebuilt on the `useGSAP` foundation, but no page has a parallax figure yet (earmarked for the Article reading page and project-page figures, both now in scope for the animation pass).

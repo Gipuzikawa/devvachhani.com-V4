@@ -31,6 +31,15 @@ Add a new bullet here when:
   don't strip context down to a bare fact
 - Don't delete a "Not yet built" bullet just because related work started; only move it once
   it meets the "Shipped" bar above
+- When a bullet references something as "earmarked," "unused pending X," or otherwise
+  forward-looking, check whether the current diff shows X now shipped — if so, remove that
+  clause or move the bullet instead of leaving it dangling
+- When a Shipped bullet names specific components/hooks and the diff shows one of those was
+  retired or renamed, update that bullet in the same pass — don't leave a retired name sitting
+  in an otherwise-current line
+- Before finishing, re-read the full file (not just the section you're editing) for any older
+  "not yet built" note that the current diff has now satisfied elsewhere in the doc or in
+  `docs/architecture.md`
 
 ## What NOT to do
 

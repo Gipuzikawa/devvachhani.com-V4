@@ -11,7 +11,7 @@ The app was migrated from a Claude Design (claude.ai/design) prototype export in
 ## Tech Stack Overview
 
 - **Framework:** Vite + React 19 + TypeScript
-- **Routing:** React Router (real routes: `/`, `/about`, `/work`, `/writing`)
+- **Routing:** React Router (real routes: `/`, `/about`, `/work`, `/work/:slug`, `/writing`, `/writing/:slug`)
 - **Styling:** plain CSS with custom-property design tokens (no CSS framework) — see Design System below
 - **Motion:** GSAP + ScrollTrigger via `@gsap/react`'s `useGSAP()`. `src/motion/core.ts` is the single plugin-registration point, exports token-mirrored `DUR`/`EASE` constants (backed by `CustomEase` curves from the CSS tokens), and owns the one `prefersReducedMotion()` check — never call `gsap.registerPlugin` or `matchMedia('prefers-reduced-motion')` elsewhere. Entrance hooks: `useReveal` (per-item, for lists), `useStagger` (group, for grids), `useParallax` (scrub drift), `usePinned` (pin-and-hold, desktop-only). Draw all timing from `DUR`/`EASE`; if a new value is needed, add it to `src/styles/tokens/effects.css` first.
 - **Content:** static TypeScript data (`src/data/content.ts`) — no CMS/backend yet
@@ -75,13 +75,14 @@ If the current branch is `main`, or was already merged, stop and create a new fe
 - Create PRs for all changes to `main`
 - Never force-push to `main`
 - Include a description of what changed and why
+- Merge (or confirm merged) each feature branch into `main` before branching the next phase off of it. Stacking a new branch on top of an unmerged one produces a criss-cross merge chain that's hard to verify afterward. If a next phase must start before the prior PR lands, rebase it onto `main` once that PR merges rather than merging it as a side-chain.
 
 ## Coding Style & Standards
 
 - **TypeScript everywhere** — no `any` without an explanatory comment
 - **One page per route** in `src/pages/`; shared UI lives in `src/components/{ui,cards,layout,motion}/`
 - **Comments explain why, not what** — code should be self-explanatory; comments are for intent
-- **No premature abstraction** — e.g. the `Article`/reading-progress screen from the original design kit hasn't been ported because there are no real articles yet (see `docs/project_status.md`). Don't build it speculatively; wire it when real content exists.
+- **No premature abstraction** — build a screen only when there's a real consumer for it. E.g. the `Article`/reading-progress page (`/writing/:slug`) is now built, but its one article is placeholder lorem (see `docs/project_status.md`) pending real essays; project detail pages (`/work/:slug`) exist only for the F-35 until a reusable template is derived from it. Don't build the remaining project pages speculatively — wire them once the template is ready.
 
 ## Documentation
 
