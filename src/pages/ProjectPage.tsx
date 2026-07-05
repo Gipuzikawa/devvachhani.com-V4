@@ -9,6 +9,7 @@ import { Figure } from '../components/ui/Figure';
 import { useReveal } from '../hooks/useReveal';
 import { useStagger } from '../hooks/useStagger';
 import { useParallax } from '../hooks/useParallax';
+import { useFocusZoom } from '../hooks/useFocusZoom';
 import { usePinned } from '../hooks/usePinned';
 import { useSplitReveal } from '../hooks/useSplitReveal';
 import { useDecode } from '../hooks/useDecode';
@@ -66,6 +67,11 @@ function BackLink() {
 function MilestoneEntry({ m }: { m: ProjectMilestone }) {
   const figRef = useParallax<HTMLDivElement>(12);
   const titleRef = useSplitReveal<HTMLHeadingElement>();
+  /* The focus cycle scales this wrapper, not the article — the node must
+     stay outside so it never scales off the 1px spine. Focus completes at
+     the same 60% read line the node/date activation uses, so the card
+     zooms fully into focus at the exact moment its node stamps cobalt. */
+  const zoomRef = useFocusZoom<HTMLDivElement>();
 
   return (
     <article data-milestone style={{ position: 'relative', paddingBottom: 'clamp(56px, 9vh, 96px)' }}>
@@ -83,40 +89,42 @@ function MilestoneEntry({ m }: { m: ProjectMilestone }) {
           borderRadius: 'var(--r-0)',
         }}
       />
-      <div data-date style={{ ...mono, color: 'var(--text-muted)' }}>
-        {m.date}
-      </div>
-      <h3
-        ref={titleRef}
-        style={{
-          fontFamily: 'var(--font-serif)',
-          fontSize: 'var(--t-lg)',
-          fontWeight: 400,
-          lineHeight: 'var(--lh-snug)',
-          color: 'var(--text-strong)',
-          margin: '12px 0 0',
-        }}
-      >
-        {m.title}
-      </h3>
-      <div data-reveal style={{ margin: '24px 0 0', maxWidth: 620 }}>
-        <div ref={figRef}>
-          <Figure {...m.figure} />
+      <div ref={zoomRef}>
+        <div data-date style={{ ...mono, color: 'var(--text-muted)' }}>
+          {m.date}
         </div>
+        <h3
+          ref={titleRef}
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: 'var(--t-lg)',
+            fontWeight: 400,
+            lineHeight: 'var(--lh-snug)',
+            color: 'var(--text-strong)',
+            margin: '12px 0 0',
+          }}
+        >
+          {m.title}
+        </h3>
+        <div data-reveal style={{ margin: '24px 0 0', maxWidth: 620 }}>
+          <div ref={figRef}>
+            <Figure {...m.figure} />
+          </div>
+        </div>
+        <p
+          data-reveal
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: 'var(--t-body)',
+            lineHeight: 'var(--lh-relaxed)',
+            color: 'var(--text-secondary)',
+            margin: '20px 0 0',
+            maxWidth: 'var(--measure-read)',
+          }}
+        >
+          {m.body}
+        </p>
       </div>
-      <p
-        data-reveal
-        style={{
-          fontFamily: 'var(--font-serif)',
-          fontSize: 'var(--t-body)',
-          lineHeight: 'var(--lh-relaxed)',
-          color: 'var(--text-secondary)',
-          margin: '20px 0 0',
-          maxWidth: 'var(--measure-read)',
-        }}
-      >
-        {m.body}
-      </p>
     </article>
   );
 }
