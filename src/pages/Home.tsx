@@ -8,6 +8,7 @@ import { ProjectCard } from '../components/cards/ProjectCard';
 import { useStagger } from '../hooks/useStagger';
 import { useMagnetic } from '../hooks/useMagnetic';
 import { DUR, EASE, DECODE_CHARS, SplitText, prefersReducedMotion } from '../motion/core';
+import { attachTextPressure } from '../motion/textPressure';
 import { projects, facts } from '../data/content';
 
 const M = 'var(--page-margin)';
@@ -21,12 +22,17 @@ export function Home() {
      The index sets itself in type: the mono metas *print* (scramble-
      settle), then the headline is *set* — every character rises into its
      line from behind the line's own clip. Once the type has settled the
-     split reverts, so the DOM (and any later reflow) sees plain text.
+     split is *kept* (not reverted) and handed to text-pressure, which turns
+     the settled headline into a cursor-reactive masthead on fine pointers.
      Scrolling away, the lines peel upward at different rates — the page
      starts performing from the very first gesture. */
   useGSAP(
     (_, contextSafe) => {
       if (prefersReducedMotion()) return;
+
+      /* Held so the sync cleanup below can tear down the pressure loop the
+         async .then() attaches once the entrance completes. */
+      let pressureCleanup: (() => void) | undefined;
 
       /* Staging: nothing shows until the fonts have settled, so the split
          measures real metrics. Fonts are self-hosted — the wait is a frame
@@ -37,16 +43,22 @@ export function Home() {
 
       document.fonts.ready.then(
         contextSafe!(() => {
-          /* Split the line spans themselves (not the h1): revert() restores
-             each span's innerHTML, so the spans persist for the recede
-             scrub below to keep pointing at live elements. */
+          /* Split the line spans themselves (not the h1). The split is kept
+             after the entrance (see onComplete): its char spans become the
+             pressure targets, and the [data-hero-line] containers it leaves
+             in place are exactly what the recede scrub below drives. */
           const lines = gsap.utils.toArray<HTMLElement>('[data-hero-line]', heroRef.current);
           if (lines.length === 0) return;
           const split = SplitText.create(lines, { type: 'chars' });
           gsap.set(split.chars, { yPercent: 120 });
           gsap.set('[data-hero-headline]', { autoAlpha: 1 });
 
-          const tl = gsap.timeline({ defaults: { ease: EASE.emph }, onComplete: () => split.revert() });
+          const tl = gsap.timeline({
+            defaults: { ease: EASE.emph },
+            onComplete: () => {
+              pressureCleanup = attachTextPressure(heroRef.current!, split.chars as HTMLElement[]);
+            },
+          });
 
           gsap.utils.toArray<HTMLElement>('[data-hero-meta] [data-hero-decode]', heroRef.current).forEach((el, i) => {
             const text = el.textContent ?? '';
@@ -78,6 +90,11 @@ export function Home() {
       });
       gsap.to('[data-hero-meta]', { yPercent: -80, ease: 'none', scrollTrigger: { ...scrub } });
       gsap.to(heroRef.current, { opacity: 0.25, ease: 'none', scrollTrigger: { ...scrub } });
+
+      /* useGSAP reverts the tweens/ScrollTriggers above; the pressure loop
+         is attached outside its tracking (async, via gsap.ticker), so tear
+         it down explicitly. */
+      return () => pressureCleanup?.();
     },
     { scope: heroRef },
   );

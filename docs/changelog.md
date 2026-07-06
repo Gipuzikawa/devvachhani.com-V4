@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Branching workflow: PRs now merge onto the `development-Area` integration branch instead of directly onto `main`; `main` receives merges from `development-Area` only (documented in `CLAUDE.md`'s Repository Etiquette).
 - Migrated the Claude Design prototype export to a real Vite + React + TypeScript app.
 - Replaced the prototype's single-page hash-router with real routes (`/`, `/about`, `/work`, `/writing`) via React Router.
 - Ported the design tokens, the 9 core components, and the GSAP scroll-motion hooks from the compiled design-system bundle.

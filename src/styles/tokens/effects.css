@@ -36,4 +36,16 @@
 
   /* Reveal transform distance */
   --reveal-rise: 24px;  /* @kind spacing */
+
+  /* Hero text-pressure — cursor-proximity response on the masthead.
+     Newsreader has only a weight axis, so the "width" is faked with a
+     per-char scaleX transform. Near the cursor → wght-max / scalex-max
+     (heavy, wide); far / untouched → the mins, which are the *designed*
+     masthead pose (weight 300, scaleX 1) so the effect is purely additive.
+     smooth is the per-frame lerp factor toward the cursor (lower = laggier). */
+  --pressure-wght-min:   300;   /* @kind other — Newsreader wght floor (= design) */
+  --pressure-wght-max:   600;   /* @kind other — Newsreader wght ceiling */
+  --pressure-scalex-min: 1;     /* @kind other — designed width (no condense) */
+  --pressure-scalex-max: 1.22;  /* @kind other */
+  --pressure-smooth:     0.15;  /* @kind other */
 }

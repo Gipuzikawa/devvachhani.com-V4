@@ -47,8 +47,9 @@ npm run lint
 
 **Branching**
 
-- Always create a feature branch before starting non-trivial changes
-- Never commit directly to `main`
+- `development-Area` is the integration branch — all feature/fix PRs merge here, not `main`. `main` now only receives merges from `development-Area` (e.g. periodic releases), never directly from a feature branch.
+- Always create a feature branch off `development-Area` before starting non-trivial changes
+- Never commit directly to `main` or `development-Area`
 - Branch naming: `feature/description` or `fix/description`
 
 **Session start check**
@@ -56,12 +57,12 @@ npm run lint
 Before writing any code, verify the current branch state:
 
 ```bash
-git branch --show-current   # confirm you are NOT on main
+git branch --show-current   # confirm you are NOT on main or development-Area
 git status                  # confirm working tree is clean
 git log --oneline -3        # confirm last commit is expected
 ```
 
-If the current branch is `main`, or was already merged, stop and create a new feature branch before proceeding.
+If the current branch is `main` or `development-Area`, or was already merged, stop and create a new feature branch (off `development-Area`) before proceeding.
 
 **Commits**
 
@@ -72,11 +73,11 @@ If the current branch is `main`, or was already merged, stop and create a new fe
 
 **Pull requests**
 
-- Create PRs for all changes to `main`
-- Never force-push to `main`
+- Create PRs for all changes against `development-Area`, not `main`
+- Never force-push to `main` or `development-Area`
 - On PowerShell, `gh pr create --body "..."` with embedded double quotes gets mangled by PS 5.1's argument parsing — use `gh pr create --body-file <path>` instead
 - Include a description of what changed and why
-- Merge (or confirm merged) each feature branch into `main` before branching the next phase off of it. Stacking a new branch on top of an unmerged one produces a criss-cross merge chain that's hard to verify afterward. If a next phase must start before the prior PR lands, rebase it onto `main` once that PR merges rather than merging it as a side-chain.
+- Merge (or confirm merged) each feature branch into `development-Area` before branching the next phase off of it. Stacking a new branch on top of an unmerged one produces a criss-cross merge chain that's hard to verify afterward. If a next phase must start before the prior PR lands, rebase it onto `development-Area` once that PR merges rather than merging it as a side-chain.
 
 ## Coding Style & Standards
 
