@@ -24,3 +24,5 @@
 - **No contact form** — the footer's `Contact` link is a plain `mailto:` link, matching the original design.
 - **No tests.** Nothing automated beyond `tsc` type-checking.
 - **No real favicon/brand mark** — currently the default Vite placeholder. The design system explicitly says "no logo supplied, don't invent one" — needs a real asset from the user, or an explicit decision to keep the plain wordmark-only brand with no favicon glyph.
+- **Homepage animation rework** — the current hero set-piece and home-page choreography need a dedicated redesign brief before implementation.
+- **Sanity CMS** — replace `src/data/content.ts` as the runtime content source with a Sanity-backed editorial workflow. This is in planning, not implemented.
