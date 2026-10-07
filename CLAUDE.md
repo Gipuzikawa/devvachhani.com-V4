@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+@AGENTS.md
+
 ## Project Overview
 
 **devvachhani.com** is Dev Vachhani's personal portfolio — a STEM student presenting projects and (eventually) writing to university and research programmes. The site's job is to make curiosity legible: catalogue the work like a scholarly index, then bring it to life with motion.
@@ -91,3 +93,13 @@ If the current branch is `main` or `development-Area`, or was already merged, st
 - [Architecture](docs/architecture.md) — system design and data flow
 - [Changelog](docs/changelog.md) — version history
 - [Project Status](docs/project_status.md) — current progress, what's implemented vs. not
+- [Stack](docs/build/stack.md) — read this when you need to know why a piece of the stack was chosen
+- [Conventions](docs/build/conventions.md) — read this before editing source, for file layout/naming/lint rules
+- [Running](docs/build/running.md) — read this for exact dev/build/test/lint/deploy commands
+- [Git etiquette](docs/build/git-etiquette.md) — read this before branching, committing, or opening a PR
+- [Workflow](docs/build/workflow.md) — read this to see how work moves from brainstorm to merged code
+- [Aim](docs/context/aim.md) — read this for who the site is for and why it exists
+- [Goals](docs/context/goals.md) — read this to check whether a change serves a stated goal or non-goal
+- [Status](docs/context/status.md) — read this for the current built/not-built/open-items picture
+- [Context changelog](docs/context/changelog.md) — read this for dated, notable-only project history
+- [Superpowers](docs/superpowers/README.md) — read this for where specs and plans are committed
