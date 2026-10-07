@@ -1,7 +1,11 @@
 # Sanity CMS design
 
-Status: draft for review. Draft-and-preview workflow confirmed by Dev on 2026-10-07;
-the remaining architecture recommendations below have not yet been approved.
+Status: agreed implementation direction, recorded on 2026-10-07. Dev confirmed
+draft-and-preview, a new personally owned Sanity project with Dev as the only
+editor, Vercel hosting with separately built Studio at `/studio`, phased full
+editorial scope, and editable hero text preserving its current presentation.
+The concrete delivery plan is [2026-10-07-sanity-cms.md](../plans/2026-10-07-sanity-cms.md).
+Implementation and live-account setup have not started.
 
 ## Purpose
 
@@ -36,11 +40,12 @@ may still carry `contentStatus: placeholder` and show the existing notice.
   access. Published content must contain nothing confidential.
 - Public reads use the published perspective and Sanity CDN. Content publication
   appears on subsequent fetches after CDN propagation, without a site rebuild.
-- Preview requires a small server/API runtime alongside the static frontend.
-  Develop it locally first; select its hosting adapter once the website host is
-  chosen. A static-file-only host cannot provide authenticated draft endpoints.
+- Preview uses Vercel Node.js Functions alongside the static frontend, with local
+  development through Vercel CLI. Keep server authentication/content logic outside
+  `src/` and expose it through thin `api/` handlers. No SSR/framework migration is
+  required. Studio remains a separate build, served at `/studio` on Vercel.
 
-## Proposed content model
+## Content model
 
 | Type | Editorial content |
 | --- | --- |
@@ -50,7 +55,8 @@ may still carry `contentStatus: placeholder` and show the existing notice.
 | `homePage` singleton | Hero statement, introduction, calls to action, ordered featured-project references, short About introduction |
 | `aboutPage` singleton | Biography, facts, skill groups, principles |
 | `siteSettings` singleton | Wordmark text, contact details, footer text, social links |
-| `writingPage` singleton | Ordered planned-writing entries currently shown as the on-the-desk list |
+| `workPage` singleton | Archive heading and introduction; archive filtering/layout remain code-owned |
+| `writingPage` singleton | Index heading, introduction, and ordered planned-writing entries currently shown as the on-the-desk list |
 
 One project document supplies both its card and detail page, avoiding duplicate
 titles/slugs. Projects can appear in the archive before a detail is ready; an
@@ -68,6 +74,12 @@ stable block keys or explicit section identifiers, the TOC, drop caps, reading
 progress, and figure motion. Render rich text rather than flattening it to strings.
 Store editorial meaning in Sanity; keep typography, timing, animation, and layout
 rules in frontend code. This is a structured editor, with no arbitrary page builder.
+
+The Home hero uses three editable lines with inline text/emphasis only, matching
+the existing three line spans and italic accent. Limit the editor to that shape;
+keep masks, type scale, responsive styling, animation and pressure behaviour in
+code. Include hero metadata labels and section-heading copy in the Home schema.
+This enables copy editing without undertaking the separate animation rework.
 
 ## Draft preview architecture
 
@@ -112,18 +124,38 @@ state and retry action. Distinguish a failed fetch from a genuinely unknown slug
 
 ## Implementation stages after design approval
 
-1. Studio setup, document/object schemas, singleton structure, and validation.
-2. Repeatable import dry run and parity report against current content.
-3. Typed published queries, images, Portable Text rendering, and route data loading.
-4. Authenticated draft session, preview queries, Presentation navigation, and exit.
-5. Targeted tests, browser verification, documentation, and deployment configuration.
+Deliver the full scope in these phases. Each editorial phase adds its
+schema, Studio fields, repeatable migration, typed public/preview query, rendering,
+and acceptance evidence together. These are design-level delivery boundaries;
+the file-by-file implementation plan is linked above.
+
+| Phase | Deliverable | Acceptance boundary |
+| --- | --- | --- |
+| 0 — Foundation and preview | New owned project; proposed `development` and `production` datasets; standalone Studio; typed query registry; Vercel API/session handlers; Presentation navigation; reusable loading/error states | A development draft renders only with a valid preview session; forged/expired sessions fail; exit restores published data; no API token enters either browser build; frontend/Studio/server checks pass |
+| 1 — Projects and archive | `project`, `discipline`, `workPage`; three cards; F-35 timeline/specs/reflections; figure assets and placeholder plates; archive filter/order | Current slugs, ordering and filter membership match; two deferred details remain unavailable; import rerun creates no duplicates; draft edits preview correctly; desktop/mobile/reduced-motion motion survives loading and navigation |
+| 2 — Writing | `article`, `writingPage`; Portable Text renderer, planned-writing list, article metadata | Existing article/placeholder notice, section anchors, TOC, progress, drop cap and figures match; links/emphasis/lists render; incomplete drafts render safely; publish exposes new content and later drafts leave it unchanged |
+| 3 — About | `aboutPage`; biography, facts with stable keys, skills, principles | All existing copy and ordering match; facts shared with Home retain identity; preview and published versions remain separate; editing content does not control styling or animation |
+| 4 — Home | `homePage`; intro, editable hero copy, CTA labels/targets, ordered featured references, About introduction | Featured order follows the authored list; draft-only references do not leak publicly; missing/unpublished references render safely; hero presentation remains consistent without undertaking its separate animation rework |
+| 5 — Shared settings | `siteSettings`; wordmark text, footer signoff, email/social links and footer text; persistent shell integration | Settings preview throughout all routes; links validate; footer contact anchor still works; persistent nav/footer motion cleans up when editable text changes; route definitions and cobalt brand styling stay code-owned |
+| 6 — Production cutover | Production import/parity report, Vercel routing and environment configuration, Studio registration, editor instructions, rollback evidence | All six route patterns pass direct-link/navigation and browser checks; live draft/publish/exit works; production content matches the approved import; builds/lint/security tests pass; rollback uses a known deployment rather than silent static-content fallback |
+
+Phases 0–5 run against the development dataset before production cutover. Studio
+menus expose only the content types ready in the current phase. Until a domain
+migrates, its existing static content is an intentional transitional source; a
+domain already switched to Sanity never silently falls back on fetch failure.
+
+Import tooling initially supports dry-run and create-missing modes, with source-key
+lookup and generated ordinary IDs. Any update mode must show a reviewed diff and
+use a revision guard; stop on editor-change conflicts. Production writes happen
+only after the corresponding development parity checks pass.
 
 ## Acceptance checks
 
 - Draft-only content and edits do not appear in public queries; publishing changes
   the public version, and subsequent drafts leave it intact.
-- Invalid, expired, or forged preview sessions cannot return draft data. No token
-  appears in bundles, responses, URLs, or logs; preview responses are not cached.
+- Invalid, expired, or forged preview sessions cannot return draft data. No Sanity
+  API token appears in bundles, responses, URLs, or logs; preview responses are not
+  cached. Preview-link secrets are removed on redirect and redacted from logs.
 - All six routes retain their content and behaviour. Filtering, figures, article
   anchors/TOC, placeholder notices, mobile layouts, and reduced motion work.
 - Async content arrival and preview changes initialise/clean up GSAP correctly;
@@ -133,27 +165,104 @@ state and retry action. Distinguish a failed fetch from a genuinely unknown slug
 - Frontend and Studio type checks/builds pass, alongside frontend lint and focused
   content/preview tests. Live-account verification is recorded separately.
 
-## Decisions to resolve before deployment
+## Confirmed decisions and setup inputs
 
-- Which hosting provider will serve the portfolio and preview API?
-- Existing Sanity project/dataset, or a new project? Confirm account ownership,
-  dataset names, Studio URL, and authorised editor before provisioning/importing.
-- Review the proposed editable Home/About/settings scope and article block set.
+Confirmed by Dev on 2026-10-07:
+
+- Create a new Sanity project owned by Dev; Dev is the only initial editor.
+- Use Vercel for website/preview API hosting.
+- Deliver the full proposed editorial scope in development phases.
+- Build Studio separately and serve it at `/studio` on Vercel.
+- Make hero text editable while preserving the current presentation.
+
+Recommended dataset names are `development` and `production`; public production
+reads are token-free. Record the actual project ID, owner/account, dataset
+visibility, and deployment origins during setup before any import. Provisioning
+and deployment have not been performed during planning.
 
 ## Git handoff
 
-Roadmap additions are committed on `fix/codexSift` in PR #10, targeting
-`development-Area`. `feature/sanity-cms` starts directly from `development-Area`;
-after a human merges PR #10, refresh and rebase this feature branch onto the updated
-integration branch before further implementation. Never merge either PR as an agent.
-Existing project-refactor changes are preserved in the named stash created before
-planning; restore them deliberately to avoid mixing that work into CMS commits.
+PR #10 merged the roadmap and restored project guidance into `development-Area`
+at `8fd4718`. `feature/sanity-cms` was rebased onto that merge; its draft-design
+commit is `3a3cb10`. The 2026-10-07 review verified this branch, those commits,
+and a clean working tree before making documentation changes. No further rebase
+is needed for that handoff. Future PRs target `development-Area`; merges remain
+human-reviewed and must not be performed by an agent.
+
+`stash@{0}` preserves earlier project-refactor work, including
+`content.generated.ts`. Do not apply or drop it wholesale: guidance/docs have
+already been restored. Inspect individual changes only if that separate work
+is resumed; the active CMS migration source is `src/data/content.ts`.
+
+## Codebase review — implementation constraints
+
+The draft matches the active Vite SPA and six route patterns. There are three
+project cards, one F-35 detail, one placeholder article, and three planned-writing
+entries. No Sanity dependencies, Studio, preview server, or generated-content
+pipeline are active on this branch.
+
+- **Content model:** retain one document for each project/article. Add explicit
+  archive ordering and detail availability; a slug alone must not enable a detail
+  page. Require detail fields only when detail availability is enabled. Convert
+  the existing tag-based discipline assignments to references without changing
+  which projects appear under each filter.
+- **Articles and figures:** `ArticleBlock` currently holds plain strings, so
+  Portable Text needs a new typed rendering contract rather than a string-flattening
+  adapter. Preserve `overview`, `development`, `testing`, and `ahead` as explicit,
+  unique section IDs independent of heading text. Use paragraph metadata for drop
+  caps, ISO publication dates with frontend formatting, and a reading-time override
+  to preserve the current example. Extend `FigureData` to distinguish alternative
+  text from captions; preserve blank plates and reserved ratios.
+- **Shared copy:** Home currently selects About facts by array position and its
+  hero has hand-authored line spans/emphasis. Use stable fact keys with a homepage
+  visibility flag. Keep hero wrapping and emphasis rendering in frontend code;
+  use the bounded three-line text/emphasis shape above. Navigation routes,
+  visual accents, typography, and motion remain code-owned.
+- **Studio:** provide page/settings singletons first, then Projects, Articles,
+  and Disciplines, alongside Presentation. Group project fields into Overview,
+  Detail, Timeline, and Results. Exclude singleton types from generic create menus
+  and disable duplicate/delete actions for them. Empty drafts may be saved;
+  publication validation enforces required metadata and enabled detail fields.
+- **Migration:** join existing card/detail records using source keys; keep the two
+  archive-only projects unlinked and preserve placeholder notices. Include an
+  inventory of page-local editorial copy. Default reruns to skipping existing
+  records; updates require a reviewed diff and revision guard. Test reference
+  resolution, reruns, and editor-change conflicts before production import.
+- **Loading and motion:** current page hooks initialise on mount with synchronous
+  data. Mount animated content after successful loading and clean up/reinitialise
+  affected motion on preview revisions. Refresh ScrollTrigger after content/image
+  layout settles. Never redirect to an index while a request is still loading or
+  has failed.
+- **Preview and hosting:** use a same-origin frontend, preview API, and separately
+  built Studio at `/studio`. Validate Sanity's
+  preview URL secret, then issue a signed, expiring HttpOnly session; a perspective
+  cookie alone is not authentication. Serve drafts only through allowlisted API
+  queries. Public browser reads remain token-free, explicitly published, and
+  CDN-backed. Start with manual refresh; live editing remains a later enhancement.
+
+The content shapes and phase boundaries above are the planning basis. Exact field
+definitions and file-level tasks are specified in the implementation plan. Any
+scope change discovered during implementation must be reflected in both documents.
 
 ## Sources
 
 - [Sanity Vite integration](https://www.sanity.io/docs/visual-editing/build-a-visual-editing-integration)
 - [Draft mode](https://www.sanity.io/docs/visual-editing/implementing-draft-mode)
 - [Perspectives](https://www.sanity.io/docs/content-lake/perspectives)
+- [Studio structure](https://www.sanity.io/docs/studio/structure-builder-cheat-sheet)
+- [Studio deployment](https://www.sanity.io/docs/studio/deployment)
+- [Vite on Vercel](https://vercel.com/docs/frameworks/frontend/vite)
+- [Vercel Node.js Functions](https://vercel.com/docs/functions/runtimes/node-js)
+- [Sanity TypeGen](https://www.sanity.io/docs/apis-and-sdks/sanity-typegen)
+- [Portable Text editor configuration](https://www.sanity.io/docs/studio/portable-text-editor-configuration)
+
+Official documentation checked during the 2026-10-07 review. The framework-agnostic
+visual-editing guide demonstrates a Node-rendered example with Vite assets; it is
+reference material, not a drop-in integration for this React SPA. The draft-mode
+guide uses a perspective cookie as its mode flag; the signed-session requirement
+above is an additional application security decision. Cross-site Studio hosting
+requires explicit cookie/partitioning tests; same-origin hosting avoids that
+cross-site arrangement.
 
 The Sanity best-practices skill informed the standalone Studio structure,
 semantic schemas, document identity, Portable Text, and preview token handling.
