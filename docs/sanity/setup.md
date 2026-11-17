@@ -3,6 +3,10 @@
 Phase 0 supplies Studio, typed transport and authenticated preview. Portfolio
 pages still deliberately read `src/data/content.ts`; migration starts in Phase 1.
 
+Task 1.1 is now seeded in development. Project and Work editing schemas are
+available, but page readers have not switched yet. See `content-inventory.md` for
+the explicit import commands, rerun/manifest rules and development-only scope.
+
 ## Provisioned resources
 
 - Project: `oir24qey`, **devvachhani.com portfolio**.

@@ -14,5 +14,7 @@ export default defineConfig({
     resolve, allowOrigins: [origin],
     previewUrl: { origin, previewMode: { enable: '/api/preview/enable' } },
   })],
-  schema: { types: schemaTypes },
+  schema: { types: schemaTypes, templates: templates => templates.filter(template => template.schemaType !== 'workPage') },
+  document: { actions: (actions, context) => context.schemaType === 'workPage' ?
+    actions.filter(action => action.action !== 'duplicate' && action.action !== 'delete') : actions },
 });

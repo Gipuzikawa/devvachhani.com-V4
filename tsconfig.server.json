@@ -5,5 +5,5 @@
     "skipLibCheck": true, "noEmit": true, "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true, "noUnusedLocals": true, "noUnusedParameters": true
   },
-  "include": ["api", "server", "src/sanity/queries.ts", "src/sanity/queryRegistry.ts", "src/sanity/sanity.types.ts"]
+  "include": ["api", "server", "scripts/sanity/*.ts", "src/sanity/queries.ts", "src/sanity/queryRegistry.ts", "src/sanity/sanity.types.ts"]
 }

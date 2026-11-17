@@ -15,6 +15,155 @@
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
+export type ProjectDetail = {
+  _type: "projectDetail";
+  intro?: string;
+  toolGroups?: Array<
+    {
+      _key: string;
+    } & ToolGroup
+  >;
+  skills?: Array<string>;
+  milestones?: Array<
+    {
+      _key: string;
+    } & ProjectMilestone
+  >;
+  finalFigure?: Figure;
+  specifications?: Array<
+    {
+      _key: string;
+    } & Specification
+  >;
+  reflections?: Reflections;
+  overviewHeading?: SectionHeading;
+  timelineHeading?: SectionHeading;
+  resultsHeading?: SectionHeading;
+  reflectionsHeading?: SectionHeading;
+};
+
+export type Reflections = {
+  _type: "reflections";
+  wentWell?: string;
+  challenges?: string;
+  improvements?: Array<string>;
+  closing?: string;
+};
+
+export type Specification = {
+  _type: "specification";
+  label?: string;
+  value?: string;
+};
+
+export type ProjectMilestone = {
+  _type: "projectMilestone";
+  date?: string;
+  title?: string;
+  body?: string;
+  figure?: Figure;
+};
+
+export type ToolGroup = {
+  _type: "toolGroup";
+  label?: string;
+  items?: Array<string>;
+};
+
+export type SanityImageAssetReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+};
+
+export type Figure = {
+  _type: "figure";
+  mode?: "placeholder" | "image";
+  caption?: string;
+  aspect?: number;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  alt?: string;
+};
+
+export type SectionHeading = {
+  _type: "sectionHeading";
+  eyebrow?: string;
+  title?: string;
+};
+
+export type WorkPage = {
+  _id: string;
+  _type: "workPage";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  sourceKey?: string;
+  heading?: SectionHeading;
+  intro?: string;
+  allLabel?: string;
+  rowsLabel?: string;
+  gridLabel?: string;
+};
+
+export type DisciplineReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "discipline";
+};
+
+export type Project = {
+  _id: string;
+  _type: "project";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  sourceKey?: string;
+  title?: string;
+  slug?: Slug;
+  summary?: string;
+  year?: string;
+  tags?: Array<string>;
+  disciplines?: Array<
+    {
+      _key: string;
+    } & DisciplineReference
+  >;
+  sortOrder?: number;
+  contentStatus?: "placeholder" | "live";
+  detailEnabled?: boolean;
+  detail?: ProjectDetail;
+};
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+};
+
+export type Slug = {
+  _type: "slug";
+  current?: string;
+  source?: string;
+};
+
 export type Discipline = {
   _id: string;
   _type: "discipline";
@@ -62,22 +211,6 @@ export type SanityImageMetadata = {
   thumbHash?: string;
   hasAlpha?: boolean;
   isOpaque?: boolean;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
 };
 
 export type SanityFileAsset = {
@@ -139,25 +272,30 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type Slug = {
-  _type: "slug";
-  current?: string;
-  source?: string;
-};
-
 export type AllSanitySchemaTypes =
+  | ProjectDetail
+  | Reflections
+  | Specification
+  | ProjectMilestone
+  | ToolGroup
+  | SanityImageAssetReference
+  | Figure
+  | SectionHeading
+  | WorkPage
+  | DisciplineReference
+  | Project
+  | SanityImageCrop
+  | SanityImageHotspot
+  | Slug
   | Discipline
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
   | SanityImageMetadata
-  | SanityImageHotspot
-  | SanityImageCrop
   | SanityFileAsset
   | SanityAssetSourceData
   | SanityImageAsset
-  | Geopoint
-  | Slug;
+  | Geopoint;
 
 // Source: ../src/sanity/queries.ts
 // Variable: DISCIPLINES_QUERY

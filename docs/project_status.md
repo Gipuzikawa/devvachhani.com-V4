@@ -1,5 +1,13 @@
 # Project Status
 
+## Project import foundation — 2026-11-17
+
+Phase 1.1 adds project/Work schemas, source snapshots and guarded import tooling.
+Seven development records are imported; a live rerun created zero records and
+reported zero differences. Tests now total 46. Task 1.2 will connect page reads;
+the portfolio still uses static content. See [inventory](sanity/content-inventory.md)
+and [evidence](sanity/verification.md).
+
 ## Sanity Phase 0 — 2026-11-17
 
 Studio, generated types, published transport, authenticated preview API and preview
