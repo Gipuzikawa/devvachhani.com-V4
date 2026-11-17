@@ -1,5 +1,55 @@
 # Sanity implementation verification
 
+## Phase 2 update — 2026-11-17
+
+PR #13 is verified merged into `development-Area` at `b903566`. Phase 2 starts
+from that integration commit on `feature/sanity-writing`.
+
+- Articles/Writing now use Sanity. About, Home and shell/settings remain static.
+  One article and one Writing singleton (three planned entries) were imported
+  into `oir24qey/development`, after development schema deployment and a no-write
+  dry run. The create-missing rerun created **0**, skipped **2**, updated **0**,
+  and found **0 differences**. IDs/revisions/hashes are in
+  `fixtures/phase-2-rerun-report.json`. Existing project/editor data was preserved.
+- **100 tests pass** across 11 files. New coverage includes source copy/date/anchor
+  parity, three ordered figures, drop-cap rich marks, strong/emphasis, safe links,
+  ordered/unordered/nested lists, incomplete/duplicate drafts, phase/type/import
+  guards, rapid slug navigation, refresh revision boundaries and exit isolation.
+  DOM tests stub motion and cannot establish browser visuals or GSAP cleanup.
+- Frontend/server/Studio type checks, both builds, combined build/Studio assembly,
+  maintained-code lint and configured-credential bundle scans passed. TypeGen
+  regeneration was byte-identical for schema/types (five queries, 31 schema
+  types). The frontend dependency audit is
+  clean; Studio still reports 16 moderate and 3 high upstream advisories.
+- Real token-free development reads passed Writing/article adapter parity.
+  `studio/scripts/verify-writing-pages.ts` passed unpublished exclusion from
+  public index/detail, official signed preview entry, private/no-store draft
+  index/detail, uncached-origin publication, subsequent private draft isolation,
+  exit cookie clearing and unauthorized read rejection. It removed only its
+  owned disposable article/draft. Seeded/editor records were read only.
+- The exact article CDN query was primed before publication and remained stale
+  through **65 attempts / 67 seconds**. The script intentionally exited nonzero
+  for this pending CDN result even though the origin/preview checks passed.
+  The project-domain check was also rerun: origin/draft/exit passed, with its
+  primed CDN publication still pending. **CDN invalidation timing is unverified.**
+- Browser inventory was retried: the browser access host is still unavailable.
+  Chrome/Safari authentication/iframe cookies, desktop/375px/reduced-motion
+  visuals, console and actual motion cleanup remain unverified. There is no
+  staging deployment to test; Vercel routing/Function/cookie/registration/log
+  acceptance remains open. No production data, deployment or DNS was changed.
+
+The first project check reached preview entry but failed while the local server
+was still running under restricted network permissions. Restarting that server
+with the updated permissions restored the complete origin/preview workflow.
+No credential or preview-secret URL was printed.
+
+Native Sanity blocks do not support extra schema fields. Headings and drop-cap
+paragraphs therefore use small owned objects containing one rich Portable Text
+block plus metadata; adapters normalize them while preserving marks and links.
+This keeps existing section IDs and the drop-cap flag editable in Studio.
+
+The earlier checkpoint records below remain historical.
+
 ## Phase 1.2 update — 2026-11-17
 
 PR #12 merged into `development-Area` at `ade1c86` on Dev's explicit request;

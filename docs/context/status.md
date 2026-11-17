@@ -1,8 +1,8 @@
 # Status
 
-Current update (2026-11-17): Sanity Phases 0 and 1 are implemented; 65 automated
+Current update (2026-11-17): Sanity Phases 0–2 are implemented; 100 automated
 tests, builds, lint and credential scans passed at the last implementation check.
-Work/project pages use Sanity; Home/About/Writing/article/shell domains remain
+Work/project and Writing/article pages use Sanity; Home/About/shell domains remain
 static. Real origin draft/publish/exit checks pass. Primed CDN invalidation timing,
 browser/iframe/reduced-motion checks and Vercel staging remain open. No production
 deployment or dataset cutover has occurred. See [evidence](../sanity/verification.md)
@@ -23,7 +23,8 @@ higher-level picture only.
   (`/writing/f35-development-update`).
 - Three projects, three disciplines and Work settings imported into Sanity development;
   a rerun created zero records and reported zero differences. F-35 detail is enabled;
-  the other two projects remain archive-only. About/Writing/shell copy remains static.
+  the other two projects remain archive-only. Articles/Writing now use Sanity;
+  About/Home/shell copy remains static.
 
 ## Not yet built
 
@@ -36,14 +37,13 @@ higher-level picture only.
   timing remain open; DOM tests do not verify actual GSAP/browser behavior.
 - **A real favicon/brand mark** — currently the default Vite placeholder.
 - **Homepage animation rework** — revisit the hero and home-page choreography as a focused design pass.
-- **Remaining Sanity domains** — Phase 2 Articles/Writing, Phase 3 About, Phase 4
+- **Remaining Sanity domains** — Phase 3 About, Phase 4
   Home, Phase 5 settings/shell; Phase 6 production import and cutover.
 
 ## Open items
 
 - TODO: staging Vercel verification plus domain/DNS.
-- TODO: whether/when to author real long-form essays, and in what content shape (structured TS
-  blocks currently; a Markdown-authoring pipeline was explored but is not present on this branch).
+- TODO: author real long-form essays in Studio's restricted Portable Text editor.
 - TODO: investigate the stale primed CDN query and finish the outstanding browser/
-  staging matrix. Phase 2 Articles/Writing is the next implementation phase.
+  staging matrix. Phase 3 About is next after the Phase 2 PR is reviewed and merged.
 - TODO: define the intended outcome for the homepage animation rework before designing it.

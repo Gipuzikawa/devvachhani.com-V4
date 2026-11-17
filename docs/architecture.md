@@ -1,8 +1,8 @@
 # Architecture
 
-## Sanity Phase 0 boundary
+## Sanity content boundary
 
-Work/project detail pages now use typed Sanity queries and strict adapters; the
+Work/project and Writing/article pages now use typed Sanity queries and strict adapters; the
 other page/shell domains below remain static until their migration phases. `studio/` builds
 separately at `/studio`; `src/sanity/` provides generated query contracts, token-free
 published reads, preview session state and cancellable content loading. Animated
@@ -24,7 +24,7 @@ Hooks (src/hooks/) + motion core (src/motion/core.ts) — GSAP + ScrollTrigger
   ↓ styled with
 Design tokens (src/styles/) — CSS custom properties
   ↓ fed by
-Data (src/data/content.ts) — static TypeScript for existing portfolio pages
+Data (src/sanity/) — typed CMS reads; src/data/content.ts for remaining static domains
 ```
 
 ## Routing
@@ -70,15 +70,28 @@ The Home hero runs a one-off `useGSAP` timeline directly in `Home.tsx` — the r
 
 ## Design tokens
 
-`src/styles/tokens/*.css` are a direct copy of `design-export/designSystem/tokens/*.css` (colors, typography, spacing, effects, fonts, base reset) — except `fonts.css`, which now declares self-hosted `@font-face` rules over latin woff2 files in `public/fonts/` (the exact binaries Google Fonts served for the original `@import`), so the site makes zero external requests at runtime. `src/styles/tokens.css` mirrors the original `styles.css` `@import` list. `src/styles/global.css` holds page-shell rules that lived inline in the original `Home.dc.html` (`scroll-behavior: smooth`, `::selection`, canvas background).
+`src/styles/tokens/*.css` are a direct copy of `design-export/designSystem/tokens/*.css` (colors, typography, spacing, effects, fonts, base reset) — except `fonts.css`, which now declares self-hosted `@font-face` rules over latin woff2 files in `public/fonts/` (the exact binaries Google Fonts served for the original `@import`), so font loading makes zero external requests at runtime. `src/styles/tokens.css` mirrors the original `styles.css` `@import` list. `src/styles/global.css` holds page-shell rules that lived inline in the original `Home.dc.html` (`scroll-behavior: smooth`, `::selection`, canvas background).
 
 ## Data
 
-`src/data/content.ts` holds the real, personalized content (ported from `Home.dc.html`'s `renderVals()`, not the generic Lorem-ipsum placeholder kit): the 3 real projects, About facts/skill groups/principles, the "on the desk" planned-writing list, and shared nav/footer props. There is no backend or CMS — adding content means editing this file.
+`src/sanity/` serves Work/projects and Writing/articles from Sanity. `src/data/content.ts`
+still supplies Home's featured cards, About facts/skill groups/principles and shell
+props. Its old project/article exports are retained as historical source, not a
+fallback for migrated routes. Versioned import fixtures preserve their original values.
 
-`articleDetails` (same file) holds article bodies as **typed blocks** (`ArticleBlock`: paragraph / heading / figure / pullquote) rather than Markdown — the reading page's reactive features (TOC, progress, figure triggers) bind to a first-class content contract, and no parser dependency is needed. The one existing article is transcribed from `Placeholders/Example_Article.md` (plus section headings and a pull quote added for the TOC/set pieces to bind to) and carries `status: 'placeholder'`.
+Articles use restricted Portable Text: native paragraphs/lists, safe link marks,
+figures and pull quotes. Owned heading and drop-cap paragraph objects store a single
+rich block plus metadata because native Sanity blocks cannot declare custom fields.
+The adapter normalizes these for `@portabletext/react`, preserving marks, h2/h3 IDs,
+TOC and figure order. Dates use ISO storage with UTC display formatting; reading
+time uses 200 words/minute unless explicitly overridden. The example remains
+placeholder content with its six-minute override. The CSS first letter preserves
+rich inline markup in drop-cap paragraphs. Revision keys clean up animated views;
+geometry refreshes after fonts/images settle, and TOC links jump instantly.
 
-`projectDetails` (same file) holds the per-project detail-page content (`ProjectDetail` in `types.ts`: intro, tool groups, skills, month-dated milestones with figures, final-product specs, reflections). Currently only the F-35 entry exists, transcribed from `Placeholders/Example_Project.md` — its body copy is deliberately lorem and the page carries a `status: 'placeholder'` notice so it is never presented as real work. A project card links to its detail page only when its `ProjectData.slug` is set.
+Sanity's project document holds detail content: intro, tool groups, skills,
+milestones/figures, specifications and reflections. Only the F-35 has enabled
+detail; its placeholder notice remains. Other archive cards still link to `/work`.
 
 ## Not yet built
 

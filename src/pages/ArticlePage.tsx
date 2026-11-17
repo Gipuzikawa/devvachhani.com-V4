@@ -1,17 +1,19 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollTrigger } from '../motion/core';
 import { useGSAP } from '@gsap/react';
 import { Tag } from '../components/ui/Tag';
-import { Figure } from '../components/ui/Figure';
 import { useReveal } from '../hooks/useReveal';
 import { useStagger } from '../hooks/useStagger';
-import { useParallax } from '../hooks/useParallax';
 import { useSplitReveal } from '../hooks/useSplitReveal';
 import { useDecode } from '../hooks/useDecode';
-import { articleDetails } from '../data/content';
-import type { ArticleBlock, FigureData } from '../types';
+import { ArticleBody } from '../components/content/ArticleBody';
+import { useContent } from '../sanity/ContentProvider';
+import { usePreview } from '../sanity/PreviewProvider';
+import { adaptArticle, type ArticleView } from '../sanity/articleAdapters';
+import { ContentPageState } from '../components/ui/ContentPageState';
+import { useContentLayout } from '../hooks/useContentLayout';
 
 const M = 'var(--page-margin)';
 
@@ -20,14 +22,6 @@ const mono: CSSProperties = {
   fontSize: 'var(--t-micro)',
   letterSpacing: 'var(--track-label)',
   textTransform: 'uppercase',
-};
-
-const prose: CSSProperties = {
-  fontFamily: 'var(--font-serif)',
-  fontSize: 'var(--t-body)',
-  lineHeight: 'var(--lh-relaxed)',
-  color: 'var(--text-body)',
-  margin: '22px 0 0',
 };
 
 /** Tracks a media query so the TOC rail only renders where it fits. */
@@ -71,107 +65,21 @@ function BackLink() {
   );
 }
 
-/** A figure inside the reading column: gentle parallax drift, no reflow. */
-function ArticleFigure({ figure }: { figure: FigureData }) {
-  const ref = useParallax<HTMLDivElement>(10);
-  return (
-    <div data-reveal style={{ margin: '44px 0 0' }}>
-      <div ref={ref}>
-        <Figure {...figure} />
-      </div>
-    </div>
-  );
-}
-
-function Block({ block, first }: { block: ArticleBlock; first: boolean }) {
-  switch (block.type) {
-    case 'heading':
-      return (
-        <h2
-          id={block.id}
-          data-article-heading
-          data-reveal
-          style={{
-            fontFamily: 'var(--font-serif)',
-            fontSize: 'var(--t-lg)',
-            fontWeight: 400,
-            lineHeight: 'var(--lh-snug)',
-            letterSpacing: 'var(--track-tight)',
-            color: 'var(--text-strong)',
-            margin: first ? 0 : 'clamp(44px,7vh,64px) 0 0',
-            paddingBottom: 14,
-            borderBottom: '1px solid var(--border-hairline)',
-            scrollMarginTop: 96,
-          }}
-        >
-          {block.text}
-        </h2>
-      );
-    case 'paragraph': {
-      if (!block.dropCap) return <p style={prose}>{block.text}</p>;
-      // Drop cap done manually — inline styles can't reach ::first-letter.
-      const [cap, rest] = [block.text[0], block.text.slice(1)];
-      return (
-        <p style={prose}>
-          <span
-            data-reveal
-            style={{
-              float: 'left',
-              fontFamily: 'var(--font-serif)',
-              fontSize: '3.4em',
-              lineHeight: 0.82,
-              fontWeight: 300,
-              color: 'var(--text-accent)',
-              padding: '4px 10px 0 0',
-            }}
-          >
-            {cap}
-          </span>
-          {rest}
-        </p>
-      );
-    }
-    case 'pullquote':
-      return <PullQuote text={block.text} />;
-    case 'figure':
-      return <ArticleFigure figure={block.figure} />;
-  }
-}
-
-/** A pull quote is display type, so it gets the signature: lines set
-    themselves into place between the rules. */
-function PullQuote({ text }: { text: string }) {
-  const ref = useSplitReveal<HTMLQuoteElement>();
-  return (
-    <blockquote
-      ref={ref}
-      style={{
-        margin: 'clamp(40px,6vh,56px) 0 0',
-        padding: '26px 0',
-        borderTop: '1px solid var(--border-strong)',
-        borderBottom: '1px solid var(--border-hairline)',
-        fontFamily: 'var(--font-serif)',
-        fontSize: 'var(--t-md)',
-        fontStyle: 'italic',
-        fontWeight: 300,
-        lineHeight: 'var(--lh-snug)',
-        color: 'var(--text-strong)',
-      }}
-    >
-      <span aria-hidden="true" style={{ color: 'var(--text-accent)' }}>
-        “
-      </span>
-      {text}
-      <span aria-hidden="true" style={{ color: 'var(--text-accent)' }}>
-        ”
-      </span>
-    </blockquote>
-  );
-}
-
 export function ArticlePage() {
-  const { slug } = useParams();
-  const article = articleDetails.find((a) => a.slug === slug);
+  const { slug = '' } = useParams();
+  const result = useContent('articlePage', { slug });
+  const { status, refresh } = usePreview();
+  if (result.status === 'empty') return <Navigate to="/writing" replace />;
+  if (result.status !== 'ready') return <ContentPageState result={result} retry={refresh} />;
+  let article: ArticleView | null;
+  try { article = adaptArticle(result.data); }
+  catch { return <ContentPageState result={status === 'active' ? { status: 'incomplete', data: null } :
+    { status: 'error', message: 'This article is incomplete. Please try again later.' }} retry={refresh} />; }
+  if (!article) return <Navigate to="/writing" replace />;
+  return <ArticleContent key={article.contentKey} article={article} />;
+}
+
+function ArticleContent({ article }: { article: ArticleView }) {
   const wide = useWide();
 
   const [activeId, setActiveId] = useState('');
@@ -182,6 +90,15 @@ export function ArticlePage() {
   const bodyRef = useReveal<HTMLDivElement>();
   const barRef = useRef<HTMLDivElement>(null);
   const progressScope = useRef<HTMLDivElement>(null);
+  useContentLayout(progressScope);
+  useEffect(() => {
+    // Data arrives after the router's scroll reset, so restore deep section links here.
+    const frame = requestAnimationFrame(() => {
+      const id = window.location.hash.slice(1);
+      if (article.toc.some(heading => heading.id === id)) document.getElementById(id)?.scrollIntoView({ behavior: 'instant' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [article.contentKey]);
 
   /* Reading state — progress bar + active-section tracking. Deliberately NOT
      gated on prefers-reduced-motion: both are information about where the
@@ -231,9 +148,7 @@ export function ArticlePage() {
     { scope: progressScope },
   );
 
-  if (!article) return <Navigate to="/writing" replace />;
-
-  const toc = article.blocks.filter((b) => b.type === 'heading');
+  const toc = article.toc;
 
   return (
     <div ref={progressScope}>
@@ -303,6 +218,11 @@ export function ArticlePage() {
                   <a
                     key={h.id}
                     href={`#${h.id}`}
+                    onClick={event => {
+                      event.preventDefault();
+                      document.getElementById(h.id)?.scrollIntoView({ behavior: 'instant' });
+                      window.history.replaceState(window.history.state, '', `#${h.id}`);
+                    }}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -333,9 +253,7 @@ export function ArticlePage() {
           )}
 
           <article ref={bodyRef}>
-            {article.blocks.map((b, i) => (
-              <Block key={i} block={b} first={i === 0} />
-            ))}
+            <ArticleBody body={article.body} />
 
             <div data-reveal style={{ marginTop: 'clamp(48px,8vh,72px)', paddingTop: 28, borderTop: '1px solid var(--border-hairline)' }}>
               <BackLink />

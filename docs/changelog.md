@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Articles and Writing — 2026-11-17
+
+- Model article metadata, rich Portable Text, stable anchors/drop caps and the
+  Writing singleton with planned entries. Extend guarded development imports.
+- Connect Writing/article routes with typed queries, safe rich rendering,
+  revision cleanup, instant TOC links and async/error/incomplete states.
+- Preserve source copy, figures, placeholder maturity and six-minute override.
+  Expand checks to 100 tests; browser/staging and primed CDN timing remain open.
+
 ### Project page integration — 2026-11-17
 
 - Connect Work/project reads to Sanity with generated query types, bounded slug

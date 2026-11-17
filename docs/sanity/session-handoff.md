@@ -1,163 +1,105 @@
 # Sanity session handoff
 
-Checkpoint: 2026-11-17. This handoff accompanies PR #13. Verify its actual merge
-state and the current repository before starting; do not resume from an old branch
-or infer acceptance from a merge alone.
+Checkpoint: 2026-11-17, Phase 2 Articles/Writing. Verify Git and the Phase 2 PR
+before continuing. PR #13 merged into `development-Area` at `b903566`; this work
+started from that commit on `feature/sanity-writing`. Do not stack Phase 3 on an
+unmerged branch or infer browser acceptance from a merge.
 
 ## Read first
 
-1. `AGENTS.md` and `docs/build/{workflow,git-etiquette,conventions,running}.md`.
+1. `AGENTS.md`, `docs/build/{workflow,git-etiquette,conventions,running}.md`.
 2. `docs/superpowers/specs/2026-10-07-sanity-cms-design.md`.
-3. `docs/superpowers/plans/2026-10-07-sanity-cms.md` (Phase 2 is next).
-4. `docs/sanity/{verification,setup,content-inventory}.md`.
+3. `docs/superpowers/plans/2026-10-07-sanity-cms.md` (Phase 3 is next).
+4. `docs/sanity/{verification,setup,content-inventory,phase-2-migration}.md`.
 
-## Current implementation
+## Implemented state
 
-| Area | State |
-| --- | --- |
-| Phase 0 | Studio, generated types, published transport, signed preview API and controls implemented |
-| Phase 1.1 | Project/Work schemas and guarded import implemented; seven development seed records imported |
-| Phase 1.2 | Work/project detail pages read Sanity; ID filters, responsive images and revision-keyed motion boundaries implemented |
-| Later domains | Articles/Writing, About, Home and shell/settings still static |
-| Production | No production import, website deployment or DNS cutover performed |
+- Phase 0: separate Studio, generated types, token-free published transport and
+  signed authenticated preview API/controls.
+- Phase 1: Work/project schemas, guarded import and resolved page readers. Three
+  projects, three disciplines and Work singleton seeded in development. F-35
+  detail remains placeholder; other cards remain archive-only.
+- Phase 2: Articles/Writing schemas, guarded import, five registered typed queries,
+  strict adapters and `@portabletext/react` rendering. One placeholder article and
+  Writing singleton with three planned entries seeded in development. Rerun:
+  0 creates, 2 skips, 0 updates, 0 differences; returned IDs/revisions/hashes in
+  `fixtures/phase-2-rerun-report.json`.
+- About, Home and shell/settings remain static for Phases 3–5. Production import,
+  website deployment and DNS cutover have not occurred.
 
-PR #11 merged at `abd06cd`; PR #12 merged at `ade1c86`. PR #13 contains the
-project-page integration (`5d3153e`) and its evidence (`eb551f3`), plus this handoff
-documentation. Integration branch: `development-Area`; release branch: `main`.
+Native Sanity blocks cannot declare extra fields. `articleHeading` and
+`articleParagraph` contain one rich text block plus section ID/level or drop-cap
+metadata. The adapter normalizes these into rich blocks without losing spans,
+marks or links. Ordinary paragraphs and nested lists use native Portable Text.
+The original four anchors, three ordered placeholder figures, quote, date formats,
+placeholder notice and six-minute reading-time override remain intact.
 
-The user explicitly requested merging PRs #11–#13 and reused `feature/sanity-cms`
-for the previous work. For the next phase, start a fresh feature branch from the
-updated integration branch, such as `feature/sanity-writing`, under the normal
-repository workflow. Do not force-push or directly commit to the integration branch.
+## Evidence and limitations
 
-## Validation evidence and limits
+- 100 automated tests pass. Frontend/server/Studio checks, combined build,
+  maintained-code lint and configured-credential bundle scans pass. TypeGen
+  generates five queries and 31 schema types. DOM tests stub motion.
+- Development schema deployment succeeded. Source import dry run, create-missing
+  and rerun succeeded; no existing editor/project records were overwritten.
+- Real Writing/article HTTP checks passed public unpublished exclusion, signed
+  index/detail preview, origin publication, subsequent private draft isolation,
+  exit cookie clearing and unauthorized read rejection. Only an owned disposable
+  test article/draft was published and cleaned up. The project workflow was also
+  rerun with origin/preview/exit passing.
+- The exact primed article CDN query remained stale through 65 attempts over
+  67 seconds. Both live scripts intentionally exit nonzero for their pending CDN
+  observation. CDN invalidation timing remains unverified; do not describe the
+  complete publication acceptance matrix as passing.
+- Browser access host remains unavailable. Chrome/Safari sign-in and iframe
+  cookies, desktop/375px/reduced-motion visuals, console errors and accumulated
+  GSAP triggers remain unverified. There is no Vercel staging deployment to test.
+  Routing/Functions/origins/registration and host secret-URL log handling remain open.
+- Studio audit still reports 16 moderate and 3 high upstream advisories; root
+  dependency audit is clean. No forced downgrade/major dependency fix was applied.
 
-- Last implementation check: **65 tests passed**, frontend/server/Studio checks and
-  combined build passed, TypeGen regeneration unchanged, maintained-code lint and
-  configured-credential bundle/staged scans passed. Documentation-only handoff
-  changes do not establish a new browser or service verification result.
-- Live development checks passed for seeded archive/F-35 adapters, unpublished
-  exclusion, signed archive/detail preview, fresh-origin publication, subsequent
-  private draft isolation, exit and unauthorized reads.
-- A primed public CDN query stayed stale through 65 polling attempts despite a
-  correct uncached origin. The live workflow script flags this with nonzero exit
-  status. **CDN invalidation timing remains unverified**; do not call the complete
-  publication/CDN acceptance matrix passing.
-- Browser access host was unavailable. Actual Chrome/Safari sign-in and iframe
-  cookies, desktop/375px/reduced-motion behavior, console errors and accumulated
-  GSAP triggers remain unverified. DOM tests stub motion and cannot prove them.
-- Vercel staging, routing/Function behavior on Vercel, exact deployment origins,
-  Studio registration and host handling of secret URLs still need verification.
-- Studio's last audit reported 16 moderate and 3 high upstream advisories; recheck
-  current output. No forced downgrade or major dependency fix was applied.
+## Service and data boundaries
 
-## Service/data boundaries
+Use project `oir24qey`, development dataset only. Public production exists but
+has not been imported. Preserve seeded/editor records and private drafts. Ordinary
+IDs come from Sanity; fixed IDs are only for managed singletons. Both import phases
+share `migrationLock.phase1`, source-key matching, skip/report reruns and reviewed
+revision/hash updates. A stale lock requires ownership/process review, never theft.
 
-- Sanity project: **`oir24qey`**, `devvachhani.com portfolio`; Dev is its sole human
-  administrator as verified during setup. Datasets: public `development` and
-  `production`. All completed imports/tests used **development only**.
-- Seven imported records: 3 projects, 3 disciplines and the `workPage` singleton.
-  `fixtures/phase-1-rerun-report.json` records actual IDs/revisions/hashes. Live
-  rerun created 0 records, skipped 7 and found 0 differences.
-- F-35 detail remains visibly placeholder content. Other two cards keep detail
-  disabled and link to `/work`. Do not invent their detail pages or new prose.
-- The separate Phase 0 smoke discipline is an unpublished test, not an archive
-  discipline. Project-domain tests create disposable records and clean up only
-  their owned IDs; seeded/editor documents are untouched.
-- Ignored root/Studio `.env.local` files were configured for local development.
-  Do not print tokens, signing secrets, cookies or preview-secret URLs. Read tokens
-  and signing secrets stay server-only; no write/import token belongs in a bundle
-  or Vercel deployment environment. Use the existing CLI auth where available.
-- Never apply/drop `stash@{0}` wholesale. `design-export/` remains frozen and must
-  not be edited or imported at runtime.
+Ignored environment files contain local development configuration. Never print
+credentials, cookies or preview-secret URLs. Read/session credentials are server
+only; no write/import credential belongs in a browser or deployment environment.
+Use existing CLI authentication. Never apply/drop `stash@{0}` wholesale. Keep
+`design-export/` frozen and retain the Vite SPA, routes, tokens and motion core.
 
-## Relevant implementation files
+## Relevant files and commands
 
-- `src/sanity/queries.ts`, `queryRegistry.ts`, `sanity.types.ts`: three registered
-  queries; only the project detail query accepts a bounded slug.
-- `ContentProvider.tsx`, `PreviewProvider.tsx`: cancellable requests, mode/route
-  boundaries, same-mode refresh, independent session polling and expiry/exit.
-- `projectAdapters.ts`, `images.ts`: strict UI contracts and responsive image URLs.
-- `src/pages/{Work,ProjectPage}.tsx`: data containers mount resolved animated views.
-  `useContentLayout` refreshes geometry after fonts/images; plugin access is through
-  `src/motion/core.ts`. No duplicate GSAP registration or reduced-motion checks.
-- `server/preview/`, `api/preview/`: official Sanity-secret validation, HMAC sessions,
-  query allowlist, origin/redirect restrictions and private/no-store responses.
-- `studio/schemaTypes/`: project/Work/discipline schemas and shared content objects.
-- `scripts/sanity/`: snapshot transforms, matching, shared lock, skip/report and
-  reviewed revision-guarded updates. Current runner/CLI deliberately allow Phase 1
-  development imports only; extend explicitly for Phase 2 instead of bypassing guards.
+- `src/sanity/{queries,queryRegistry,articleValidation,articleAdapters}.ts`:
+  allowlisted queries, shared validation and rich UI contracts.
+- `src/components/content/ArticleBody.tsx`, `src/pages/{Writing,ArticlePage}.tsx`:
+  safe rich rendering, resolved/revision-keyed views, instant TOC/progress behavior.
+- `studio/schemaTypes/objects/articleBody.ts` and documents `article`, `writingPage`.
+- `scripts/sanity/{writingSource,writingTransform,import,store}.ts`:
+  offline source conversion and guarded development import.
+- CLI: `studio/scripts/import-phase1.ts` now explicitly supports `--phase 1` or
+  `--phase 2`. The old filename is retained for compatibility. See the inventory.
+- Live tests: from `studio/`, run `sanity exec scripts/verify-writing-pages.ts
+  --with-user-token` or `scripts/verify-project-pages.ts`. Both own and clean up
+  disposable development IDs. Inspect CDN and origin results separately.
 
-## Next implementation: Phase 2 Articles and Writing
+Use `npm run dev:preview` for `https://localhost:3000`, with built Studio at
+`/studio`. Check port 3000 first; do not start duplicate servers. The user handles
+certificate warnings. Run `npm run test`, `npm run server:check`,
+`npm run studio:check`, `npm run typegen`, `npm run build:deploy`, and
+`npm run lint -- --ignore-pattern design-export` for local verification.
 
-First assess the open CDN/browser/staging checks. Resolve what the available
-environment permits and keep the rest explicit while progressing independent work.
-Then follow the existing Phase 2 plan:
+## Next session
 
-1. Model article metadata and a Writing singleton, with restricted Portable Text
-   paragraphs/headings, marks, safe links/lists, figures and pull quotes. Keep
-   content maturity separate from Sanity publication state.
-2. Snapshot and convert the existing article plus three planned-writing entries.
-   Preserve heading IDs `overview`, `development`, `testing`, `ahead`, the drop-cap
-   flag, figure order, placeholder notice and six-minute reading-time override.
-   Store an ISO date and preserve the current displayed date.
-3. Extend the guarded importer in development. Match source keys, preserve editor
-   drafts/changes, use returned document IDs for references and stable array keys,
-   and require reviewed source hashes/revisions for updates. No replace-all import.
-4. Add generated queries, registry entries, adapters and `@portabletext/react`
-   rendering. Preserve rich marks/lists/safe hrefs rather than flattening strings.
-   Keep body text static, TOC/progress behavior and async motion cleanup intact.
-5. Verify source parity, incomplete drafts, unsafe-link rejection, async route
-   behavior and real draft/publish/exit isolation. Report local/DOM/HTTP checks
-   separately from browser/CDN/deployed checks. Update evidence and open a PR
-   against `development-Area`; do not assume permission to merge future PRs.
-
-Keep the Vite SPA, existing routes/tokens and separate Studio install. No framework
-migration, homepage animation redesign, new branding or speculative project templates.
-
-## Commands
-
-```sh
-git status
-git log --oneline -5
-gh pr view 13
-npm run studio:build
-npm run dev:preview
-npm run test
-npm run server:check
-npm run studio:check
-npm run typegen
-npm run build:deploy
-npm run lint -- --ignore-pattern design-export
-```
-
-The combined preview server is `https://localhost:3000`, with Studio at `/studio`.
-Check whether port 3000 is already in use before launching another process. The
-generated certificate is untrusted; the user handles browser security warnings.
-See `setup.md` before rerunning account-backed smoke scripts. The project workflow
-test can publish a disposable record to development and may return nonzero solely
-for the documented CDN timing check; its output distinguishes that pending result.
-
-## Copyable next-session prompt
-
-Continue the Sanity CMS migration in this repository. Read AGENTS.md,
-docs/sanity/session-handoff.md, the approved Sanity design/plan under
-docs/superpowers/, and docs/sanity/verification.md first. Verify PR #13's merge
-state, fetch development-Area and check branch/status/history before writing code.
-Start a fresh feature branch from the integration branch for the next phase.
-
-Phases 0 and 1 are implemented; Work/project pages use Sanity. Articles/Writing,
-About, Home and shell/settings remain static. The next implementation is Phase 2:
-Articles and Writing using Portable Text, guarded development import, typed queries
-and rich rendering that preserves the existing TOC IDs, placeholder state, drop cap
-and reading-time override. Follow the committed workflow and preserve Vite, routes,
-motion/tokens, frozen design-export and existing editor data.
-
-Last implementation checks passed 65 tests and all local builds/checks. Browser/
-staging checks are unavailable/unverified, Studio dependency advisories remain,
-and primed CDN invalidation stayed stale despite successful origin publication.
-Assess those items first, resolve what the environment permits, and keep limitations
-explicit while progressing useful independent implementation. Use project oir24qey,
-dataset development only; do not expose credentials, overwrite editor records, deploy
-production or merge a future PR without authorization. Finish with verification,
-updated docs and a PR targeting development-Area. Keep responses concise.
+First confirm the Phase 2 PR has been human-reviewed and merged into
+`development-Area`, fetch it, then create a fresh feature branch for Phase 3 About.
+Continue assessing the outstanding CDN/browser/staging checks without blocking
+independent implementation. Phase 3 models biography/facts/skill groups/principles
+and changes Home's positional fact lookups to keyed About data. Home's remaining
+content waits for Phase 4. Follow the approved plan; preserve existing editorial
+copy and async motion cleanup. Finish with evidence, updated documentation and a
+PR against `development-Area`. Do not deploy production or merge future PRs
+without authorization. Keep responses concise.

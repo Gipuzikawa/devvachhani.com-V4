@@ -98,6 +98,145 @@ export type SectionHeading = {
   title?: string;
 };
 
+export type PlannedWriting = {
+  _type: "plannedWriting";
+  kind?: string;
+  title?: string;
+};
+
+export type PullQuote = {
+  _type: "pullQuote";
+  text?: string;
+};
+
+export type ArticleParagraph = {
+  _type: "articleParagraph";
+  dropCap?: boolean;
+  content?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+};
+
+export type ArticleHeading = {
+  _type: "articleHeading";
+  level?: "h2" | "h3";
+  sectionId?: string;
+  content?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+};
+
+export type ArticleBody = Array<
+  | {
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }
+  | ({
+      _key: string;
+    } & ArticleHeading)
+  | ({
+      _key: string;
+    } & ArticleParagraph)
+  | ({
+      _key: string;
+    } & Figure)
+  | ({
+      _key: string;
+    } & PullQuote)
+>;
+
+export type WritingPage = {
+  _id: string;
+  _type: "writingPage";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  sourceKey?: string;
+  heading?: SectionHeading;
+  intro?: string;
+  plannedHeading?: string;
+  planned?: Array<
+    {
+      _key: string;
+    } & PlannedWriting
+  >;
+};
+
+export type ProjectReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "project";
+};
+
+export type Article = {
+  _id: string;
+  _type: "article";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  sourceKey?: string;
+  title?: string;
+  slug?: Slug;
+  dek?: string;
+  publishedAt?: string;
+  category?: string;
+  contentStatus?: "placeholder" | "live";
+  relatedProject?: ProjectReference;
+  readingTimeOverride?: number;
+  body?: ArticleBody;
+};
+
+export type Slug = {
+  _type: "slug";
+  current?: string;
+  source?: string;
+};
+
 export type WorkPage = {
   _id: string;
   _type: "workPage";
@@ -156,12 +295,6 @@ export type SanityImageHotspot = {
   y?: number;
   height?: number;
   width?: number;
-};
-
-export type Slug = {
-  _type: "slug";
-  current?: string;
-  source?: string;
 };
 
 export type Discipline = {
@@ -281,12 +414,20 @@ export type AllSanitySchemaTypes =
   | SanityImageAssetReference
   | Figure
   | SectionHeading
+  | PlannedWriting
+  | PullQuote
+  | ArticleParagraph
+  | ArticleHeading
+  | ArticleBody
+  | WritingPage
+  | ProjectReference
+  | Article
+  | Slug
   | WorkPage
   | DisciplineReference
   | Project
   | SanityImageCrop
   | SanityImageHotspot
-  | Slug
   | Discipline
   | SanityImagePaletteSwatch
   | SanityImagePalette
@@ -296,6 +437,145 @@ export type AllSanitySchemaTypes =
   | SanityAssetSourceData
   | SanityImageAsset
   | Geopoint;
+
+// Source: ../src/sanity/queries.ts
+// Variable: WRITING_INDEX_QUERY
+// Query: {  "settings": *[_type == "writingPage" && _id == "writingPage"]{_id, _rev, heading, intro, plannedHeading, planned},  "articles": *[_type == "article"] | order(publishedAt desc, _id asc){    _id, _rev, title, slug, dek, publishedAt, category, contentStatus, readingTimeOverride, body  }}
+export type WRITING_INDEX_QUERY_RESULT = {
+  settings: Array<{
+    _id: "writingPage";
+    _rev: string;
+    heading: SectionHeading | null;
+    intro: string | null;
+    plannedHeading: string | null;
+    planned: Array<
+      {
+        _key: string;
+      } & PlannedWriting
+    > | null;
+  }>;
+  articles: Array<{
+    _id: string;
+    _rev: string;
+    title: string | null;
+    slug: Slug | null;
+    dek: string | null;
+    publishedAt: string | null;
+    category: string | null;
+    contentStatus: "live" | "placeholder" | null;
+    readingTimeOverride: number | null;
+    body: ArticleBody | null;
+  }>;
+};
+
+// Source: ../src/sanity/queries.ts
+// Variable: ARTICLE_PAGE_QUERY
+// Query: *[_type == "article" && slug.current == $slug]{  _id, _rev, title, slug, dek, publishedAt, category, contentStatus, readingTimeOverride,  relatedProject->{_id, title, slug, detailEnabled},  body[]{..., _type == "figure" => {image{..., "assetId": asset->_id}}}}
+export type ARTICLE_PAGE_QUERY_RESULT = Array<{
+  _id: string;
+  _rev: string;
+  title: string | null;
+  slug: Slug | null;
+  dek: string | null;
+  publishedAt: string | null;
+  category: string | null;
+  contentStatus: "live" | "placeholder" | null;
+  readingTimeOverride: number | null;
+  relatedProject: {
+    _id: string;
+    title: string | null;
+    slug: Slug | null;
+    detailEnabled: boolean | null;
+  } | null;
+  body: Array<
+    | {
+        _key: string;
+        _type: "articleHeading";
+        level?: "h2" | "h3";
+        sectionId?: string;
+        content?: Array<{
+          children?: Array<{
+            marks?: Array<string>;
+            text?: string;
+            _type: "span";
+            _key: string;
+          }>;
+          style?: "normal";
+          listItem?: never;
+          markDefs?: Array<{
+            href?: string;
+            _type: "link";
+            _key: string;
+          }>;
+          level?: number;
+          _type: "block";
+          _key: string;
+        }>;
+      }
+    | {
+        _key: string;
+        _type: "articleParagraph";
+        dropCap?: boolean;
+        content?: Array<{
+          children?: Array<{
+            marks?: Array<string>;
+            text?: string;
+            _type: "span";
+            _key: string;
+          }>;
+          style?: "normal";
+          listItem?: never;
+          markDefs?: Array<{
+            href?: string;
+            _type: "link";
+            _key: string;
+          }>;
+          level?: number;
+          _type: "block";
+          _key: string;
+        }>;
+      }
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?: "normal";
+        listItem?: "bullet" | "number";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        _key: string;
+        _type: "figure";
+        mode?: "image" | "placeholder";
+        caption?: string;
+        aspect?: number;
+        image: {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+          assetId: string | null;
+        } | null;
+        alt?: string;
+      }
+    | {
+        _key: string;
+        _type: "pullQuote";
+        text?: string;
+      }
+  > | null;
+}>;
 
 // Source: ../src/sanity/queries.ts
 // Variable: DISCIPLINES_QUERY
@@ -420,6 +700,8 @@ export type PROJECT_PAGE_QUERY_RESULT = {
 // Query TypeMap
 declare global {
   interface SanityQueries {
+    '{\n  "settings": *[_type == "writingPage" && _id == "writingPage"]{_id, _rev, heading, intro, plannedHeading, planned},\n  "articles": *[_type == "article"] | order(publishedAt desc, _id asc){\n    _id, _rev, title, slug, dek, publishedAt, category, contentStatus, readingTimeOverride, body\n  }\n}': WRITING_INDEX_QUERY_RESULT;
+    '*[_type == "article" && slug.current == $slug]{\n  _id, _rev, title, slug, dek, publishedAt, category, contentStatus, readingTimeOverride,\n  relatedProject->{_id, title, slug, detailEnabled},\n  body[]{..., _type == "figure" => {image{..., "assetId": asset->_id}}}\n}': ARTICLE_PAGE_QUERY_RESULT;
     '*[_type == "discipline"] | order(sortOrder asc, _id asc) {\n  _id, _rev, sourceKey, label, sortOrder\n}': DISCIPLINES_QUERY_RESULT;
     '{\n  "settings": *[_type == "workPage" && _id == "workPage"]{_id, _rev, heading, intro, allLabel, rowsLabel, gridLabel},\n  "disciplines": *[_type == "discipline"] | order(sortOrder asc, _id asc){_id, _rev, label, sourceKey},\n  "projects": *[_type == "project"] | order(sortOrder asc, _id asc){\n    _id, _rev, title, summary, year, tags, slug, detailEnabled, contentStatus,\n    "disciplineIds": disciplines[]._ref\n  }\n}': WORK_ARCHIVE_QUERY_RESULT;
     '{\n  "order": *[_type == "project"] | order(sortOrder asc, _id asc){_id},\n  "projects": *[_type == "project" && slug.current == $slug && detailEnabled == true]{\n    _id, _rev, title, summary, year, slug, contentStatus, detailEnabled,\n    detail{...,\n      milestones[]{..., figure{..., image{..., "assetId": asset->_id}}},\n      finalFigure{..., image{..., "assetId": asset->_id}}\n    }\n  }\n}': PROJECT_PAGE_QUERY_RESULT;

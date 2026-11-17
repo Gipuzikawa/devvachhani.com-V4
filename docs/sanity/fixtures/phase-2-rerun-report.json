@@ -1,0 +1,29 @@
+{
+  "phase": 2,
+  "dataset": "development",
+  "mode": "create-missing",
+  "creates": 0,
+  "skips": 2,
+  "updates": 0,
+  "differences": [],
+  "rows": [
+    {
+      "sourceKey": "article-f35-development-update",
+      "action": "skip",
+      "id": "VgrazLdhiTTwkW5de6VGVn",
+      "revision": "VgrazLdhiTTwkW5de6VGSP",
+      "sourceHash": "d9247ef68b000b0985ef4968a9aa12d8ed3a6cb456f181e86d050f2490963d0c",
+      "differs": false,
+      "draft": false
+    },
+    {
+      "sourceKey": "writing-page",
+      "action": "skip",
+      "id": "writingPage",
+      "revision": "VgrazLdhiTTwkW5de6VGq7",
+      "sourceHash": "128d2db8ac5604ddf0a3997b96dcb5a05fcc0cf74afd098ddf51e46f312f249f",
+      "differs": false,
+      "draft": false
+    }
+  ]
+}

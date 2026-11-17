@@ -12,7 +12,7 @@ export function canonical(value: unknown): string {
 }
 export const fingerprint = (value: unknown) => createHash('sha256').update(canonical(value)).digest('hex');
 export const stableKey = (value: string) => `k${fingerprint(value).slice(0, 20)}`;
-function figure(value: FigureData) {
+export function figure(value: FigureData) {
   if (value.src) throw new Error('A source image needs an asset upload mapping before import.');
   return { _type: 'figure', mode: 'placeholder', caption: value.title, aspect: value.aspect ?? 1.5 };
 }
