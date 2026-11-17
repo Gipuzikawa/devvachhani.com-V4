@@ -2,9 +2,18 @@
 
 Current handoff: [Sanity session handoff](sanity/session-handoff.md). Phase 0/1
 implementation is covered by PRs #11–#13; acceptance limits are recorded separately
-in [verification](sanity/verification.md). Phase 2 is the next planned work.
+in [verification](sanity/verification.md). Phase 2 is now implemented; see the update below.
 
-## Project page integration — 2026-11-17
+## Current update: Articles and Writing — 2026-11-17
+
+Writing/article routes read Sanity through registered typed queries and revision-keyed
+views. Restricted Portable Text preserves rich marks/lists, safe links, stable TOC
+anchors, drop cap, placeholder figures/notice and the six-minute example override.
+The guarded Phase 2 importer targets development only. There are 100 passing tests;
+build and live verification results and limitations are in the verification record.
+About (Phase 3) is next, after this PR receives human review and merges.
+
+## Historical checkpoint: project page integration — 2026-11-17
 
 Task 1.2 connects Work and project detail pages to Sanity with typed queries,
 strict adapters, ID-based discipline filters and revision-keyed animated views.
@@ -53,11 +62,11 @@ It is not evidence that the new async CMS/browser matrix has passed.
 
 ## Not yet built (intentionally deferred, not forgotten)
 
-- **Article content is placeholder.** The reading page (`/writing/:slug`) is built and wired (see Shipped), but its one article is clearly-labelled lorem from `Placeholders/Example_Article.md` — the real essays still need to be written. Swapping in a real essay means replacing the `articleDetails` blocks in `content.ts`.
+- **Article content is placeholder.** The reading page (`/writing/:slug`) still labels its example honestly. Author real essays in Sanity Studio; keep existing heading IDs stable.
 - **Project detail pages exist only for the F-35** (deliberate — the user will derive a reusable template from it before the other two projects get pages). Its content is clearly-labelled lorem placeholder from `Placeholders/Example_Project.md`; the real build log still needs to be written. Cards for the other two projects still link to `/work`.
 - **Vercel deployment pending.** Combined frontend/Studio build and routing are configured; staging and custom-domain DNS remain open.
 - **No contact form** — the footer's `Contact` link is a plain `mailto:` link, matching the original design.
-- **Acceptance pending.** Current automated checks total 65 tests; browser/staging and observed primed CDN invalidation timing remain open.
+- **Acceptance pending.** Current automated checks total 100 tests; browser/staging and observed primed CDN invalidation timing remain open.
 - **No real favicon/brand mark** — currently the default Vite placeholder. The design system explicitly says "no logo supplied, don't invent one" — needs a real asset from the user, or an explicit decision to keep the plain wordmark-only brand with no favicon glyph.
 - **Homepage animation rework** — the current hero set-piece and home-page choreography need a dedicated redesign brief before implementation.
-- **Remaining Sanity migration** — Work/project reads have moved to Sanity. Articles/Writing, About, Home and settings/shell remain for Phases 2–5; production import/cutover is Phase 6.
+- **Remaining Sanity migration** — Work/project and Writing/article reads use Sanity. About, Home and settings/shell remain for Phases 3–5; production import/cutover is Phase 6.

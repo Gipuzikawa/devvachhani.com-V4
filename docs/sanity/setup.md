@@ -3,13 +3,21 @@
 For a new session, start with [the handoff](session-handoff.md), then verify the
 live branch and PR state. Historical acceptance evidence is in `verification.md`.
 
-Studio, typed transport and authenticated preview now serve the Work archive and
-project detail pages. Other page/shell domains still use static content until
+Studio, typed transport and authenticated preview now serve Work/project and
+Writing/article pages. Other page/shell domains still use static content until
 their own migration phases. There is no static fallback for Work or project reads.
 
 Task 1.1 is now seeded in development. Project and Work editing schemas are
 available, and task 1.2 has connected the page readers. See `content-inventory.md` for
 the explicit import commands, rerun/manifest rules and development-only scope.
+
+Phase 2 is also seeded in development: one article and the Writing singleton.
+Use Articles to author essays and Writing index to edit the introduction/planned
+entries. Insert a Heading object for h2/h3 with a stable section ID, and a
+Paragraph with drop cap object for the initial rich paragraph. Ordinary paragraphs,
+links, emphasis and lists stay in the Portable Text editor. Content maturity is
+independent of Publish. Reading time derives at 200 words/minute unless overridden.
+The example keeps its six-minute override and placeholder notice.
 
 ## Provisioned resources
 
@@ -91,6 +99,13 @@ The test returns a nonzero status if the primed CDN query does not refresh in it
 window, even when the remaining origin/preview/exit checks pass. Its default is
 65 polling attempts; `PORTFOLIO_SMOKE_CDN_ATTEMPTS` may set a bounded 1–180 attempt
 window for local diagnostics. Browser acceptance is a separate check.
+
+Repeat the Article/Writing workflow using `sanity exec
+scripts/verify-writing-pages.ts --with-user-token` from `studio/`. It uses only
+owned disposable development article IDs; it never edits seeded/editor records.
+It checks public exclusion, signed index/detail preview, publish-then-edit and
+exit, and separately measures the exact primed CDN query. Pending CDN propagation
+returns nonzero; inspect `verification.md` instead of calling it a full pass.
 
 ## Checks and deployment boundary
 
