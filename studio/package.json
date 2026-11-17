@@ -1,0 +1,24 @@
+{
+  "name": "portfolio-studio",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "check": "tsc --noEmit",
+    "typegen": "sanity schema extract --path schema.json --force && sanity typegen generate"
+  },
+  "dependencies": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "sanity": "6.21.0",
+    "styled-components": "^6.1.15"
+  },
+  "devDependencies": {
+    "@sanity/preview-url-secret": "4.1.5",
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "typescript": "~6.0.2"
+  }
+}

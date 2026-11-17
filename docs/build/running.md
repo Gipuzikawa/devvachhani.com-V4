@@ -1,5 +1,21 @@
 # Running
 
+## Phase 0 commands (2026-11-17)
+
+Install with `npm ci` and `npm --prefix studio ci`. Use `npm run studio:build`,
+then `npm run dev:preview` for the portfolio, API and Studio on
+`https://localhost:3000`. `npm run dev` remains the frontend-only development path;
+with CMS environment configured, preview verification requires the combined server.
+
+`npm run test` runs Vitest. `npm run server:check`, `npm run studio:check`, and
+`npm run typegen` check/regenerate the new boundaries. `npm run build:deploy`
+builds both apps and assembles `dist/studio`, with tests and credential scanning.
+Vercel routing/configuration is in `vercel.json`; deployment is not yet verified.
+Use the root and Studio environment examples, following
+[Sanity setup](../sanity/setup.md). Tokens are server-only; import tokens stay local.
+
+The frontend command reference follows.
+
 ## Dev
 
 ```bash
@@ -24,8 +40,8 @@ npx tsc -b --noEmit
 
 ## Test
 
-No automated test suite exists — verification is `tsc` type-checking plus manual browser checks
-(see `docs/context/status.md`).
+Run `npm run test` for the Vitest suite. Browser acceptance is recorded separately
+in `docs/sanity/verification.md`.
 
 ## Lint
 
@@ -37,14 +53,15 @@ Runs oxlint.
 
 ## Deploy
 
-TODO: no hosting target chosen yet. `npm run build` produces a static `dist/` that any static host
-can serve; the host and custom-domain DNS decision are still open (see `docs/context/status.md`).
+Vercel is selected. `npm run build:deploy` assembles both browser apps, with APIs
+routed through Vercel Functions. Staging verification and custom-domain DNS remain open.
 
 ## Environment variables
 
-None — the site has no backend, API keys, or runtime configuration.
+Use root and Studio `.env.example` files; see `docs/sanity/setup.md` for the
+public identifiers, exact origins and server-only credentials.
 
 ## Services
 
-None — no CMS, no backend, no external API dependency. Fonts are self-hosted (`public/fonts/`), not
-loaded from a CDN.
+Sanity provides the Phase 0 discipline preview. Existing portfolio pages still use
+static content. Fonts remain self-hosted in `public/fonts/`.

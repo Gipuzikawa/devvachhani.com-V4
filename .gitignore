@@ -11,6 +11,13 @@ node_modules
 dist
 dist-ssr
 *.local
+.env*
+!.env.example
+!**/.env.example
+.vercel
+studio/.sanity
+coverage
+.sanity-audit-*.json
 
 # Editor directories and files
 .vscode/*

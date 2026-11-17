@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Sanity Phase 0 — 2026-11-17
+
+- Add separately built Studio, discipline schema/TypeGen, token-free published
+  transport, signed draft-preview sessions, query allowlist, preview controls,
+  HTTPS development integration and Vercel route/build boundaries.
+- Add 36 focused tests and account-backed unpublished-draft HTTP verification.
+  Browser/iframe/staging acceptance remains outstanding; no content migration or
+  production deployment is included. See `docs/sanity/verification.md`.
+
 ### Added
 
 - Focus-zoom cycle on the F-35 production timeline (`useFocusZoom` hook): each milestone card zooms into focus — scale and ink scrub up as it approaches the 60% read line, landing at full scale at the same moment its spine node stamps cobalt — holds completely static through the reading band (body copy never moves while read), then recedes and dims once read, handing focus to the next card. Transform/opacity only; skipped under reduced motion (cards render at final state).
