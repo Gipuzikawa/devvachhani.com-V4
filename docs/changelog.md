@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Project page integration — 2026-11-17
+
+- Connect Work/project reads to Sanity with generated query types, bounded slug
+  parameters, loading/error/incomplete states and stable archive/body numbering.
+- Preserve filters/layout motion, mount resolved views by content revision,
+  refresh geometry after font/image load, and prevent session polling from
+  replaying animations. Add responsive hotspot/crop images and separate alt text.
+- Expand checks to 65 tests. Browser and staging acceptance remain open.
+
 ### Project import foundation — 2026-11-17
 
 - Add project/Work schemas and owned detail/figure objects, source snapshots,

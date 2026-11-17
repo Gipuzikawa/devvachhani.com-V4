@@ -1,5 +1,15 @@
 # Project Status
 
+## Project page integration — 2026-11-17
+
+Task 1.2 connects Work and project detail pages to Sanity with typed queries,
+strict adapters, ID-based discipline filters and revision-keyed animated views.
+Loading/failure/incomplete preview states are distinct from successful missing
+slugs. Figures preserve placeholder plates or use responsive hotspot/crop images
+with separate alt text. Session polling no longer replays page motion. Tests now
+total 65; browser/staging acceptance and observed CDN invalidation timing remain
+open. The fresh origin publish/draft/exit workflow passed. No production cutover is included.
+
 ## Project import foundation — 2026-11-17
 
 Phase 1.1 adds project/Work schemas, source snapshots and guarded import tooling.

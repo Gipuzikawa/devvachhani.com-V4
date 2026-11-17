@@ -1,10 +1,11 @@
 # Sanity development setup
 
-Phase 0 supplies Studio, typed transport and authenticated preview. Portfolio
-pages still deliberately read `src/data/content.ts`; migration starts in Phase 1.
+Studio, typed transport and authenticated preview now serve the Work archive and
+project detail pages. Other page/shell domains still use static content until
+their own migration phases. There is no static fallback for Work or project reads.
 
 Task 1.1 is now seeded in development. Project and Work editing schemas are
-available, but page readers have not switched yet. See `content-inventory.md` for
+available, and task 1.2 has connected the page readers. See `content-inventory.md` for
 the explicit import commands, rerun/manifest rules and development-only scope.
 
 ## Provisioned resources
@@ -59,7 +60,8 @@ Rebuild Studio after editing its configuration/schema when using the combined se
 Sign in, open Disciplines and the unpublished **Phase 0 — unpublished draft check**
 document, then use Presentation. Its location points to `/work`; expand the
 discipline check in the draft-preview banner. The unpublished label should be
-visible there, while the Work archive still uses its existing static data.
+visible there. Project and Work changes also appear in their actual pages through
+Presentation's document locations. Home featured cards remain static until Phase 4.
 Refresh reloads draft data. Exit clears the cookie and reloads published mode.
 Expiry requires re-entry from Studio. A failed session lookup never authorizes drafts.
 
@@ -75,6 +77,17 @@ official preview secret, and verifies secret/session/content/public/exit boundar
 It never publishes the test document or saves a write token. Test secret URLs and
 cookie values remain in memory. It trusts only the generated localhost certificate.
 HTTP success does not prove browser sign-in, iframe cookies or rendered motion.
+
+The project-domain workflow test is `sanity exec scripts/verify-project-pages.ts
+--with-user-token` from `studio/`. It uses a disposable development project to
+check draft exclusion, archive/detail preview, publish and subsequent draft
+isolation, then removes only its own test document and draft. Existing projects
+are read only. Its publication check distinguishes the uncached origin from CDN
+propagation; inspect the verification record for actual results and limitations.
+The test returns a nonzero status if the primed CDN query does not refresh in its
+window, even when the remaining origin/preview/exit checks pass. Its default is
+65 polling attempts; `PORTFOLIO_SMOKE_CDN_ATTEMPTS` may set a bounded 1–180 attempt
+window for local diagnostics. Browser acceptance is a separate check.
 
 ## Checks and deployment boundary
 

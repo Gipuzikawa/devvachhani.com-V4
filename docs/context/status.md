@@ -4,7 +4,8 @@ Current update (2026-11-17): Sanity Phase 0 is implemented and locally verified,
 including a real development draft-isolation smoke test and 36 automated tests.
 Browser/staging acceptance remains open. Vercel is selected, not deployed.
 Phase 1.1 schemas/import tooling and the development seed are complete; task 1.2
-page cutover remains pending. See [evidence](../sanity/verification.md).
+connects Work/project pages to Sanity. Home/About/Writing/shell migration remains
+deferred to later phases. Tests now total 65. See [evidence](../sanity/verification.md).
 
 See `docs/project_status.md` for the full, detailed shipped-features log — this file tracks the
 higher-level picture only.

@@ -1,4 +1,41 @@
-# Phase 0 verification
+# Sanity implementation verification
+
+## Phase 1.2 update — 2026-11-17
+
+PR #12 merged into `development-Area` at `ade1c86` on Dev's explicit request;
+`feature/sanity-cms` was updated to that merge and reused.
+
+- Work/archive and project detail now read Sanity. Home/About/Writing/article and
+  shell domains remain static deliberately. No automatic fallback for migrated pages.
+- 65 tests pass: adapter parity, stable numbering/ID filters, empty/error/incomplete
+  route states, responsive images/alt text, query bounds, same-mode refresh,
+  session polling/expiry/stale responses, plus all earlier import/security tests.
+  DOM tests stub motion hooks and do not demonstrate actual GSAP performance.
+- Frontend/server/Studio checks, combined deploy build, maintained-code lint,
+  TypeGen repeatability and configured-credential bundle scans passed.
+- Real development reads resolved the archive and F-35 through the new adapters.
+  Unpublished records were excluded from token-free public reads, and archive/detail
+  draft overrides resolved through the signed preview API.
+- The fresh published origin returned the disposable record after the Actions API
+  publication. A primed public CDN query remained stale through 65 polling attempts;
+  CDN invalidation timing is **unverified**, not a passing publication check. The
+  workflow test flags this with a nonzero exit status instead of silently passing.
+- The remaining live checks passed: a subsequent private draft changed preview
+  without changing the published origin; Exit cleared the cookie, and unauthenticated
+  detail reads returned 401. The shortened diagnostic run still flagged the already
+  observed CDN limitation and cleaned up its disposable record.
+- Disposable checks use newly owned development IDs only and clean up their own
+  published/draft pair. Seeded project/editor documents are never modified.
+- Browser host remains unavailable. Chrome/Safari sign-in/iframe cookies,
+  desktop/mobile/reduced-motion visuals and Vercel staging remain unverified.
+  No production dataset, website deployment or DNS change was performed.
+
+Sanity distinguishes the fresh API from the cached API CDN; this implementation
+retains token-free published/CDN reads as designed. The timing observation above
+does not establish a cache invalidation SLA. See the official
+[API CDN reference](https://www.sanity.io/docs/content-lake/api-cdn).
+
+The earlier task records below describe the state at those checkpoints.
 
 ## Phase 1.1 update — 2026-11-17
 
