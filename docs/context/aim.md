@@ -6,8 +6,9 @@ make that curiosity legible: catalogue the work like a scholarly index, then bri
 motion, so a technical reader (an admissions committee, a research lead) stops, pays attention, and
 trusts the person behind it.
 
-It exists as a static, no-backend site because the content — a handful of real projects and
-(eventually) essays — changes rarely enough that a CMS or server would be overhead without benefit.
+The frontend remains a Vite SPA. Sanity is being introduced in phases so projects
+and writing can be maintained through draft/preview/publish without source edits.
+Work/project pages are connected; later domains remain static until their migrations.
 The two Fable handover documents in `Fable_Handovers/` record the motion-design brief in more depth
 and are useful project history, but are not treated as an authoritative source of current state —
 `docs/context/status.md` and the repository itself are.

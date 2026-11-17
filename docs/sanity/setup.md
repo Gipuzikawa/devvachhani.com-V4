@@ -1,5 +1,8 @@
 # Sanity development setup
 
+For a new session, start with [the handoff](session-handoff.md), then verify the
+live branch and PR state. Historical acceptance evidence is in `verification.md`.
+
 Studio, typed transport and authenticated preview now serve the Work archive and
 project detail pages. Other page/shell domains still use static content until
 their own migration phases. There is no static fallback for Work or project reads.

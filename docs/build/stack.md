@@ -5,13 +5,16 @@
 Build tool and dev server. Inherited from the original Claude Design → React migration; no reason
 to swap it — fast HMR, minimal config, static `dist/` output that any static host can serve.
 
-### React 19.2 + TypeScript ~6.0
+### React 19 + TypeScript ~6.0
 
 Component model and type safety for a content-heavy, motion-heavy site. `StrictMode` is on in
 `src/main.tsx`, which is why GSAP lifecycle goes through `@gsap/react`'s `useGSAP()` rather than a
 raw `useEffect` — it handles the double-invoke cleanup StrictMode triggers.
 
-### React Router (`react-router-dom` 7.9)
+The frontend and Studio keep separate installs. At this handoff the frontend uses
+React 19.2.7 and Studio uses 19.3.1 to satisfy its editor's peer requirements.
+
+### React Router (`react-router-dom` 7.x)
 
 Real, crawlable routes (`/`, `/about`, `/work`, `/work/:slug`, `/writing`, `/writing/:slug`)
 instead of the original design export's hash-router SPA — chosen so project/article pages are
@@ -38,13 +41,26 @@ enforce the token/prop adherence spec documented at
 `design-export/designSystem/_adherence.oxlintrc.json` (that file is intent documentation, not an
 active gate).
 
-### Content: `src/data/content.ts`
+### Content: Sanity with phased static domains
 
-Static TypeScript data, hand-written. No CMS or backend — chosen because the site's content
-(projects, articles, About copy) changes rarely enough that a build step or hosted CMS would be
-overhead without benefit.
+Sanity Studio 6.21.0 builds separately at `/studio`; the Vite/React SPA is retained.
+Work/project pages consume generated GROQ contracts and strict adapters. Published
+browser reads use the Sanity CDN without tokens. Drafts use signed sessions and
+allowlisted Vercel Functions. Credentials stay outside browser code.
+
+Articles/Writing, About, Home and shell settings remain in static TypeScript until
+their planned phases. `@sanity/image-url` handles responsive crop/hotspot images.
+Studio's required styled-components dependency is confined to Studio; the portfolio
+keeps its existing plain CSS conventions. See `docs/sanity/setup.md`.
+
+### Vitest + Testing Library
+
+65 tests passed at the handoff, covering import, security, adapters and DOM/async
+behavior. DOM motion mocks do not replace browser acceptance. Studio's upstream
+dependency advisories and the primed CDN timing observation remain documented.
 
 ### Hosting
 
-TODO: no deployment target chosen yet (Vercel/Netlify/Cloudflare Pages or similar) — see
-`docs/context/status.md`.
+Vercel is selected. The combined build assembles the frontend and `dist/studio`,
+with API/Studio routing before SPA fallback. Staging, domain/DNS and production
+dataset cutover remain pending; no deployment has been performed in this work.

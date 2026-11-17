@@ -1,11 +1,12 @@
 # Status
 
-Current update (2026-11-17): Sanity Phase 0 is implemented and locally verified,
-including a real development draft-isolation smoke test and 36 automated tests.
-Browser/staging acceptance remains open. Vercel is selected, not deployed.
-Phase 1.1 schemas/import tooling and the development seed are complete; task 1.2
-connects Work/project pages to Sanity. Home/About/Writing/shell migration remains
-deferred to later phases. Tests now total 65. See [evidence](../sanity/verification.md).
+Current update (2026-11-17): Sanity Phases 0 and 1 are implemented; 65 automated
+tests, builds, lint and credential scans passed at the last implementation check.
+Work/project pages use Sanity; Home/About/Writing/article/shell domains remain
+static. Real origin draft/publish/exit checks pass. Primed CDN invalidation timing,
+browser/iframe/reduced-motion checks and Vercel staging remain open. No production
+deployment or dataset cutover has occurred. See [evidence](../sanity/verification.md)
+and [session handoff](../sanity/session-handoff.md).
 
 See `docs/project_status.md` for the full, detailed shipped-features log — this file tracks the
 higher-level picture only.
@@ -20,7 +21,9 @@ higher-level picture only.
   `useMagnetic`), all routed through `src/motion/core.ts`.
 - Two signature pages: the F-35 project timeline (`/work/rc-f35-vtol`) and the article reading page
   (`/writing/f35-development-update`).
-- Real content for 3 projects, About copy/facts/skills/principles, in `src/data/content.ts`.
+- Three projects, three disciplines and Work settings imported into Sanity development;
+  a rerun created zero records and reported zero differences. F-35 detail is enabled;
+  the other two projects remain archive-only. About/Writing/shell copy remains static.
 
 ## Not yet built
 
@@ -29,15 +32,18 @@ higher-level picture only.
 - **Real article content** — the one existing article and the F-35 build log are labelled
   placeholder text; real essays haven't been written yet.
 - **Deployment** — Vercel is selected; staging and custom-domain DNS remain open.
-- **Browser/staging acceptance** — automated Phase 0 tests pass; the browser matrix remains open.
+- **Acceptance checks** — browser/staging checks and observed primed CDN invalidation
+  timing remain open; DOM tests do not verify actual GSAP/browser behavior.
 - **A real favicon/brand mark** — currently the default Vite placeholder.
 - **Homepage animation rework** — revisit the hero and home-page choreography as a focused design pass.
-- **Sanity content migration** — Phase 0 foundation is implemented; portfolio domain migration begins in Phase 1.
+- **Remaining Sanity domains** — Phase 2 Articles/Writing, Phase 3 About, Phase 4
+  Home, Phase 5 settings/shell; Phase 6 production import and cutover.
 
 ## Open items
 
 - TODO: staging Vercel verification plus domain/DNS.
 - TODO: whether/when to author real long-form essays, and in what content shape (structured TS
   blocks currently; a Markdown-authoring pipeline was explored but is not present on this branch).
-- TODO: finish Phase 0 browser/staging acceptance and human review before starting Phase 1.
+- TODO: investigate the stale primed CDN query and finish the outstanding browser/
+  staging matrix. Phase 2 Articles/Writing is the next implementation phase.
 - TODO: define the intended outcome for the homepage animation rework before designing it.

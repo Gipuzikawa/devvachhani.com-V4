@@ -1,6 +1,6 @@
 # Running
 
-## Phase 0 commands (2026-11-17)
+## Sanity development commands (2026-11-17)
 
 Install with `npm ci` and `npm --prefix studio ci`. Use `npm run studio:build`,
 then `npm run dev:preview` for the portfolio, API and Studio on
@@ -63,5 +63,5 @@ public identifiers, exact origins and server-only credentials.
 
 ## Services
 
-Sanity provides the Phase 0 discipline preview. Existing portfolio pages still use
-static content. Fonts remain self-hosted in `public/fonts/`.
+Sanity serves Work/project pages and authenticated preview. Other domains remain
+static until their migrations. Fonts remain self-hosted in `public/fonts/`.
