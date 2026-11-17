@@ -1,0 +1,14 @@
+{
+  "framework": null,
+  "installCommand": "npm ci && npm --prefix studio ci",
+  "buildCommand": "npm run build:deploy",
+  "outputDirectory": "dist",
+  "routes": [
+    { "src": "/.*", "headers": { "Content-Security-Policy": "frame-ancestors 'self'", "Referrer-Policy": "no-referrer" }, "continue": true },
+    { "src": "/api/preview/(enable|session|content|disable)", "dest": "/api/preview/$1" },
+    { "src": "/api/.*", "status": 404 },
+    { "handle": "filesystem" },
+    { "src": "/studio(?:/.*)?", "dest": "/studio/index.html" },
+    { "src": "/.*", "dest": "/index.html" }
+  ]
+}

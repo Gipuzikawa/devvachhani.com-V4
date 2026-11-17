@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "ES2023", "lib": ["ES2023", "DOM"], "module": "ESNext",
+    "moduleResolution": "bundler", "types": ["node"], "strict": true,
+    "skipLibCheck": true, "noEmit": true, "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true, "noUnusedLocals": true, "noUnusedParameters": true
+  },
+  "include": ["api", "server", "src/sanity/queries.ts", "src/sanity/queryRegistry.ts", "src/sanity/sanity.types.ts"]
+}
