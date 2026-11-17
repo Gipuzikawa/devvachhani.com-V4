@@ -1,7 +1,6 @@
 import { useRef, useState, type CSSProperties } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { Tag } from '../components/ui/Tag';
@@ -14,8 +13,12 @@ import { usePinned } from '../hooks/usePinned';
 import { useSplitReveal } from '../hooks/useSplitReveal';
 import { useDecode } from '../hooks/useDecode';
 import { useInkResolve } from '../hooks/useInkResolve';
-import { DUR, EASE, DECODE_CHARS, prefersReducedMotion } from '../motion/core';
-import { projectDetails } from '../data/content';
+import { DUR, EASE, DECODE_CHARS, prefersReducedMotion, ScrollTrigger } from '../motion/core';
+import { useContent } from '../sanity/ContentProvider';
+import { usePreview } from '../sanity/PreviewProvider';
+import { adaptProject, type ProjectView } from '../sanity/projectAdapters';
+import { ContentPageState } from '../components/ui/ContentPageState';
+import { useContentLayout } from '../hooks/useContentLayout';
 import type { ProjectMilestone } from '../types';
 
 const M = 'var(--page-margin)';
@@ -130,12 +133,24 @@ function MilestoneEntry({ m }: { m: ProjectMilestone }) {
 }
 
 export function ProjectPage() {
-  const { slug } = useParams();
-  const project = projectDetails.find((p) => p.slug === slug);
+  const { slug = '' } = useParams();
+  const result = useContent('projectPage', { slug });
+  const { status, refresh } = usePreview();
+  if (result.status !== 'ready') return <ContentPageState result={result} retry={refresh} />;
+  let project: ProjectView | null;
+  try { project = adaptProject(result.data); }
+  catch { return <ContentPageState result={status === 'active' ? { status: 'incomplete', data: null } :
+    { status: 'error', message: 'This project is incomplete. Please try again later.' }} retry={refresh} />; }
+  if (!project) return <Navigate to="/work" replace />;
+  return <ProjectContent key={project.contentKey} project={project} />;
+}
+
+function ProjectContent({ project }: { project: ProjectView }) {
 
   const headRef = useStagger<HTMLDivElement>({ each: 0.08 });
   const titleRef = useSplitReveal<HTMLHeadingElement>({ by: 'chars', each: 0.03, immediate: true, delay: 0.2 });
   const mainRef = useReveal<HTMLElement>();
+  useContentLayout(mainRef);
   const decodeRef = useDecode<HTMLDivElement>();
   const toolsRef = useStagger<HTMLDivElement>();
   const reflRef = useStagger<HTMLDivElement>();
@@ -205,8 +220,6 @@ export function ProjectPage() {
     { scope: tlRef },
   );
 
-  if (!project) return <Navigate to="/work" replace />;
-
   return (
     <main ref={mainRef} style={{ padding: `clamp(48px,7vh,90px) ${M} 0`, maxWidth: 'var(--measure-wide)', margin: '0 auto' }}>
       <div ref={decodeRef}>
@@ -256,7 +269,7 @@ export function ProjectPage() {
 
       {/* ── 01 Overview ── */}
       <section style={{ marginTop: 'clamp(56px,9vh,100px)' }}>
-        <SectionHeading index="01" eyebrow="Overview" title="Tools & skills" />
+        <SectionHeading index="01" {...project.headings.overview} />
         <div ref={toolsRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 40, marginTop: 32 }}>
           {[...project.toolGroups, { label: 'Skills demonstrated', items: project.skills }].map((g) => (
             <div key={g.label}>
@@ -277,7 +290,7 @@ export function ProjectPage() {
 
       {/* ── 02 Production timeline ── */}
       <section style={{ marginTop: 'clamp(64px,10vh,110px)' }}>
-        <SectionHeading index="02" eyebrow="Production timeline" title="How it came together" />
+        <SectionHeading index="02" {...project.headings.timeline} />
         <div ref={tlRef} style={{ position: 'relative', paddingLeft: PAD, marginTop: 48 }}>
           {/* spine + cobalt progress line */}
           <span aria-hidden="true" style={{ position: 'absolute', left: SPINE_X, top: 4, bottom: 4, width: 1, background: 'var(--border-hairline)' }} />
@@ -294,7 +307,7 @@ export function ProjectPage() {
 
       {/* ── 03 Final product ── */}
       <section style={{ marginTop: 'clamp(24px,4vh,48px)' }}>
-        <SectionHeading index="03" eyebrow="Final product" title="The finished machine" />
+        <SectionHeading index="03" {...project.headings.results} />
         <div ref={pinRef} style={{ padding: '48px 0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 48, alignItems: 'start' }}>
             <div data-final-figure>
@@ -318,7 +331,7 @@ export function ProjectPage() {
 
       {/* ── 04 Reflections ── */}
       <section style={{ marginTop: 'clamp(48px,8vh,90px)', paddingBottom: 'clamp(48px,8vh,90px)' }}>
-        <SectionHeading index="04" eyebrow="Reflections" title="What the build taught" />
+        <SectionHeading index="04" {...project.headings.reflections} />
         <div ref={reflRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 40, marginTop: 32 }}>
           {[
             { label: 'What went well', body: project.reflections.wentWell },

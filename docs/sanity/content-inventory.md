@@ -71,5 +71,6 @@ earlier successful updates remain recorded in Sanity and a fresh dry-run is need
 There is no replace/import-all operation and no production write mode.
 
 Schema extraction/TypeGen and development schema deployment precede live writes.
-This task does not switch frontend content sources or routes; no redirects or
-production cutover are needed. Task 1.2 owns rendering parity and domain previews.
+Task 1.1 did not switch frontend readers. Task 1.2 now connects Work/project pages
+to these records, with rendering parity and domain previews; route shapes are
+unchanged. No production cutover is included. See the current verification record.

@@ -2,10 +2,13 @@
 
 ## Sanity Phase 0 boundary
 
-The existing page-data flow below still uses static content. `studio/` now builds
+Work/project detail pages now use typed Sanity queries and strict adapters; the
+other page/shell domains below remain static until their migration phases. `studio/` builds
 separately at `/studio`; `src/sanity/` provides generated query contracts, token-free
-published reads, preview session state and cancellable content loading. Only the
-authenticated discipline check currently consumes this boundary. Thin Vercel
+published reads, preview session state and cancellable content loading. Animated
+views mount only after resolution and remount on relevant content revisions.
+Session polling leaves content mounted; explicit refresh keeps same-mode content
+until new data arrives, while exit/expiry immediately masks and clears drafts. Thin Vercel
 handlers in `api/preview/` call `server/` for official secret validation, signed
 sessions and allowlisted draft queries. Server credentials never enter frontend
 modules. See [setup](sanity/setup.md) and [verification](sanity/verification.md).

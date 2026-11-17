@@ -14,8 +14,12 @@ export function PreviewProvider({ children }: { children: ReactNode }) {
   const [dataset, setDataset] = useState<string>();
   const [expiresAt, setExpiresAt] = useState(0);
   const [revision, setRevision] = useState(0);
+  const [sessionCheck, setSessionCheck] = useState(0);
   const epoch = useRef(0);
-  const refresh = useCallback(() => { setStatus('checking'); setRevision(value => value + 1); }, []);
+  const refresh = useCallback(() => {
+    setStatus(value => value === 'active' || value === 'public' || value === 'exiting' ? value : 'checking');
+    setRevision(value => value + 1); setSessionCheck(value => value + 1);
+  }, []);
   const expire = useCallback(() => { epoch.current++; setStatus('expired'); setRevision(value => value + 1); }, []);
 
   useEffect(() => {
@@ -42,9 +46,9 @@ export function PreviewProvider({ children }: { children: ReactNode }) {
         setDataset(result.dataset); setExpiresAt(result.expiresAt ?? 0); setStatus(result.status);
       }).catch(() => { if (!controller.signal.aborted && current === epoch.current) setStatus('error'); });
     return () => controller.abort();
-    // Status changes must not restart a session lookup; revision is the explicit refresh trigger.
+    // Session polling is separate from content refresh, so it cannot replay page motion.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configured, revision]);
+  }, [configured, sessionCheck]);
 
   useEffect(() => {
     if (status === 'public' || !configured) return;
@@ -56,8 +60,8 @@ export function PreviewProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (status !== 'active') return;
-    const onFocus = () => refresh();
-    const interval = window.setInterval(refresh, 60_000);
+    const onFocus = () => setSessionCheck(value => value + 1);
+    const interval = window.setInterval(onFocus, 60_000);
     const expiry = window.setTimeout(expire, Math.max(0, expiresAt - Date.now()));
     window.addEventListener('focus', onFocus);
     return () => { window.clearTimeout(expiry); window.clearInterval(interval); window.removeEventListener('focus', onFocus); };

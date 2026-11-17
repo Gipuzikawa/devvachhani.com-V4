@@ -12,7 +12,7 @@ interface FigureProps extends FigureData {
  * honest "image forthcoming" state. A real image drops into the same frame
  * with zero layout change.
  */
-export function Figure({ index, title, aspect = 3 / 2, src, style }: FigureProps) {
+export function Figure({ index, title, aspect = 3 / 2, src, alt, srcSet, sizes, width, height, style }: FigureProps) {
   const label = `Fig. ${String(index).padStart(2, '0')}`;
 
   return (
@@ -34,7 +34,8 @@ export function Figure({ index, title, aspect = 3 / 2, src, style }: FigureProps
         }}
       >
         {src ? (
-          <img src={src} alt={title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          <img src={src} srcSet={srcSet} sizes={sizes} alt={alt ?? title} width={width} height={height}
+            loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         ) : (
           <span
             style={{

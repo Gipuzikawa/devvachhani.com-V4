@@ -16,7 +16,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, CustomEase, SplitText, ScrambleTextP
 
 /* Re-exported so consumers never import plugins from 'gsap/…' directly —
    importing through the core is what guarantees registration happened. */
-export { SplitText, Flip };
+export { SplitText, Flip, ScrollTrigger };
 
 /** Durations in seconds — mirrors --dur-* in effects.css. */
 export const DUR = {

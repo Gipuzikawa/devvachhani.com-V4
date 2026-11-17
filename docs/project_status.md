@@ -1,6 +1,20 @@
 # Project Status
 
-## Project import foundation — 2026-11-17
+Current handoff: [Sanity session handoff](sanity/session-handoff.md). Phase 0/1
+implementation is covered by PRs #11–#13; acceptance limits are recorded separately
+in [verification](sanity/verification.md). Phase 2 is the next planned work.
+
+## Project page integration — 2026-11-17
+
+Task 1.2 connects Work and project detail pages to Sanity with typed queries,
+strict adapters, ID-based discipline filters and revision-keyed animated views.
+Loading/failure/incomplete preview states are distinct from successful missing
+slugs. Figures preserve placeholder plates or use responsive hotspot/crop images
+with separate alt text. Session polling no longer replays page motion. Tests now
+total 65; browser/staging acceptance and observed CDN invalidation timing remain
+open. The fresh origin publish/draft/exit workflow passed. No production cutover is included.
+
+## Historical checkpoint: project import foundation — 2026-11-17
 
 Phase 1.1 adds project/Work schemas, source snapshots and guarded import tooling.
 Seven development records are imported; a live rerun created zero records and
@@ -8,7 +22,7 @@ reported zero differences. Tests now total 46. Task 1.2 will connect page reads;
 the portfolio still uses static content. See [inventory](sanity/content-inventory.md)
 and [evidence](sanity/verification.md).
 
-## Sanity Phase 0 — 2026-11-17
+## Historical checkpoint: Sanity Phase 0 — 2026-11-17
 
 Studio, generated types, published transport, authenticated preview API and preview
 controls are implemented. Project `oir24qey` has public development/production
@@ -19,6 +33,9 @@ See [verification](sanity/verification.md). Vercel is selected but no deployment
 has been performed.
 
 ## Shipped
+
+The original UI browser/performance evidence below predates the Sanity migration.
+It is not evidence that the new async CMS/browser matrix has passed.
 
 - Vite + React + TypeScript scaffold, building and type-checking cleanly (`npm run build`, `npx tsc -b --noEmit`).
 - Six real routes: Home, About, Work, Work/:slug (project detail), Writing, Writing/:slug (article reading page) — persistent nav + footer shell.
@@ -40,7 +57,7 @@ has been performed.
 - **Project detail pages exist only for the F-35** (deliberate — the user will derive a reusable template from it before the other two projects get pages). Its content is clearly-labelled lorem placeholder from `Placeholders/Example_Project.md`; the real build log still needs to be written. Cards for the other two projects still link to `/work`.
 - **Vercel deployment pending.** Combined frontend/Studio build and routing are configured; staging and custom-domain DNS remain open.
 - **No contact form** — the footer's `Contact` link is a plain `mailto:` link, matching the original design.
-- **Browser/staging acceptance pending.** Automated Phase 0 tests exist; see the verification record for the unverified browser matrix.
+- **Acceptance pending.** Current automated checks total 65 tests; browser/staging and observed primed CDN invalidation timing remain open.
 - **No real favicon/brand mark** — currently the default Vite placeholder. The design system explicitly says "no logo supplied, don't invent one" — needs a real asset from the user, or an explicit decision to keep the plain wordmark-only brand with no favicon glyph.
 - **Homepage animation rework** — the current hero set-piece and home-page choreography need a dedicated redesign brief before implementation.
-- **Sanity content migration** — Phase 0 foundation is implemented; replacing `src/data/content.ts` begins in Phase 1 after Phase 0 acceptance and human-reviewed integration.
+- **Remaining Sanity migration** — Work/project reads have moved to Sanity. Articles/Writing, About, Home and settings/shell remain for Phases 2–5; production import/cutover is Phase 6.

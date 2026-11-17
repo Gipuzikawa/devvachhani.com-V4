@@ -3,8 +3,8 @@
 Phase 0 addition: `studio/` owns Studio and its separate install; `server/` and
 `api/` own authenticated preview, and `src/sanity/` owns shared query contracts
 and browser content state. Keep credentials out of `src/` and Studio environment
-variables. Existing portfolio content remains in `src/data/content.ts` until its
-domain migration. See [setup](../sanity/setup.md) before CMS work.
+variables. Work/project pages use Sanity; other domains remain static until their
+migrations. See [setup](../sanity/setup.md) before CMS work.
 
 Read before editing source.
 
@@ -20,7 +20,7 @@ Read before editing source.
   `matchMedia('prefers-reduced-motion')`.
 - `src/styles/tokens/` — the live design-token CSS, copied from `design-export/designSystem/tokens/`.
   Edit here, never in `design-export/`.
-- `src/data/content.ts` — existing portfolio content until its domain migration; Phase 0 Sanity content is confined to the discipline preview check.
+- `src/data/content.ts` — remaining static domains; Work/project detail data comes from `src/sanity/`.
 - `design-export/` — frozen, read-only reference to the original Claude Design handoff. Never
   edited, never imported at runtime.
 
