@@ -2,7 +2,7 @@ import type { SanityClient } from '@sanity/client';
 import type { Existing, Store } from './import';
 export function sanityStore(client: SanityClient): Store {
   return {
-    read: keys => client.fetch<Existing[]>(`*[sourceKey in $keys || _id in ["workPage", "drafts.workPage"]]`, { keys }, { perspective: 'raw' }),
+    read: keys => client.fetch<Existing[]>(`*[sourceKey in $keys || _id in ["workPage", "drafts.workPage", "writingPage", "drafts.writingPage"]]`, { keys }, { perspective: 'raw' }),
     create: (body, singletonId) => client.create({ ...body, ...(singletonId ? { _id: singletonId } : {}) }) as Promise<Existing>,
     async update(id, revision, body) {
       const { _type, ...fields } = body;

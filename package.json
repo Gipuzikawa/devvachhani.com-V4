@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@portabletext/react": "^8.0.1",
+    "@portabletext/types": "^4.0.2",
     "@sanity/client": "8.14.1",
     "@sanity/image-url": "2.2.0",
     "@sanity/preview-url-secret": "4.1.5",

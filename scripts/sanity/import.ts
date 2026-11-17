@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { fingerprint, canonical, type Body, type Seed } from './transform';
 import { validateEnabledDetail } from '../../studio/schemaTypes/projectValidation';
+import { validateArticle, validateWritingPage } from '../../src/sanity/articleValidation';
 
 export type Existing = Body & { _id: string; _rev: string };
 export type UpdateApproval = { sourceKey: string; id: string; expectedRevision: string; sourceHash: string };
@@ -11,12 +12,14 @@ export interface Store {
   lock: (owner: string) => Promise<() => Promise<void>>;
 }
 export type ImportRow = { sourceKey: string; action: 'create' | 'skip' | 'update'; id?: string; revision?: string; sourceHash: string; differs: boolean; draft: boolean };
-export type ImportReport = { phase: 1; dataset: 'development'; mode: 'dry-run' | 'create-missing' | 'update-reviewed'; rows: ImportRow[] };
+export type ImportReport = { phase: 1 | 2; dataset: 'development'; mode: 'dry-run' | 'create-missing' | 'update-reviewed'; rows: ImportRow[] };
 
 export async function runImport(store: Store, seeds: Seed[], options: {
-  phase: 1; dataset: 'development'; mode: ImportReport['mode']; approvals?: UpdateApproval[];
+  phase: 1 | 2; dataset: 'development'; mode: ImportReport['mode']; approvals?: UpdateApproval[];
 }): Promise<ImportReport> {
-  if (options.phase !== 1 || options.dataset !== 'development' || !['dry-run', 'create-missing', 'update-reviewed'].includes(options.mode)) throw new Error('Only explicit Phase 1 development imports are supported.');
+  if (![1, 2].includes(options.phase) || options.dataset !== 'development' || !['dry-run', 'create-missing', 'update-reviewed'].includes(options.mode)) throw new Error('Only explicit Phase 1/2 development imports are supported.');
+  const allowedTypes = options.phase === 1 ? ['discipline', 'project', 'workPage'] : ['article', 'writingPage'];
+  if (seeds.some(seed => !allowedTypes.includes(seed.type))) throw new Error('Source types do not match the selected phase.');
   if (new Set(seeds.map(seed => seed.sourceKey)).size !== seeds.length) throw new Error('Duplicate source keys in import input.');
   const approvals = options.approvals ?? [];
   if (options.mode === 'update-reviewed' && !approvals.length) throw new Error('Reviewed update manifest is required.');
@@ -31,7 +34,9 @@ export async function runImport(store: Store, seeds: Seed[], options: {
     for (const seed of seeds) {
       const body = seed.build(provisional);
       if (body._type !== seed.type || body.sourceKey !== seed.sourceKey ||
-        (body._type === 'project' && validateEnabledDetail(body) !== true)) throw new Error('Invalid transformed source document.');
+        (body._type === 'project' && validateEnabledDetail(body) !== true) ||
+        (body._type === 'article' && validateArticle(body) !== true) ||
+        (body._type === 'writingPage' && validateWritingPage(body) !== true)) throw new Error('Invalid transformed source document.');
     }
     const ids = new Map<string, string>();
     const matches = new Map<string, Existing[]>();
@@ -83,6 +88,6 @@ export async function runImport(store: Store, seeds: Seed[], options: {
       rows.push({ sourceKey: seed.sourceKey, action, id: item?._id ?? (options.mode !== 'dry-run' ? ids.get(seed.sourceKey) : undefined),
         revision: item?._rev, sourceHash, differs, draft });
     }
-    return { phase: 1, dataset: 'development', mode: options.mode, rows };
+    return { phase: options.phase, dataset: 'development', mode: options.mode, rows };
   } finally { await release?.(); }
 }

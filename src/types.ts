@@ -1,3 +1,12 @@
+import type { PortableTextBlock, PortableTextSpan } from '@portabletext/types';
+
+export type ArticleLink = { _type: 'link'; _key: string; href: string };
+export type ArticleTextBlock = PortableTextBlock<ArticleLink, PortableTextSpan, 'normal' | 'h2' | 'h3', 'bullet' | 'number'> & {
+  _type: 'block'; _key: string; sectionId?: string; dropCap?: boolean;
+};
+export type RichArticleBlock = ArticleTextBlock | { _type: 'figure'; _key: string; figure: FigureData } |
+  { _type: 'pullQuote'; _key: string; text: string };
+
 export interface ProjectData {
   index: string;
   title: string;
@@ -62,9 +71,8 @@ export interface ArticleData {
   slug?: string;
 }
 
-/* Article bodies are typed blocks, not Markdown — the reactive reading
-   features (TOC, progress, figure triggers) bind to a first-class content
-   contract, and no parser dependency is needed. */
+/* Legacy static source contract retained for versioned migration fixtures.
+   Sanity reading pages use RichArticleBlock above. */
 export type ArticleBlock =
   | { type: 'paragraph'; text: string; dropCap?: boolean }
   | { type: 'heading'; id: string; text: string }

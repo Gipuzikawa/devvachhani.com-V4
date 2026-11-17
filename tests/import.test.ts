@@ -3,6 +3,7 @@ import { phase1Seeds, fingerprint, type Body } from '../scripts/sanity/transform
 import { runImport, type Existing, type Store, type UpdateApproval } from '../scripts/sanity/import';
 import { phase1Source } from '../scripts/sanity/source';
 import { validateEnabledDetail } from '../studio/schemaTypes/projectValidation';
+import { phase2Seeds } from '../scripts/sanity/writingTransform';
 
 class MemoryStore implements Store {
   documents: Existing[] = [];
@@ -27,6 +28,39 @@ class MemoryStore implements Store {
 const write = { phase: 1 as const, dataset: 'development' as const, mode: 'create-missing' as const };
 const dry = { ...write, mode: 'dry-run' as const };
 const seeds = phase1Seeds();
+
+describe('Phase 2 guarded imports', () => {
+  const seeds = phase2Seeds();
+  const options = { ...write, phase: 2 as const };
+  it('dry-runs without a lock, imports two records and reruns without changes', async () => {
+    const store = new MemoryStore();
+    const report = await runImport(store, seeds, { ...options, mode: 'dry-run' });
+    expect(report.phase).toBe(2); expect(report.rows).toHaveLength(2); expect(store.creates).toBe(0); expect(store.locks).toBe(0);
+    await runImport(store, seeds, options);
+    expect(store.documents.map(item => item._type)).toEqual(['article', 'writingPage']);
+    expect(store.documents[0]._id).toBe('generated-1'); expect(store.documents[1]._id).toBe('writingPage');
+    const rerun = await runImport(store, seeds, options);
+    expect(rerun.rows.every(row => row.action === 'skip' && !row.differs)).toBe(true); expect(store.creates).toBe(2);
+  });
+  it('preserves article editor changes and drafts; refuses stale review approvals', async () => {
+    const store = new MemoryStore(); await runImport(store, seeds, options);
+    const article = store.documents[0]; article.title = 'Editor title'; article._rev = 'editor-revision';
+    store.documents.push({ ...article, _id: `drafts.${article._id}`, title: 'Private title' });
+    const report = await runImport(store, seeds, options);
+    expect(report.rows[0]).toMatchObject({ action: 'skip', differs: true, draft: true }); expect(store.updates).toBe(0);
+    const row = report.rows[0];
+    await expect(runImport(store, seeds, { ...options, mode: 'update-reviewed', approvals: [{
+      sourceKey: row.sourceKey, id: row.id!, expectedRevision: row.revision!, sourceHash: row.sourceHash,
+    }] })).rejects.toThrow('manifest');
+    expect(article.title).toBe('Editor title');
+  });
+  it('rejects singleton conflicts, duplicate source keys and incorrect phase types before writes', async () => {
+    const store = new MemoryStore(); await store.create({ _type: 'writingPage', sourceKey: 'editor' }, 'writingPage');
+    await expect(runImport(store, seeds, options)).rejects.toThrow('conflicting'); expect(store.creates).toBe(1);
+    await expect(runImport(new MemoryStore(), [seeds[0], seeds[0]], options)).rejects.toThrow('Duplicate');
+    await expect(runImport(new MemoryStore(), seeds, write)).rejects.toThrow('phase');
+  });
+});
 
 describe('source parity and project publication', () => {
   it('joins F-35 metadata/detail, preserves placeholders, figure ratios and archive-only cards', () => {

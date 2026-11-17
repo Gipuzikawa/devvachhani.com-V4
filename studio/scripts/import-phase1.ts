@@ -2,6 +2,7 @@ import { getCliClient } from 'sanity/cli';
 import { readFileSync } from 'node:fs';
 import { runImport, type UpdateApproval } from '../../scripts/sanity/import';
 import { phase1Seeds } from '../../scripts/sanity/transform';
+import { phase2Seeds } from '../../scripts/sanity/writingTransform';
 import { sanityStore } from '../../scripts/sanity/store';
 import { summarize } from '../../scripts/sanity/report';
 
@@ -21,8 +22,8 @@ async function main() {
   const dataset = option('--dataset');
   const phase = option('--phase');
   const mode = option('--mode');
-  if (projectId !== 'oir24qey' || dataset !== 'development' || phase !== '1' ||
-    !['dry-run', 'create-missing', 'update-reviewed'].includes(mode)) throw new Error('Only Phase 1 of the owned development project is enabled.');
+  if (projectId !== 'oir24qey' || dataset !== 'development' || !['1', '2'].includes(phase) ||
+    !['dry-run', 'create-missing', 'update-reviewed'].includes(mode)) throw new Error('Only Phase 1/2 of the owned development project is enabled.');
   const client = getCliClient({ apiVersion: '2026-10-01' }).withConfig({ projectId, dataset, useCdn: false, perspective: 'raw', timeout: 10_000 });
   let approvals: UpdateApproval[] = [];
   if (args.includes('--manifest')) {
@@ -34,9 +35,9 @@ async function main() {
     }
     approvals = value;
   }
-  const report = await runImport(sanityStore(client), phase1Seeds(), {
-    phase: 1, dataset, mode: mode as 'dry-run' | 'create-missing' | 'update-reviewed', approvals,
+  const report = await runImport(sanityStore(client), phase === '1' ? phase1Seeds() : phase2Seeds(), {
+    phase: phase === '1' ? 1 : 2, dataset, mode: mode as 'dry-run' | 'create-missing' | 'update-reviewed', approvals,
   });
   console.log(JSON.stringify(summarize(report), null, 2));
 }
-main().catch(() => { console.error('Phase 1 import stopped. Check target, manifest, source-key conflicts and migration lock; no credentials logged.'); process.exitCode = 1; });
+main().catch(() => { console.error('Import stopped. Check target, phase, manifest, source-key conflicts and migration lock; no credentials logged.'); process.exitCode = 1; });
