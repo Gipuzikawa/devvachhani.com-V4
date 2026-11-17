@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Project import foundation — 2026-11-17
+
+- Add project/Work schemas and owned detail/figure objects, source snapshots,
+  source-key import matching, dry runs, shared import locks and revision-guarded
+  reviewed updates. Preserve editor changes and drafts on ordinary reruns.
+- Seed seven development records; a live rerun creates none and reports no
+  differences. Add ten import tests (46 total). Frontend cutover remains task 1.2.
+
 ### Sanity Phase 0 — 2026-11-17
 
 - Add separately built Studio, discipline schema/TypeGen, token-free published

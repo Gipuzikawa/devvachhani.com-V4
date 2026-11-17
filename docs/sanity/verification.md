@@ -1,5 +1,28 @@
 # Phase 0 verification
 
+## Phase 1.1 update — 2026-11-17
+
+PR #11 merged into `development-Area` at `abd06cd` on Dev's explicit instruction.
+The same `feature/sanity-cms` branch was fast-forwarded to that merge and reused
+at Dev's request.
+
+- Project/Work schemas and safe import tooling implemented; source/page snapshots
+  and field mappings recorded in `content-inventory.md`.
+- 46 tests passed, including ten import/parity/conflict tests. Server/Studio type
+  checks passed; TypeGen regenerated 23 schema types and the existing query.
+- Development schema deployment succeeded for workspace `portfolio`, dataset
+  `development`. No production schema or dataset mutation was performed.
+- Live dry-run found 7 missing source records and no conflicts. Create-missing
+  imported 3 projects, 3 disciplines and the Work singleton. Actual generated IDs,
+  revisions and hashes are in `fixtures/phase-1-rerun-report.json`.
+- Live create-missing rerun created 0 records, skipped 7 and reported 0 differences.
+  Lock acquire/release is the only mutation on that rerun. The Phase 0 unpublished
+  smoke discipline remains separate and was not modified.
+- Task 1.2 (frontend cutover/image rendering) is not implemented. Portfolio pages
+  still read static content. Domain draft/publish/browser checks remain pending.
+
+The original Phase 0 verification record follows.
+
 Status: local implementation verified; browser/deployment acceptance remains open.
 
 ## Evidence from 2026-11-17

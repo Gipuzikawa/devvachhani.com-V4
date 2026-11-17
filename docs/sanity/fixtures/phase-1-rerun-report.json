@@ -1,0 +1,74 @@
+{
+  "phase": 1,
+  "dataset": "development",
+  "mode": "create-missing",
+  "creates": 0,
+  "skips": 7,
+  "updates": 0,
+  "differences": [],
+  "rows": [
+    {
+      "sourceKey": "discipline-embedded",
+      "action": "skip",
+      "id": "cDoGhF7H64oauqSAOCfsqx",
+      "revision": "cDoGhF7H64oauqSAOCfsot",
+      "sourceHash": "560481d60afd995c55eea62c8df4aa96454ba81a109d910cc4799310234377b8",
+      "differs": false,
+      "draft": false
+    },
+    {
+      "sourceKey": "discipline-software",
+      "action": "skip",
+      "id": "cDoGhF7H64oauqSAOCfszD",
+      "revision": "cDoGhF7H64oauqSAOCfsx9",
+      "sourceHash": "c2a02ff401989f1e219d19ee5fd4f95fbcc900ac53a57be2107a29ad6b723932",
+      "differs": false,
+      "draft": false
+    },
+    {
+      "sourceKey": "discipline-ai",
+      "action": "skip",
+      "id": "hMDUXbZeY75Osy9iWrk3Ks",
+      "revision": "hMDUXbZeY75Osy9iWrk3FX",
+      "sourceHash": "9f5f73f29b9510d4563d510b59aff1ca0607f9f75610d58a58d0da43d939d91b",
+      "differs": false,
+      "draft": false
+    },
+    {
+      "sourceKey": "project-rc-f35-vtol",
+      "action": "skip",
+      "id": "er1oYKUILRv9WJvL8kyZyi",
+      "revision": "er1oYKUILRv9WJvL8kyZus",
+      "sourceHash": "6dc675b6dff52586b5757adace88f266300ac0bccca2639c2483fbdc832e3412",
+      "differs": false,
+      "draft": false
+    },
+    {
+      "sourceKey": "project-guest-registration",
+      "action": "skip",
+      "id": "cDoGhF7H64oauqSAOCft7T",
+      "revision": "cDoGhF7H64oauqSAOCft5P",
+      "sourceHash": "369c42b719753409990166b1766cd7f406720a47acd945b776d9361fceb3eadd",
+      "differs": false,
+      "draft": false
+    },
+    {
+      "sourceKey": "project-dcs-companion",
+      "action": "skip",
+      "id": "hMDUXbZeY75Osy9iWrk41a",
+      "revision": "hMDUXbZeY75Osy9iWrk3wF",
+      "sourceHash": "1acd7fc9698d7ba961a779d007a4511ad1d0c7581839fa6fbfb1a3dfeb968709",
+      "differs": false,
+      "draft": false
+    },
+    {
+      "sourceKey": "work-page",
+      "action": "skip",
+      "id": "workPage",
+      "revision": "hMDUXbZeY75Osy9iWrk4cx",
+      "sourceHash": "f23a0680e8abae3fde26362d27d9b26ce1ca369b37ae240e7c87516032a50ca8",
+      "differs": false,
+      "draft": false
+    }
+  ]
+}
