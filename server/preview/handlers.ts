@@ -12,7 +12,7 @@ type Action = 'enable' | 'session' | 'content' | 'disable';
 type Dependencies = {
   config: () => PreviewConfig;
   validate: (config: PreviewConfig, url: string) => Promise<{ isValid: boolean; redirectTo?: string; studioPreviewPerspective?: string | null }>;
-  fetch: (config: PreviewConfig, query: string, params: Record<string, never>) => Promise<unknown>;
+  fetch: (config: PreviewConfig, query: string, params: Record<string, string>) => Promise<unknown>;
 };
 const defaults: Dependencies = {
   config: getConfig,

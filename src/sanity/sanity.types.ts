@@ -308,10 +308,121 @@ export type DISCIPLINES_QUERY_RESULT = Array<{
   sortOrder: number | null;
 }>;
 
+// Source: ../src/sanity/queries.ts
+// Variable: WORK_ARCHIVE_QUERY
+// Query: {  "settings": *[_type == "workPage" && _id == "workPage"]{_id, _rev, heading, intro, allLabel, rowsLabel, gridLabel},  "disciplines": *[_type == "discipline"] | order(sortOrder asc, _id asc){_id, _rev, label, sourceKey},  "projects": *[_type == "project"] | order(sortOrder asc, _id asc){    _id, _rev, title, summary, year, tags, slug, detailEnabled, contentStatus,    "disciplineIds": disciplines[]._ref  }}
+export type WORK_ARCHIVE_QUERY_RESULT = {
+  settings: Array<{
+    _id: "workPage";
+    _rev: string;
+    heading: SectionHeading | null;
+    intro: string | null;
+    allLabel: string | null;
+    rowsLabel: string | null;
+    gridLabel: string | null;
+  }>;
+  disciplines: Array<{
+    _id: string;
+    _rev: string;
+    label: string | null;
+    sourceKey: string | null;
+  }>;
+  projects: Array<{
+    _id: string;
+    _rev: string;
+    title: string | null;
+    summary: string | null;
+    year: string | null;
+    tags: Array<string> | null;
+    slug: Slug | null;
+    detailEnabled: boolean | null;
+    contentStatus: "live" | "placeholder" | null;
+    disciplineIds: Array<string> | null;
+  }>;
+};
+
+// Source: ../src/sanity/queries.ts
+// Variable: PROJECT_PAGE_QUERY
+// Query: {  "order": *[_type == "project"] | order(sortOrder asc, _id asc){_id},  "projects": *[_type == "project" && slug.current == $slug && detailEnabled == true]{    _id, _rev, title, summary, year, slug, contentStatus, detailEnabled,    detail{...,      milestones[]{..., figure{..., image{..., "assetId": asset->_id}}},      finalFigure{..., image{..., "assetId": asset->_id}}    }  }}
+export type PROJECT_PAGE_QUERY_RESULT = {
+  order: Array<{
+    _id: string;
+  }>;
+  projects: Array<{
+    _id: string;
+    _rev: string;
+    title: string | null;
+    summary: string | null;
+    year: string | null;
+    slug: Slug | null;
+    contentStatus: "live" | "placeholder" | null;
+    detailEnabled: boolean | null;
+    detail: {
+      _type: "projectDetail";
+      intro?: string;
+      toolGroups?: Array<
+        {
+          _key: string;
+        } & ToolGroup
+      >;
+      skills?: Array<string>;
+      milestones: Array<{
+        _key: string;
+        _type: "projectMilestone";
+        date?: string;
+        title?: string;
+        body?: string;
+        figure: {
+          _type: "figure";
+          mode?: "image" | "placeholder";
+          caption?: string;
+          aspect?: number;
+          image: {
+            asset?: SanityImageAssetReference;
+            media?: unknown;
+            hotspot?: SanityImageHotspot;
+            crop?: SanityImageCrop;
+            _type: "image";
+            assetId: string | null;
+          } | null;
+          alt?: string;
+        } | null;
+      }> | null;
+      finalFigure: {
+        _type: "figure";
+        mode?: "image" | "placeholder";
+        caption?: string;
+        aspect?: number;
+        image: {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+          assetId: string | null;
+        } | null;
+        alt?: string;
+      } | null;
+      specifications?: Array<
+        {
+          _key: string;
+        } & Specification
+      >;
+      reflections?: Reflections;
+      overviewHeading?: SectionHeading;
+      timelineHeading?: SectionHeading;
+      resultsHeading?: SectionHeading;
+      reflectionsHeading?: SectionHeading;
+    } | null;
+  }>;
+};
+
 // Query TypeMap
 declare global {
   interface SanityQueries {
     '*[_type == "discipline"] | order(sortOrder asc, _id asc) {\n  _id, _rev, sourceKey, label, sortOrder\n}': DISCIPLINES_QUERY_RESULT;
+    '{\n  "settings": *[_type == "workPage" && _id == "workPage"]{_id, _rev, heading, intro, allLabel, rowsLabel, gridLabel},\n  "disciplines": *[_type == "discipline"] | order(sortOrder asc, _id asc){_id, _rev, label, sourceKey},\n  "projects": *[_type == "project"] | order(sortOrder asc, _id asc){\n    _id, _rev, title, summary, year, tags, slug, detailEnabled, contentStatus,\n    "disciplineIds": disciplines[]._ref\n  }\n}': WORK_ARCHIVE_QUERY_RESULT;
+    '{\n  "order": *[_type == "project"] | order(sortOrder asc, _id asc){_id},\n  "projects": *[_type == "project" && slug.current == $slug && detailEnabled == true]{\n    _id, _rev, title, summary, year, slug, contentStatus, detailEnabled,\n    detail{...,\n      milestones[]{..., figure{..., image{..., "assetId": asset->_id}}},\n      finalFigure{..., image{..., "assetId": asset->_id}}\n    }\n  }\n}': PROJECT_PAGE_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

@@ -17,6 +17,11 @@ export interface FigureData {
   aspect?: number;
   /** Real image, when one exists. Absent = blank archival placeholder frame. */
   src?: string;
+  alt?: string;
+  srcSet?: string;
+  sizes?: string;
+  width?: number;
+  height?: number;
 }
 
 export interface ProjectMilestone {

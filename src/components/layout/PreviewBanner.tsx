@@ -20,9 +20,10 @@ export function PreviewBanner() {
     padding: 'var(--space-4, 1rem)', background: 'var(--accent-wash)', color: 'var(--text-strong)',
     borderBottom: '1px solid var(--border-accent)' }}>
     <strong>{status === 'active' ? `Draft preview · ${dataset}` : status === 'expired' ?
-      'Preview expired — re-enter from Studio.' : status === 'error' ? 'Preview could not be verified.' : 'Checking preview…'}</strong>
-    {' '}<button type="button" onClick={refresh}>Refresh</button>{' '}
-    <button type="button" onClick={() => { void exit(); }}>Exit preview</button>
+      'Preview expired — re-enter from Studio.' : status === 'error' ? 'Preview could not be verified.' :
+      status === 'exiting' ? 'Exiting preview…' : 'Checking preview…'}</strong>
+    {' '}<button type="button" disabled={status === 'exiting'} onClick={refresh}>Refresh</button>{' '}
+    <button type="button" disabled={status === 'exiting'} onClick={() => { void exit(); }}>Exit preview</button>
     {status === 'active' && <DisciplineCheck />}
   </aside>;
 }

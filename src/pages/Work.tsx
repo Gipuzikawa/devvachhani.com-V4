@@ -7,8 +7,11 @@ import { useStagger } from '../hooks/useStagger';
 import { useReveal } from '../hooks/useReveal';
 import { useDecode } from '../hooks/useDecode';
 import { DUR, EASE, Flip, prefersReducedMotion } from '../motion/core';
-import { projects, disciplines, disciplineTags } from '../data/content';
-import type { ProjectData } from '../types';
+import { useContent } from '../sanity/ContentProvider';
+import { usePreview } from '../sanity/PreviewProvider';
+import { adaptArchive, type ArchiveView, type ArchiveProject } from '../sanity/projectAdapters';
+import { ContentPageState } from '../components/ui/ContentPageState';
+import { useContentLayout } from '../hooks/useContentLayout';
 
 const M = 'var(--page-margin)';
 
@@ -29,17 +32,30 @@ function chipStyle(active: boolean): CSSProperties {
 }
 
 export function Work() {
-  const [filter, setFilter] = useState('All');
+  const result = useContent('workArchive');
+  const { status, refresh } = usePreview();
+  if (result.status !== 'ready') return <ContentPageState result={result} retry={refresh} />;
+  let data: ArchiveView;
+  try { data = adaptArchive(result.data); }
+  catch { return <ContentPageState result={status === 'active' ? { status: 'incomplete', data: null } :
+    { status: 'error', message: 'The project archive is incomplete. Please try again later.' }} retry={refresh} />; }
+  return <WorkContent key={data.key} data={data} />;
+}
+
+function WorkContent({ data }: { data: ArchiveView }) {
+  const { projects } = data;
+  const [filter, setFilter] = useState<string | null>(null);
   const [layout, setLayout] = useState<'row' | 'grid'>('row');
 
   const pageRef = useReveal<HTMLElement>();
+  useContentLayout(pageRef);
   const decodeScope = useDecode<HTMLDivElement>();
   // Entrance only — filter/layout changes are handled by FLIP below, not by
   // re-running the stagger.
   const gridRef = useStagger<HTMLDivElement>({ y: 14, duration: DUR.slow, each: 0.06 });
   const flipState = useRef<ReturnType<typeof Flip.getState> | null>(null);
 
-  const matches = (p: ProjectData) => filter === 'All' || (p.tags?.some((t) => (disciplineTags[filter] ?? []).includes(t)) ?? false);
+  const matches = (p: ArchiveProject) => filter === null || p.disciplineIds.includes(filter);
 
   /* Every card stays mounted; filtering toggles display. That's what lets
      FLIP see both worlds — where each card was, where it is now — and glide
@@ -70,28 +86,29 @@ export function Work() {
 
   return (
     <main ref={pageRef} style={{ padding: `clamp(56px,9vh,110px) ${M} 0`, maxWidth: 'var(--measure-wide)', margin: '0 auto' }}>
-      <SectionHeading index={`${String(projects.length).padStart(2, '0')} entries`} eyebrow="The archive" title="Projects & experiments" />
+      <SectionHeading index={`${String(projects.length).padStart(2, '0')} entries`} {...data.heading} />
       <p
         data-reveal
         style={{ maxWidth: '56ch', marginTop: 22, fontFamily: 'var(--font-serif)', fontSize: 'var(--t-md)', color: 'var(--text-secondary)', lineHeight: 'var(--lh-normal)' }}
       >
-        Instruments, software, and small machines — built end to end. Filter by discipline, or switch between the index and the grid.
+        {data.intro}
       </p>
 
       <div data-reveal style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, alignItems: 'center', margin: '34px 0 8px' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {disciplines.map((d) => (
-            <button key={d} type="button" onClick={() => rearrange(() => setFilter(d))} style={chipStyle(filter === d)}>
-              {d}
+          {[{ id: null, label: data.allLabel }, ...data.disciplines].map((d) => (
+            <button key={d.id ? `discipline:${d.id}` : 'all'} type="button" aria-pressed={filter === d.id}
+              onClick={() => rearrange(() => setFilter(d.id))} style={chipStyle(filter === d.id)}>
+              {d.label}
             </button>
           ))}
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button type="button" onClick={() => rearrange(() => setLayout('row'))} style={chipStyle(layout === 'row')}>
-            Rows
+            {data.rowsLabel}
           </button>
           <button type="button" onClick={() => rearrange(() => setLayout('grid'))} style={chipStyle(layout === 'grid')}>
-            Grid
+            {data.gridLabel}
           </button>
         </div>
       </div>
@@ -108,12 +125,13 @@ export function Work() {
           }}
         >
           {projects.map((p) => (
-            <div key={p.index} style={{ display: matches(p) ? undefined : 'none' }}>
+            <div key={p.id} style={{ display: matches(p) ? undefined : 'none' }}>
               <ProjectCard {...p} layout={layout === 'grid' ? 'tile' : 'row'} href={p.slug ? `/work/${p.slug}` : '/work'} />
             </div>
           ))}
         </div>
       </div>
+      {!projects.length && <p role="status">No projects have been published yet.</p>}
     </main>
   );
 }

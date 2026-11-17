@@ -69,4 +69,16 @@ describe('content lifecycle', () => {
     await waitFor(() => expect(state.expire).toHaveBeenCalledOnce());
     expect(transport).toHaveBeenCalledOnce();
   });
+  it('keeps resolved content mounted during same-mode refresh and masks it on expiry', async () => {
+    const refreshed = deferred<QueryResults['disciplines']>();
+    const transport = vi.fn().mockResolvedValueOnce(document('Stable draft')).mockReturnValueOnce(refreshed.promise);
+    const tree = () => <MemoryRouter><ContentProvider transport={transport}><Consumer /></ContentProvider></MemoryRouter>;
+    const view = render(tree());
+    await waitFor(() => expect(screen.getByText('Stable draft')).toBeTruthy());
+    state.revision++; view.rerender(tree());
+    expect(screen.getByText('Stable draft')).toBeTruthy(); expect(screen.queryByText('loading')).toBeNull();
+    await act(async () => refreshed.resolve(document('Stable draft')));
+    state.status = 'expired'; view.rerender(tree());
+    expect(screen.queryByText('Stable draft')).toBeNull(); expect(screen.getByText('error')).toBeTruthy();
+  });
 });
