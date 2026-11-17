@@ -1,5 +1,15 @@
 # Architecture
 
+## Sanity Phase 0 boundary
+
+The existing page-data flow below still uses static content. `studio/` now builds
+separately at `/studio`; `src/sanity/` provides generated query contracts, token-free
+published reads, preview session state and cancellable content loading. Only the
+authenticated discipline check currently consumes this boundary. Thin Vercel
+handlers in `api/preview/` call `server/` for official secret validation, signed
+sessions and allowlisted draft queries. Server credentials never enter frontend
+modules. See [setup](sanity/setup.md) and [verification](sanity/verification.md).
+
 ## Layers
 
 ```
@@ -11,7 +21,7 @@ Hooks (src/hooks/) + motion core (src/motion/core.ts) — GSAP + ScrollTrigger
   ↓ styled with
 Design tokens (src/styles/) — CSS custom properties
   ↓ fed by
-Data (src/data/content.ts) — static TypeScript, no backend/CMS
+Data (src/data/content.ts) — static TypeScript for existing portfolio pages
 ```
 
 ## Routing

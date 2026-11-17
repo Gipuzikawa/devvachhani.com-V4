@@ -1,5 +1,10 @@
 # Status
 
+Current update (2026-11-17): Sanity Phase 0 is implemented and locally verified,
+including a real development draft-isolation smoke test and 36 automated tests.
+Browser/staging acceptance remains open. Vercel is selected, not deployed.
+Content migration has not begun. See [evidence](../sanity/verification.md).
+
 See `docs/project_status.md` for the full, detailed shipped-features log — this file tracks the
 higher-level picture only.
 
@@ -21,16 +26,16 @@ higher-level picture only.
   app) — deliberately deferred until a reusable template is derived from the F-35 page.
 - **Real article content** — the one existing article and the F-35 build log are labelled
   placeholder text; real essays haven't been written yet.
-- **Deployment** — no host or custom-domain DNS chosen.
-- **Automated tests** — nothing beyond `tsc` type-checking.
+- **Deployment** — Vercel is selected; staging and custom-domain DNS remain open.
+- **Browser/staging acceptance** — automated Phase 0 tests pass; the browser matrix remains open.
 - **A real favicon/brand mark** — currently the default Vite placeholder.
 - **Homepage animation rework** — revisit the hero and home-page choreography as a focused design pass.
-- **Sanity CMS** — replace hand-authored TypeScript content with a Sanity-backed editorial workflow; planning is underway.
+- **Sanity content migration** — Phase 0 foundation is implemented; portfolio domain migration begins in Phase 1.
 
 ## Open items
 
-- TODO: hosting decision (Vercel/Netlify/Cloudflare Pages or similar) plus domain/DNS.
+- TODO: staging Vercel verification plus domain/DNS.
 - TODO: whether/when to author real long-form essays, and in what content shape (structured TS
   blocks currently; a Markdown-authoring pipeline was explored but is not present on this branch).
-- TODO: approve the Sanity content model and integration design before implementation.
+- TODO: finish Phase 0 browser/staging acceptance and human review before starting Phase 1.
 - TODO: define the intended outcome for the homepage animation rework before designing it.

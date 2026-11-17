@@ -1,6 +1,8 @@
 # Sanity CMS implementation plan
 
-Date: 2026-10-07. Status: prepared for implementation; no tasks executed.
+Date: 2026-10-07. Updated 2026-11-17: Phase 0 implemented locally; browser and
+staging acceptance remain open. See `../../sanity/verification.md`. Phases 1–6
+have not started.
 Design: [Sanity CMS](../specs/2026-10-07-sanity-cms-design.md).
 
 Dev owns the new Sanity project and is its only initial editor. Keep the Vite SPA

@@ -2,6 +2,9 @@
 
 Implements Phase 0 of `2026-10-07-sanity-cms.md`; the approved design remains unchanged.
 
+Updated 2026-11-17: local implementation and real development HTTP smoke test pass.
+Browser and staging acceptance remain open; see `../../sanity/verification.md`.
+
 ## Scope and order
 
 1. Establish separate root/Studio lockfiles, credential-free environment examples,

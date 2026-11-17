@@ -1,5 +1,15 @@
 # Project Status
 
+## Sanity Phase 0 — 2026-11-17
+
+Studio, generated types, published transport, authenticated preview API and preview
+controls are implemented. Project `oir24qey` has public development/production
+datasets. The real development HTTP smoke test passes; 36 automated tests pass.
+Portfolio pages still use static content pending Phase 1. Browser authentication,
+iframe-cookie and staging checks remain open; Phase 0 is not fully accepted.
+See [verification](sanity/verification.md). Vercel is selected but no deployment
+has been performed.
+
 ## Shipped
 
 - Vite + React + TypeScript scaffold, building and type-checking cleanly (`npm run build`, `npx tsc -b --noEmit`).
@@ -20,9 +30,9 @@
 
 - **Article content is placeholder.** The reading page (`/writing/:slug`) is built and wired (see Shipped), but its one article is clearly-labelled lorem from `Placeholders/Example_Article.md` — the real essays still need to be written. Swapping in a real essay means replacing the `articleDetails` blocks in `content.ts`.
 - **Project detail pages exist only for the F-35** (deliberate — the user will derive a reusable template from it before the other two projects get pages). Its content is clearly-labelled lorem placeholder from `Placeholders/Example_Project.md`; the real build log still needs to be written. Cards for the other two projects still link to `/work`.
-- **No deployment/hosting target chosen.** `npm run build` produces a static `dist/` — needs a host (Vercel/Netlify/Cloudflare Pages/etc.) and a decision on custom-domain DNS.
+- **Vercel deployment pending.** Combined frontend/Studio build and routing are configured; staging and custom-domain DNS remain open.
 - **No contact form** — the footer's `Contact` link is a plain `mailto:` link, matching the original design.
-- **No tests.** Nothing automated beyond `tsc` type-checking.
+- **Browser/staging acceptance pending.** Automated Phase 0 tests exist; see the verification record for the unverified browser matrix.
 - **No real favicon/brand mark** — currently the default Vite placeholder. The design system explicitly says "no logo supplied, don't invent one" — needs a real asset from the user, or an explicit decision to keep the plain wordmark-only brand with no favicon glyph.
 - **Homepage animation rework** — the current hero set-piece and home-page choreography need a dedicated redesign brief before implementation.
-- **Sanity CMS** — replace `src/data/content.ts` as the runtime content source with a Sanity-backed editorial workflow. This is in planning, not implemented.
+- **Sanity content migration** — Phase 0 foundation is implemented; replacing `src/data/content.ts` begins in Phase 1 after Phase 0 acceptance and human-reviewed integration.
