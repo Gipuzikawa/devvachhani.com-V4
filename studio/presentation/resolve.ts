@@ -1,6 +1,7 @@
 import { defineLocations, type PresentationPluginOptions } from 'sanity/presentation';
 export const resolve: PresentationPluginOptions['resolve'] = {
   locations: {
+    aboutPage: defineLocations({ locations: [{ title: 'About', href: '/about' }, { title: 'Home facts', href: '/' }] }),
     writingPage: defineLocations({ locations: [{ title: 'Writing index', href: '/writing' }] }),
     article: defineLocations({ select: { title: 'title', slug: 'slug.current' },
       resolve: doc => ({ locations: [{ title: 'Writing index', href: '/writing' },

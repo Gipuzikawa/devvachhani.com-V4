@@ -1,5 +1,41 @@
 # Sanity implementation verification
 
+## Phase 3 — 2026-11-24
+
+- GitHub confirmed PR #14 merged into `development-Area` at `d388558`. About
+  and Home’s selected facts now share one registered query and the same singleton.
+- The schema deployed to `oir24qey/development`. A no-write dry run found one
+  missing record. Create-missing created `aboutPage`; its rerun skipped one,
+  created/updated zero and found zero differences or drafts. See the
+  [revision and source hash](fixtures/phase-3-rerun-report.json).
+- **Live About HTTP** passed. Token-free CDN returned the published revision.
+  The signed API returned the temporary draft lead and selected fact under
+  private/no-store. Origin and CDN retained the published revision. Exit cleared
+  the cookie, a cookieless read returned 401, and revision-guarded cleanup succeeded.
+- **Live CDN publication** passed for both existing domain checks. The exact
+  primed article query returned the published value after 37 attempts / 38 seconds.
+  The project query also refreshed within the configured 180-attempt window.
+  Both scripts passed the origin, subsequent private edit and exit checks and
+  removed their owned documents. These measurements describe this run only.
+  Initial attempts stopped at preview entry or local API availability. The
+  successful checks used the restarted local HTTPS server and the existing Viewer token.
+- **Local verification** passed 105 tests across 12 files, frontend/server/Studio
+  type checks and maintained-code lint. The combined deployment build assembled
+  both outputs and its bundle scan found neither configured server credential.
+  TypeGen regenerated six queries and 34
+  schema types byte-for-byte. The new DOM tests cover reordered Home facts,
+  preview exit, incomplete drafts and About revision remounts with motion
+  stubbed. Three Vitest workers timed out during a concurrent run. The full
+  suite passed with `VITEST_MAX_WORKERS=2`; the four About/Home tests also
+  passed separately.
+- **Browser/staging** remain open. Browser inventory reported “The browser
+  access host is unavailable”. Chrome/Safari Studio sign-in, iframe cookies,
+  desktop/375px visuals, reduced motion and repeated refresh with real GSAP
+  still require a browser. GitHub listed only github-pages deployment records,
+  the checkout has no linked Vercel project and `vercel project ls` rejected
+  the configured CLI token. No staging URL or staging routing/log evidence
+  was obtained. Production cutover remains behind its separate approval gate.
+
 ## Phase 2 update — 2026-11-17
 
 PR #13 is verified merged into `development-Area` at `b903566`. Phase 2 starts

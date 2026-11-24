@@ -9,7 +9,9 @@ import { useStagger } from '../hooks/useStagger';
 import { useMagnetic } from '../hooks/useMagnetic';
 import { DUR, EASE, DECODE_CHARS, SplitText, prefersReducedMotion } from '../motion/core';
 import { attachTextPressure } from '../motion/textPressure';
-import { projects, facts } from '../data/content';
+import { useAboutContent } from '../sanity/useAboutContent';
+import { ContentState } from '../components/ui/ContentState';
+import { projects } from '../data/content';
 
 const M = 'var(--page-margin)';
 
@@ -188,20 +190,29 @@ export function Home() {
               </TextLink>
             </div>
           </div>
-          <div style={{ borderTop: '1px solid var(--border-hairline)' }}>
-            {[facts[0], facts[3]].map((f) => (
-              <div key={f.k} style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '16px 0', borderBottom: '1px solid var(--border-hairline)' }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--t-micro)', letterSpacing: 'var(--track-label)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-                  {f.k}
-                </span>
-                <span style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--t-sm)', color: f.accent ? 'var(--text-accent)' : 'var(--text-body)', textAlign: 'right' }}>
-                  {f.v}
-                </span>
-              </div>
-            ))}
-          </div>
+          <HomeFacts />
         </div>
       </section>
     </main>
+  );
+}
+
+function HomeFacts() {
+  const { result, refresh } = useAboutContent();
+  if (result.status !== 'ready') return <ContentState result={result} retry={refresh} emptyMessage="No About facts available." />;
+  return (
+    <div style={{ borderTop: '1px solid var(--border-hairline)' }}>
+      {result.data.page.gaps.includes('facts') && <p role="status">Incomplete draft — add facts in Studio.</p>}
+      {result.data.page.facts.filter(f => f.showOnHome).map((f) => (
+        <div key={f.key} style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '16px 0', borderBottom: '1px solid var(--border-hairline)' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--t-micro)', letterSpacing: 'var(--track-label)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+            {f.label}
+          </span>
+          <span style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--t-sm)', color: f.emphasized ? 'var(--text-accent)' : 'var(--text-body)', textAlign: 'right' }}>
+            {f.value}
+          </span>
+        </div>
+      ))}
+    </div>
   );
 }

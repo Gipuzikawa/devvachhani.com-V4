@@ -3,6 +3,7 @@ import { phase1Seeds, fingerprint, type Body } from '../scripts/sanity/transform
 import { runImport, type Existing, type Store, type UpdateApproval } from '../scripts/sanity/import';
 import { phase1Source } from '../scripts/sanity/source';
 import { validateEnabledDetail } from '../studio/schemaTypes/projectValidation';
+import { phase3Seeds } from '../scripts/sanity/aboutTransform';
 import { phase2Seeds } from '../scripts/sanity/writingTransform';
 
 class MemoryStore implements Store {
@@ -28,6 +29,25 @@ class MemoryStore implements Store {
 const write = { phase: 1 as const, dataset: 'development' as const, mode: 'create-missing' as const };
 const dry = { ...write, mode: 'dry-run' as const };
 const seeds = phase1Seeds();
+
+describe('Phase 3 singleton import', () => {
+  it('creates the singleton once and skips subsequent editor revisions', async () => {
+    const store = new MemoryStore();
+    const options = { ...write, phase: 3 as const };
+    const seeds = phase3Seeds();
+    await runImport(store, seeds, { ...options, mode: 'dry-run' });
+    expect(store.locks).toBe(0);
+    await runImport(store, seeds, options);
+    const [page] = store.documents;
+    expect(page._id).toBe('aboutPage');
+    page.lead = 'Editor copy';
+    const report = await runImport(store, seeds, options);
+    expect(report.rows[0]).toMatchObject({ action: 'skip', differs: true });
+    expect(store.creates).toBe(1);
+    expect(page.lead).toBe('Editor copy');
+    await expect(runImport(store, seeds, write)).rejects.toThrow('selected phase');
+  });
+});
 
 describe('Phase 2 guarded imports', () => {
   const seeds = phase2Seeds();
