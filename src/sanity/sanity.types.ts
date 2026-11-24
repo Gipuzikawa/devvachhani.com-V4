@@ -308,6 +308,49 @@ export type Discipline = {
   sortOrder?: number;
 };
 
+export type Principle = {
+  _type: "principle";
+  title?: string;
+  body?: string;
+};
+
+export type AboutPage = {
+  _id: string;
+  _type: "aboutPage";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  sourceKey?: string;
+  heading?: SectionHeading;
+  toolkitHeading?: SectionHeading;
+  approachHeading?: SectionHeading;
+  lead?: string;
+  biography?: Array<string>;
+  facts?: Array<
+    {
+      _key: string;
+    } & AboutFact
+  >;
+  skillGroups?: Array<
+    {
+      _key: string;
+    } & ToolGroup
+  >;
+  principles?: Array<
+    {
+      _key: string;
+    } & Principle
+  >;
+};
+
+export type AboutFact = {
+  _type: "aboutFact";
+  label?: string;
+  value?: string;
+  showOnHome?: boolean;
+  emphasized?: boolean;
+};
+
 export type SanityImagePaletteSwatch = {
   _type: "sanity.imagePaletteSwatch";
   background?: string;
@@ -429,6 +472,9 @@ export type AllSanitySchemaTypes =
   | SanityImageCrop
   | SanityImageHotspot
   | Discipline
+  | Principle
+  | AboutPage
+  | AboutFact
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
@@ -437,6 +483,34 @@ export type AllSanitySchemaTypes =
   | SanityAssetSourceData
   | SanityImageAsset
   | Geopoint;
+
+// Source: ../src/sanity/queries.ts
+// Variable: ABOUT_PAGE_QUERY
+// Query: *[_type == "aboutPage" && _id == "aboutPage"]{  _id, _rev, heading, toolkitHeading, approachHeading, lead, biography, facts, skillGroups, principles}
+export type ABOUT_PAGE_QUERY_RESULT = Array<{
+  _id: "aboutPage";
+  _rev: string;
+  heading: SectionHeading | null;
+  toolkitHeading: SectionHeading | null;
+  approachHeading: SectionHeading | null;
+  lead: string | null;
+  biography: Array<string> | null;
+  facts: Array<
+    {
+      _key: string;
+    } & AboutFact
+  > | null;
+  skillGroups: Array<
+    {
+      _key: string;
+    } & ToolGroup
+  > | null;
+  principles: Array<
+    {
+      _key: string;
+    } & Principle
+  > | null;
+}>;
 
 // Source: ../src/sanity/queries.ts
 // Variable: WRITING_INDEX_QUERY
@@ -700,6 +774,7 @@ export type PROJECT_PAGE_QUERY_RESULT = {
 // Query TypeMap
 declare global {
   interface SanityQueries {
+    '*[_type == "aboutPage" && _id == "aboutPage"]{\n  _id, _rev, heading, toolkitHeading, approachHeading, lead, biography, facts, skillGroups, principles\n}': ABOUT_PAGE_QUERY_RESULT;
     '{\n  "settings": *[_type == "writingPage" && _id == "writingPage"]{_id, _rev, heading, intro, plannedHeading, planned},\n  "articles": *[_type == "article"] | order(publishedAt desc, _id asc){\n    _id, _rev, title, slug, dek, publishedAt, category, contentStatus, readingTimeOverride, body\n  }\n}': WRITING_INDEX_QUERY_RESULT;
     '*[_type == "article" && slug.current == $slug]{\n  _id, _rev, title, slug, dek, publishedAt, category, contentStatus, readingTimeOverride,\n  relatedProject->{_id, title, slug, detailEnabled},\n  body[]{..., _type == "figure" => {image{..., "assetId": asset->_id}}}\n}': ARTICLE_PAGE_QUERY_RESULT;
     '*[_type == "discipline"] | order(sortOrder asc, _id asc) {\n  _id, _rev, sourceKey, label, sortOrder\n}': DISCIPLINES_QUERY_RESULT;

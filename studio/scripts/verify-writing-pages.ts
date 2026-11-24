@@ -1,8 +1,7 @@
 import { getCliClient } from 'sanity/cli';
 import { createPreviewSecret } from '@sanity/preview-url-secret/create-secret';
 import { randomUUID } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-import { request } from 'node:https';
+import { localPreviewRequest } from './localPreviewRequest';
 import { ARTICLE_PAGE_QUERY, WRITING_INDEX_QUERY } from '../../src/sanity/queries';
 import { adaptArticle, adaptWriting } from '../../src/sanity/articleAdapters';
 import { phase2Seeds } from '../../scripts/sanity/writingTransform';
@@ -17,21 +16,7 @@ async function verify() {
   const publishedOrigin = publicClient.withConfig({ useCdn: false });
   const id = randomUUID(); const draftId = `drafts.${id}`; const sourceKey = `phase2-smoke-${id}`; const slug = sourceKey;
   let owned = false;
-  const certificate = readFileSync('../node_modules/.vite/basic-ssl/_cert.pem', 'utf8')
-    .match(/-----BEGIN CERTIFICATE-----[\s\S]*?-----END CERTIFICATE-----/)?.[0];
-  if (!certificate) throw new Error('Start the local HTTPS server first.');
-  async function call(path: string, method = 'GET', cookie?: string, value?: unknown) {
-    const body = value === undefined ? undefined : JSON.stringify(value);
-    return new Promise<{ status: number; headers: import('node:http').IncomingHttpHeaders; text: string }>((resolve, reject) => {
-      const req = request(new URL(path, origin), { ca: certificate, method, headers: { Origin: origin!,
-        ...(cookie ? { Cookie: cookie } : {}), ...(body ? { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) } : {}) } }, res => {
-        let text = ''; res.on('data', chunk => { text += chunk; });
-        res.on('end', () => resolve({ status: res.statusCode ?? 0, headers: res.headers, text }));
-      });
-      req.on('error', () => reject(new Error('Local request failed.')));
-      req.setTimeout(15_000, () => { req.destroy(); reject(new Error('Local request timed out.')); }); req.end(body);
-    });
-  }
+  const call = localPreviewRequest(origin);
   try {
     stage = 'published Writing and article parity';
     const index = adaptWriting(await publicClient.fetch(WRITING_INDEX_QUERY));

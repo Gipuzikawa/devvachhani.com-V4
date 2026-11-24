@@ -1,5 +1,9 @@
 import { defineQuery } from 'groq';
 
+export const ABOUT_PAGE_QUERY = defineQuery(`*[_type == "aboutPage" && _id == "aboutPage"]{
+  _id, _rev, heading, toolkitHeading, approachHeading, lead, biography, facts, skillGroups, principles
+}`);
+
 export const WRITING_INDEX_QUERY = defineQuery(`{
   "settings": *[_type == "writingPage" && _id == "writingPage"]{_id, _rev, heading, intro, plannedHeading, planned},
   "articles": *[_type == "article"] | order(publishedAt desc, _id asc){
