@@ -63,5 +63,5 @@ public identifiers, exact origins and server-only credentials.
 
 ## Services
 
-Sanity serves Work/project pages and authenticated preview. Other domains remain
+Sanity serves Work/project and Writing/article pages and authenticated preview. Other domains remain
 static until their migrations. Fonts remain self-hosted in `public/fonts/`.

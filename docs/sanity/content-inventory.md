@@ -1,5 +1,47 @@
 # Phase 1 source inventory and mapping
 
+## Phase 2 extension — 2026-11-17
+
+Source: `fixtures/phase-1-source.ts` article/card/planned exports and
+`fixtures/phase1-pages/Writing.tsx.snapshot`. No additional source discovery or
+article prose was invented. `scripts/sanity/writingSource.ts` captures the page
+copy/date mapping; `writingTransform.ts` performs deterministic conversion.
+
+| Source | Count | Destination / handling |
+| --- | --- | --- |
+| Article card/detail | 1 pair | One ordinary `article`, source key `article-f35-development-update`; generated ID |
+| Article blocks | 19 | Portable Text paragraphs, owned headings/drop-cap paragraph, figures and pull quote |
+| Section anchors | 4 | `overview`, `development`, `testing`, `ahead`, stored as explicit IDs |
+| Figure plates / pull quotes | 3 / 1 | Ordered placeholder figures at existing default 3:2; quote copy preserved |
+| Publication date | 1 | ISO `2026-06-12`; index `12 Jun 2026`, detail `12 June 2026` |
+| Reading-time override | 1 | Six minutes; content maturity remains `placeholder` |
+| Writing heading/introduction | 1 set | Managed `writingPage` singleton |
+| Planned-writing entries | 3 | Keyed owned objects; numbering derived from order |
+| Related-project source relationship | 0 | Optional schema reference; no relationship invented |
+
+No real article assets, locales, schedules or source editorial drafts exist.
+Marks/links/lists remain rich on new content; no HTML injection/embeds are enabled.
+Native blocks cannot declare additional fields, so editable heading/drop-cap
+metadata lives on owned objects containing a single rich block. Conversion keeps
+all 19 source blocks and stable body/span keys. Routes stay unchanged.
+
+The existing CLI explicitly supports `--phase 2` with the same safeguards:
+
+```sh
+cd studio
+node node_modules/@sanity/cli/bin/run.js exec scripts/import-phase1.ts --with-user-token -- --project oir24qey --dataset development --phase 2 --mode dry-run
+```
+
+The filename is retained for compatibility with Phase 1. Use `create-missing`
+only after reviewing the dry run. `update-reviewed` still requires an exact
+source-hash/revision manifest and rejects drafts. Both phases share the existing
+`migrationLock.phase1` lock to serialize runs. Singleton collisions are checked
+for both `workPage` and `writingPage`. No production mode or replacement import
+was added. The live rerun created 0, skipped 2, updated 0, with no differences;
+`fixtures/phase-2-rerun-report.json` records returned IDs/revisions/hashes.
+
+The original Phase 1 inventory follows.
+
 Captured 2026-11-17 before changes to portfolio page readers. English-only static
 source; no archived/scheduled variants or historical editor drafts exist in that
 source. Target: project `oir24qey`, **development** only.

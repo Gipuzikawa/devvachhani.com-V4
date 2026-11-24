@@ -1,5 +1,9 @@
 ## 2026-11-17
 
+- Implemented Phase 2 Articles/Writing with guarded development imports and rich
+  Portable Text rendering; 100 tests pass. Browser/staging and primed CDN timing
+  remain separate acceptance items. No production cutover or PR merge authorized.
+
 - Implemented Sanity preview foundation, guarded development project import and
   Work/project page integration (PRs #11–#13). Recorded 65 passing tests and real
   origin-based draft/publish/exit verification. Browser/staging and primed CDN

@@ -14,3 +14,14 @@ body {
 ::selection {
   background: var(--accent-wash);
 }
+
+/* Keep rich marks and links intact around the initial letter. */
+.article-drop-cap::first-letter {
+  float: left;
+  font-family: var(--font-serif);
+  font-size: 3.4em;
+  line-height: 0.82;
+  font-weight: 300;
+  color: var(--text-accent);
+  padding: 4px 10px 0 0;
+}

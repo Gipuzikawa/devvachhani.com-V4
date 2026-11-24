@@ -54,7 +54,7 @@ export function adaptArchive(value: QueryResults['workArchive']): ArchiveView {
   return { key: revisions([...settings, ...rawProjects, ...usedDisciplines]), heading: heading(page.heading), intro: text(page.intro),
     allLabel: text(page.allLabel), rowsLabel: text(page.rowsLabel), gridLabel: text(page.gridLabel), projects, disciplines };
 }
-function figure(value: unknown, index: number, imageConfig?: { projectId: string; dataset: string }): FigureData {
+export function figure(value: unknown, index: number, imageConfig?: { projectId: string; dataset: string }): FigureData {
   const item = record(value);
   const title = text(item.caption);
   if (typeof item.aspect !== 'number' || !Number.isFinite(item.aspect) || item.aspect <= 0) throw new IncompleteContentError('A figure needs an aspect ratio.');
