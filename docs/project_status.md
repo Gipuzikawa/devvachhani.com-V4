@@ -2,9 +2,14 @@
 
 Current handoff: [Sanity session handoff](sanity/session-handoff.md). Phase 0/1
 implementation is covered by PRs #11–#13; acceptance limits are recorded separately
-in [verification](sanity/verification.md). Phase 2 is now implemented; see the update below.
+in [verification](sanity/verification.md). PR #14 integrated Phase 2 at d388558.
 
-## Current update: Articles and Writing — 2026-11-17
+## About and shared Home facts — 2026-11-24
+
+Phase 3 connects About and Home’s selected facts to one development singleton.
+The phase PR requires human review before Phase 4. See the [progress log](sanity/phase-3-migration.md).
+
+## Historical checkpoint: Articles and Writing — 2026-11-17
 
 Writing/article routes read Sanity through registered typed queries and revision-keyed
 views. Restricted Portable Text preserves rich marks/lists, safe links, stable TOC

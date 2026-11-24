@@ -1,5 +1,13 @@
 # Phase 1 source inventory and mapping
 
+## Phase 3 About
+
+The [Phase 3 migration log](phase-3-migration.md) identifies the source snapshots,
+singleton fields and verification steps. Pass `--phase 3` to the same development
+import command below. The only document is `aboutPage`; its nested objects keep
+stable array keys. The fact's visibility flag determines inclusion on Home.
+
+
 ## Phase 2 extension — 2026-11-17
 
 Source: `fixtures/phase-1-source.ts` article/card/planned exports and

@@ -3,9 +3,9 @@
 For a new session, start with [the handoff](session-handoff.md), then verify the
 live branch and PR state. Historical acceptance evidence is in `verification.md`.
 
-Studio, typed transport and authenticated preview now serve Work/project and
-Writing/article pages. Other page/shell domains still use static content until
-their own migration phases. There is no static fallback for Work or project reads.
+Studio, typed transport and authenticated preview serve Work/project, Writing/article,
+About and the Home facts selected in About. Remaining Home content and shell copy
+use their existing source until Phases 4 and 5.
 
 Task 1.1 is now seeded in development. Project and Work editing schemas are
 available, and task 1.2 has connected the page readers. See `content-inventory.md` for
@@ -106,6 +106,12 @@ owned disposable development article IDs; it never edits seeded/editor records.
 It checks public exclusion, signed index/detail preview, publish-then-edit and
 exit, and separately measures the exact primed CDN query. Pending CDN propagation
 returns nonzero; inspect `verification.md` instead of calling it a full pass.
+
+From `studio/`, run `node node_modules/@sanity/cli/bin/run.js exec scripts/verify-about.ts --with-user-token`
+with the local HTTPS server running. It compares the public CDN revision to the
+development singleton and checks a draft lead and shared Home fact through the
+signed API. It creates a draft only when that ID is free. Cleanup uses the created
+revision so concurrent editor changes stop deletion and require manual review.
 
 ## Checks and deployment boundary
 
