@@ -31,6 +31,13 @@ function slug(value: unknown) {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(current) || current.length > 160) throw new IncompleteContentError('Invalid project slug.');
   return current;
 }
+export function projectCard(value: unknown, position: number): ProjectData {
+  const item = record(value);
+  if (typeof item.detailEnabled !== 'boolean') throw new IncompleteContentError('Project detail availability is missing.');
+  // The cards originally omitted the year, which remains detail metadata.
+  return { index: String(position + 1).padStart(2, '0'), title: text(item.title),
+    summary: text(item.summary), tags: strings(item.tags), ...(item.detailEnabled ? { slug: slug(item.slug) } : {}) };
+}
 export function adaptArchive(value: QueryResults['workArchive']): ArchiveView {
   const raw = record(value);
   const settings = list(raw.settings);
@@ -39,11 +46,7 @@ export function adaptArchive(value: QueryResults['workArchive']): ArchiveView {
   const rawProjects = list(raw.projects);
   const projects = rawProjects.map((value, position): ArchiveProject => {
     const item = record(value);
-    if (typeof item.detailEnabled !== 'boolean') throw new IncompleteContentError('Project detail availability is missing.');
-    // Archive cards originally omitted the year; the unified year remains detail metadata.
-    return { id: text(item._id), index: String(position + 1).padStart(2, '0'), title: text(item.title),
-      summary: text(item.summary), tags: strings(item.tags), disciplineIds: strings(item.disciplineIds),
-      ...(item.detailEnabled ? { slug: slug(item.slug) } : {}) };
+    return { ...projectCard(item, position), id: text(item._id), disciplineIds: strings(item.disciplineIds) };
   });
   const requiredIds = new Set(projects.flatMap(project => project.disciplineIds));
   const usedDisciplines = list(raw.disciplines).filter(value => requiredIds.has(String(record(value)._id)));

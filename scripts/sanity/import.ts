@@ -1,3 +1,4 @@
+import { validateHome } from '../../src/sanity/homeValidation';
 import { readAbout } from '../../src/sanity/aboutContent';
 import { randomUUID } from 'node:crypto';
 import { fingerprint, canonical, type Body, type Seed } from './transform';
@@ -13,13 +14,26 @@ export interface Store {
   lock: (owner: string) => Promise<() => Promise<void>>;
 }
 export type ImportRow = { sourceKey: string; action: 'create' | 'skip' | 'update'; id?: string; revision?: string; sourceHash: string; differs: boolean; draft: boolean };
-export type ImportReport = { phase: 1 | 2 | 3; dataset: 'development'; mode: 'dry-run' | 'create-missing' | 'update-reviewed'; rows: ImportRow[] };
+export type ImportPhase = 1 | 2 | 3 | 4;
+export type ImportReport = { phase: ImportPhase; dataset: 'development'; mode: 'dry-run' | 'create-missing' | 'update-reviewed'; rows: ImportRow[] };
+
+function readPublishedProjectId(existing: Existing[], sourceKey: string): string {
+  const found = existing.filter(item => item.sourceKey === sourceKey && !item._id.startsWith('versions.'));
+  if (found.some(item => item._type !== 'project') ||
+    new Set(found.map(item => item._id.replace(/^drafts\./, ''))).size > 1) {
+    throw new Error(`Ambiguous or conflicting featured project source key: ${sourceKey}`);
+  }
+  if (!found.length) throw new Error(`Featured project is absent: ${sourceKey}`);
+  const published = found.find(item => !item._id.startsWith('drafts.'));
+  if (!published) throw new Error(`Featured project exists only as a draft: ${sourceKey}`);
+  return published._id;
+}
 
 export async function runImport(store: Store, seeds: Seed[], options: {
-  phase: 1 | 2 | 3; dataset: 'development'; mode: ImportReport['mode']; approvals?: UpdateApproval[];
+  phase: ImportPhase; dataset: 'development'; mode: ImportReport['mode']; approvals?: UpdateApproval[];
 }): Promise<ImportReport> {
-  if (![1, 2, 3].includes(options.phase) || options.dataset !== 'development' || !['dry-run', 'create-missing', 'update-reviewed'].includes(options.mode)) throw new Error('Only explicit Phase 1/2/3 development imports are supported.');
-  const allowedTypes = { 1: ['discipline', 'project', 'workPage'], 2: ['article', 'writingPage'], 3: ['aboutPage'] }[options.phase];
+  if (![1, 2, 3, 4].includes(options.phase) || options.dataset !== 'development' || !['dry-run', 'create-missing', 'update-reviewed'].includes(options.mode)) throw new Error('Only explicit Phase 1–4 development imports are supported.');
+  const allowedTypes = { 1: ['discipline', 'project', 'workPage'], 2: ['article', 'writingPage'], 3: ['aboutPage'], 4: ['homePage'] }[options.phase];
   if (seeds.some(seed => !allowedTypes.includes(seed.type))) throw new Error('Source types do not match the selected phase.');
   if (new Set(seeds.map(seed => seed.sourceKey)).size !== seeds.length) throw new Error('Duplicate source keys in import input.');
   const approvals = options.approvals ?? [];
@@ -28,19 +42,22 @@ export async function runImport(store: Store, seeds: Seed[], options: {
   if (new Set(approvals.map(entry => entry.sourceKey)).size !== approvals.length) throw new Error('Duplicate approvals.');
   const release = options.mode === 'dry-run' ? undefined : await store.lock(randomUUID());
   try {
-    const existing = await store.read(seeds.map(seed => seed.sourceKey));
-    // Validate all source bodies before the first mutation, using report-only
-    // dependency IDs until the real documents have been resolved or created.
-    const provisional = new Map(seeds.map(seed => [seed.sourceKey, seed.singletonId ?? `pending:${seed.sourceKey}`]));
+    const projectKeys = options.phase === 4 ? [...new Set(seeds.flatMap(seed => seed.dependencies))] : [];
+    const existing = await store.read([...seeds.map(seed => seed.sourceKey), ...projectKeys]);
+    const ids = new Map(projectKeys.map(key => [key, readPublishedProjectId(existing, key)]));
+    // Validate all source bodies before the first content mutation. Only
+    // dependencies created by this same run can use report-only IDs.
+    const provisional = new Map(ids);
+    for (const seed of seeds) provisional.set(seed.sourceKey, seed.singletonId ?? `pending:${seed.sourceKey}`);
     for (const seed of seeds) {
       const body = seed.build(provisional);
       if (body._type !== seed.type || body.sourceKey !== seed.sourceKey ||
         (body._type === 'project' && validateEnabledDetail(body) !== true) ||
+        (body._type === 'homePage' && validateHome(body) !== true) ||
         (body._type === 'aboutPage' && readAbout(body).gaps.length > 0) ||
         (body._type === 'article' && validateArticle(body) !== true) ||
         (body._type === 'writingPage' && validateWritingPage(body) !== true)) throw new Error('Invalid transformed source document.');
     }
-    const ids = new Map<string, string>();
     const matches = new Map<string, Existing[]>();
     // Preflight all ambiguous matches and singleton collisions before writing anything.
     for (const seed of seeds) {

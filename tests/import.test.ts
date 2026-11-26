@@ -3,13 +3,18 @@ import { phase1Seeds, fingerprint, type Body } from '../scripts/sanity/transform
 import { runImport, type Existing, type Store, type UpdateApproval } from '../scripts/sanity/import';
 import { phase1Source } from '../scripts/sanity/source';
 import { validateEnabledDetail } from '../studio/schemaTypes/projectValidation';
+import { phase4Seeds } from '../scripts/sanity/homeTransform';
 import { phase3Seeds } from '../scripts/sanity/aboutTransform';
 import { phase2Seeds } from '../scripts/sanity/writingTransform';
 
 class MemoryStore implements Store {
   documents: Existing[] = [];
   creates = 0; updates = 0; locks = 0; locked = false;
-  async read() { return structuredClone(this.documents); }
+  async read(keys: string[]) {
+    const singletons = new Set(['workPage', 'writingPage', 'aboutPage', 'homePage']);
+    return structuredClone(this.documents.filter(item => keys.includes(item.sourceKey) ||
+      singletons.has(item._id.replace(/^drafts\./, ''))));
+  }
   async create(body: Body, singletonId?: string) {
     const document: Existing = { ...structuredClone(body), _id: singletonId ?? `generated-${++this.creates}`, _rev: 'revision-1' };
     if (singletonId) this.creates++;
@@ -169,5 +174,70 @@ describe('guarded import runner', () => {
     store.documents.push({ ...seeds[0].build(new Map()), _id: 'drafts.only', _rev: '1' });
     await expect(runImport(store, seeds, write)).rejects.toThrow('only as a draft');
     await expect(runImport(store, seeds, { ...write, dataset: 'production' as 'development' })).rejects.toThrow('development');
+  });
+});
+
+describe('Phase 4 guarded Home import', () => {
+  const options = { ...write, phase: 4 as const };
+  const projectKeys = ['project-rc-f35-vtol', 'project-guest-registration', 'project-dcs-companion'];
+  const projects = () => projectKeys.map((sourceKey, index): Existing => ({
+    _id: 'published-' + (index + 1), _rev: 'project-rev', _type: 'project', sourceKey,
+  }));
+
+  it('accepts explicit phase 4 while preserving the development-only guard', async () => {
+    const store = new MemoryStore();
+    expect(await runImport(store, [], { ...options, mode: 'dry-run' })).toMatchObject({ phase: 4, rows: [] });
+    await expect(runImport(store, [], { ...options, dataset: 'production' as 'development' })).rejects.toThrow('development');
+  });
+
+  it('imports the frozen copy and resolves the authored order to published project IDs', async () => {
+    const store = new MemoryStore();
+    store.documents.push(...projects(), { ...projects()[0], _id: 'drafts.published-1' });
+    const seeds = phase4Seeds();
+    await expect(runImport(store, seeds, write)).rejects.toThrow('selected phase');
+    const dryRun = await runImport(store, seeds, { ...options, mode: 'dry-run' });
+    expect(dryRun.rows).toEqual([expect.objectContaining({ sourceKey: 'home-page', action: 'create' })]);
+    expect(store.locks).toBe(0);
+    const original = structuredClone(store.documents);
+
+    await runImport(store, seeds, options);
+    const home = store.documents.at(-1)!;
+    expect(home).toMatchObject({
+      _id: 'homePage', _type: 'homePage', sourceKey: 'home-page',
+      metaAccent: 'Portfolio — 2026', metaMuted: 'STEM · Embedded · Software',
+      heroLead: 'I’m Dev — a student building instruments, software, and small machines to understand how the physical world actually works. This is a catalogue of that work.',
+      primaryCta: { label: 'Browse projects', href: '/work' },
+      contactCta: { label: 'Get in touch', href: '#contact' },
+      workHeading: { eyebrow: 'Selected work', title: 'Projects & experiments' },
+      archiveLink: { label: 'See the full archive', href: '/work' },
+      aboutHeading: { eyebrow: 'About', title: "Who's behind the index" },
+      aboutIntro: 'I’m a STEM student drawn to the seam where physics meets software — the point where an idea turns into an instrument you can actually measure with.',
+      aboutLink: { label: 'More about me', href: '/about' },
+      heroLines: [
+        { _key: expect.any(String), runs: [{ _key: expect.any(String), text: 'Measuring the' }] },
+        { _key: expect.any(String), runs: [{ _key: expect.any(String), text: 'invisible, ' }, { _key: expect.any(String), text: 'one', emphasis: true }] },
+        { _key: expect.any(String), runs: [{ _key: expect.any(String), text: 'experiment at a time.' }] },
+      ],
+      featuredProjects: ['published-1', 'published-2', 'published-3'].map(_ref => ({ _type: 'reference', _key: expect.any(String), _ref })),
+    });
+    expect(store.documents.slice(0, -1)).toEqual(original);
+    expect((await runImport(store, seeds, options)).rows[0]).toMatchObject({ action: 'skip', differs: false });
+    expect(store.creates).toBe(1);
+  });
+
+  it.each<[string, Existing[]]>([
+    ['absent', []],
+    ['only as a draft', [{ ...projects()[0], _id: 'drafts.published-1' }]],
+    ['ambiguous', [projects()[0], { ...projects()[0], _id: 'other-published' }]],
+    ['ambiguous', [projects()[0], { ...projects()[0], _id: 'other-type', _type: 'article' }]],
+    ['absent', [{ ...projects()[0], _id: 'versions.release.published-1' }]],
+  ])('rejects an external project dependency that is %s before writing', async (message, matches) => {
+    const store = new MemoryStore();
+    store.documents.push(...matches, ...projects().slice(1));
+    const seeds = phase4Seeds();
+    await expect(runImport(store, seeds, { ...options, mode: 'dry-run' })).rejects.toThrow(new RegExp(message, 'i'));
+    await expect(runImport(store, seeds, options)).rejects.toThrow(new RegExp(message, 'i'));
+    expect(store.creates).toBe(0);
+    expect(store.locked).toBe(false);
   });
 });
