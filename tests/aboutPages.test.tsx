@@ -8,6 +8,7 @@ import { Home } from '../src/pages/Home';
 import { ContentProvider } from '../src/sanity/ContentProvider';
 import { readAbout } from '../src/sanity/aboutContent';
 import { phase3Seeds } from '../scripts/sanity/aboutTransform';
+import { homeQuery } from './fixtures/homeQuery';
 
 const preview = vi.hoisted(() => ({ status: 'public', revision: 0, refresh: vi.fn(), expire: vi.fn() }));
 vi.mock('../src/sanity/PreviewProvider', () => ({ usePreview: () => preview }));
@@ -37,19 +38,32 @@ it('preserves shared fact identity through reorder and label edits on Home', asy
   const facts = structuredClone(seed.facts) as Array<{label: string; value: string}>;
   facts.reverse();
   facts[0].label = 'Seeking';
+  const revisedFacts = [{ ...facts[0], label: 'Seeking collaborators' }, ...facts.slice(1)].reverse();
   preview.status = 'active';
-  const transport = vi.fn().mockResolvedValueOnce([{ ...doc, facts }]).mockResolvedValueOnce([doc]);
+  const transport = vi.fn().mockImplementation(async (name: string, active: boolean) => {
+    if (name === 'homePage') return homeQuery();
+    if (!active) return [doc];
+    return preview.revision ? [{ ...doc, _rev: 'edited', facts: revisedFacts }] : [{ ...doc, facts }];
+  });
   const view = render(tree(transport, true));
-  await screen.findByText('Seeking');
-  expect(screen.getByText('Focus')).toBeTruthy();
+  const seekingRow = (await screen.findByText('Seeking')).parentElement;
+  const draftFacts = seekingRow?.parentElement;
+  const hero = screen.getByRole('heading', { level: 1 });
+  expect(Array.from(draftFacts?.children ?? [], row => row.firstElementChild?.textContent)).toEqual(['Seeking', 'Focus']);
   expect(screen.queryByText('Currently')).toBeNull();
   expect(screen.queryByText('Based')).toBeNull();
-  expect(transport.mock.calls[0].slice(0, 2)).toEqual(['aboutPage', true]);
+  expect(transport.mock.calls).toContainEqual(['aboutPage', true, expect.any(AbortSignal), {}]);
+  preview.revision++;
+  view.rerender(tree(transport, true));
+  expect((await screen.findByText('Seeking collaborators')).parentElement).toBe(seekingRow);
+  expect(Array.from(draftFacts?.children ?? [], row => row.firstElementChild?.textContent)).toEqual(['Focus', 'Seeking collaborators']);
+  expect(screen.getByRole('heading', { level: 1 })).toBe(hero);
+
   preview.status = 'public';
   view.rerender(tree(transport, true));
-  expect(screen.queryByText('Seeking')).toBeNull();
+  expect(screen.queryByText('Seeking collaborators')).toBeNull();
   await screen.findByText('Looking for');
-  expect(transport.mock.calls[1].slice(0, 2)).toEqual(['aboutPage', false]);
+  expect(transport.mock.calls).toContainEqual(['aboutPage', false, expect.any(AbortSignal), {}]);
 });
 
 it('shows labelled gaps in preview, remounts on revision and clears draft content on exit', async () => {

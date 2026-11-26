@@ -54,6 +54,17 @@ export const REVEAL_RISE = 24;
  */
 export const DECODE_CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ·—/';
 
+/** ScrambleText writes HTML on elements. Give it a text-only target. */
+export function scrambleTextTarget(element: HTMLElement) {
+  const first = element.firstChild;
+  if (first instanceof Text && !first.nextSibling) return first;
+  return {
+    nodeType: element.nodeType,
+    get textContent() { return element.textContent; },
+    set textContent(value) { element.textContent = value; },
+  };
+}
+
 /**
  * Resolve a design token (e.g. '--cobalt') to its computed value, for the
  * few GSAP tweens that need a literal color. Read at animation-setup time,
