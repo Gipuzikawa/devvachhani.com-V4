@@ -2,8 +2,8 @@
 
 ## Sanity content boundary
 
-Work/project, Writing/article and About use typed Sanity queries. Home reads its shared facts
-from the About singleton. Its remaining copy and shell settings migrate in Phases 4 and 5. `studio/` builds
+Work/project, Writing/article, About and Home use typed Sanity queries. Home reads its shared
+facts from About and resolves featured projects in the Home singleton’s order. Shell settings migrate in Phase 5. `studio/` builds
 separately at `/studio`; `src/sanity/` provides generated query contracts, token-free
 published reads, preview session state and cancellable content loading. Animated
 views mount only after resolution and remount on relevant content revisions.

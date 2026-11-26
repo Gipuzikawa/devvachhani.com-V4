@@ -1,10 +1,9 @@
 # Status
 
-Phase 3 (2026-11-24) connects About and the shared Home facts to Sanity alongside
-Work and Writing. The remaining Home and shell content stays static. The project
-is at the Phase 3 review gate. See the [verification record](../sanity/verification.md)
-and [session handoff](../sanity/session-handoff.md) for measured service results
-and outstanding browser and staging checks.
+Phase 4 makes Home’s hero, links, section copy and featured projects editable in
+Sanity. Its shared facts come from About. Shell settings migrate in Phase 5,
+after the Phase 4 PR is reviewed and merged. The [verification record](../sanity/verification.md)
+and [session handoff](../sanity/session-handoff.md) track acceptance evidence.
 
 See `docs/project_status.md` for the full, detailed shipped-features log — this file tracks the
 higher-level picture only.
@@ -21,8 +20,7 @@ higher-level picture only.
   (`/writing/f35-development-update`).
 - Three projects, three disciplines and Work settings imported into Sanity development;
   a rerun created zero records and reported zero differences. F-35 detail is enabled;
-  the other two projects remain archive-only. Writing, article pages, About and Home’s
-  selected facts use Sanity.
+  the other two projects remain archive-only. Writing, article pages, About and Home use Sanity.
 
 ## Not yet built
 
@@ -35,11 +33,11 @@ higher-level picture only.
   service results are in the verification record.
 - **A real favicon/brand mark** — currently the default Vite placeholder.
 - **Homepage animation rework** — revisit the hero and home-page choreography as a focused design pass.
-- **Remaining Sanity domains** — Phase 4 Home (shared About facts already migrated), Phase 5 settings/shell; Phase 6 production import and cutover.
+- **Remaining Sanity domains** — Phase 5 settings/shell; Phase 6 production import and cutover.
 
 ## Open items
 
 - TODO: staging Vercel verification plus domain/DNS.
 - TODO: author real long-form essays in Studio's restricted Portable Text editor.
-- TODO: finish the outstanding browser and staging matrix. Phase 4 Home follows human review and merge of Phase 3.
+- TODO: finish the outstanding browser and staging matrix.
 - TODO: define the intended outcome for the homepage animation rework before designing it.

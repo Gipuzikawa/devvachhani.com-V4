@@ -1,0 +1,20 @@
+{
+  "phase": 4,
+  "dataset": "development",
+  "mode": "create-missing",
+  "creates": 0,
+  "skips": 1,
+  "updates": 0,
+  "differences": [],
+  "rows": [
+    {
+      "sourceKey": "home-page",
+      "action": "skip",
+      "id": "homePage",
+      "revision": "3JAa7kwA6559qZe4e8eYyS",
+      "sourceHash": "bfd70fdbc86da63be015165f93c4b6f9e68f123da173e82122bfd38236185c88",
+      "differs": false,
+      "draft": false
+    }
+  ]
+}

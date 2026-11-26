@@ -4,10 +4,16 @@ Current handoff: [Sanity session handoff](sanity/session-handoff.md). Phase 0/1
 implementation is covered by PRs #11–#13; acceptance limits are recorded separately
 in [verification](sanity/verification.md). PR #14 integrated Phase 2 at d388558.
 
+## Home and the editable hero
+
+Studio’s Home singleton controls three lines of hero text and emphasis, calls to
+action, section copy and ordered project references. Home still reads the shared
+facts selected in About. See the [Phase 4 progress log](sanity/phase-4-migration.md).
+
 ## About and shared Home facts — 2026-11-24
 
 Phase 3 connects About and Home’s selected facts to one development singleton.
-The phase PR requires human review before Phase 4. See the [progress log](sanity/phase-3-migration.md).
+PR #15 merged at `b221438`. See the [progress log](sanity/phase-3-migration.md).
 
 ## Historical checkpoint: Articles and Writing — 2026-11-17
 

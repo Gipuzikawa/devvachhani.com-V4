@@ -4,8 +4,7 @@ For a new session, start with [the handoff](session-handoff.md), then verify the
 live branch and PR state. Historical acceptance evidence is in `verification.md`.
 
 Studio, typed transport and authenticated preview serve Work/project, Writing/article,
-About and the Home facts selected in About. Remaining Home content and shell copy
-use their existing source until Phases 4 and 5.
+About and Home. Shell copy migrates in Phase 5.
 
 Task 1.1 is now seeded in development. Project and Work editing schemas are
 available, and task 1.2 has connected the page readers. See `content-inventory.md` for
@@ -72,7 +71,10 @@ Sign in, open Disciplines and the unpublished **Phase 0 — unpublished draft ch
 document, then use Presentation. Its location points to `/work`; expand the
 discipline check in the draft-preview banner. The unpublished label should be
 visible there. Project and Work changes also appear in their actual pages through
-Presentation's document locations. Home featured cards remain static until Phase 4.
+Presentation's document locations. Open **Home** to edit the three hero lines,
+links, section copy and featured projects. Each hero line accepts plain text and
+emphasized text runs. Reorder the project references to change the featured order.
+Edit the shared facts under **About** and use each fact’s Home visibility toggle.
 Refresh reloads draft data. Exit clears the cookie and reloads published mode.
 Expiry requires re-entry from Studio. A failed session lookup never authorizes drafts.
 
@@ -112,6 +114,17 @@ with the local HTTPS server running. It compares the public CDN revision to the
 development singleton and checks a draft lead and shared Home fact through the
 signed API. It creates a draft only when that ID is free. Cleanup uses the created
 revision so concurrent editor changes stop deletion and require manual review.
+
+With the local HTTPS preview server running, test the signed Home route:
+
+```sh
+cd studio
+node node_modules/@sanity/cli/bin/run.js exec scripts/verify-home.ts --with-user-token
+```
+
+The verifier creates two temporary development drafts atomically and deletes
+them using their exact created revisions. An existing Home draft prevents the
+creation. Add `-- --published-only` for a read-only origin and CDN check.
 
 ## Checks and deployment boundary
 
