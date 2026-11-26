@@ -36,7 +36,7 @@ export function projectCard(value: unknown, position: number): ProjectData {
   if (typeof item.detailEnabled !== 'boolean') throw new IncompleteContentError('Project detail availability is missing.');
   // The cards originally omitted the year, which remains detail metadata.
   return { index: String(position + 1).padStart(2, '0'), title: text(item.title),
-    summary: text(item.summary), tags: strings(item.tags), ...(item.detailEnabled ? { slug: slug(item.slug) } : {}) };
+    summary: text(item.summary), tags: item.tags == null ? [] : strings(item.tags), ...(item.detailEnabled ? { slug: slug(item.slug) } : {}) };
 }
 export function adaptArchive(value: QueryResults['workArchive']): ArchiveView {
   const raw = record(value);

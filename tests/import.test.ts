@@ -192,7 +192,10 @@ describe('Phase 4 guarded Home import', () => {
 
   it('imports the frozen copy and resolves the authored order to published project IDs', async () => {
     const store = new MemoryStore();
-    store.documents.push(...projects(), { ...projects()[0], _id: 'drafts.published-1' });
+    const [first] = projects();
+    store.documents.push(...projects(),
+      { ...first, _id: 'drafts.published-1' },
+      { ...first, _id: 'versions.release.published-1' });
     const seeds = phase4Seeds();
     await expect(runImport(store, seeds, write)).rejects.toThrow('selected phase');
     const dryRun = await runImport(store, seeds, { ...options, mode: 'dry-run' });
@@ -231,6 +234,9 @@ describe('Phase 4 guarded Home import', () => {
     ['ambiguous', [projects()[0], { ...projects()[0], _id: 'other-published' }]],
     ['ambiguous', [projects()[0], { ...projects()[0], _id: 'other-type', _type: 'article' }]],
     ['absent', [{ ...projects()[0], _id: 'versions.release.published-1' }]],
+    ['private', [{ ...projects()[0], _id: 'private.project' }]],
+    ['private', [{ ...projects()[0], _id: 'drafts.private.project' }]],
+    ['ambiguous', [projects()[0], { ...projects()[0], _id: 'private.project' }]],
   ])('rejects an external project dependency that is %s before writing', async (message, matches) => {
     const store = new MemoryStore();
     store.documents.push(...matches, ...projects().slice(1));

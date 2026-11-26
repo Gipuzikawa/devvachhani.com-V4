@@ -24,9 +24,13 @@ function readPublishedProjectId(existing: Existing[], sourceKey: string): string
     throw new Error(`Ambiguous or conflicting featured project source key: ${sourceKey}`);
   }
   if (!found.length) throw new Error(`Featured project is absent: ${sourceKey}`);
-  const published = found.find(item => !item._id.startsWith('drafts.'));
-  if (!published) throw new Error(`Featured project exists only as a draft: ${sourceKey}`);
-  return published._id;
+  // An authenticated raw read can see private subpaths in a public dataset.
+  const published = found.find(item => !item._id.includes('.'));
+  if (published) return published._id;
+  if (found.every(item => /^drafts\.[^.]+$/.test(item._id))) {
+    throw new Error(`Featured project exists only as a draft: ${sourceKey}`);
+  }
+  throw new Error(`Featured project uses a private document ID: ${sourceKey}`);
 }
 
 export async function runImport(store: Store, seeds: Seed[], options: {

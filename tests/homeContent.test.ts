@@ -79,6 +79,21 @@ describe('Home content adapter', () => {
     ]);
   });
 
+  it.each([null, undefined])('builds a project card with no tags when the optional field is %s', tags => {
+    const result = home({ featuredProjects: [slot('first-card', 'first', { ...project('first')!, tags })] });
+    expect(adaptHome(result)?.featuredProjects).toEqual([
+      { key: 'first-card', card: expect.objectContaining({ index: '01', tags: [] }), href: '/work/first' },
+    ]);
+  });
+
+  it('keeps a card with malformed non-null tags unavailable', () => {
+    const result = home({ featuredProjects: [slot('first-card', 'first', { ...project('first')!, tags: [''] })] });
+    expect(adaptHome(result)?.featuredProjects).toEqual([]);
+    expect(adaptHome(result, true)?.featuredProjects).toEqual([
+      { key: 'first-card', card: null, notice: expect.stringMatching(/incomplete/i) },
+    ]);
+  });
+
   it('omits unresolved and unusable targets publicly, with per-slot diagnostics in preview', () => {
     const result = home({ featuredProjects: [
       slot('missing', 'unpublished', null),
