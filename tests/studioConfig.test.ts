@@ -31,9 +31,9 @@ it('opens five fixed document editors before the three ordinary lists', async ()
   const root = structure(builder, { ...builder.context, documentStore: source.documentStore });
   if (!(root instanceof ListBuilder)) throw new Error('Expected the Portfolio list');
   const items = root.serialize().items.filter(item => item.type === 'listItem');
-  expect(items.map(item => item.id)).toEqual(['home', 'about', 'workArchive', 'writingIndex', 'siteSettings', ...ordinaryTypes]);
+  expect(items.map(item => item.id)).toEqual([...singletonIds, ...ordinaryTypes]);
   for (const [index, id] of singletonIds.entries()) {
-    expect(items[index].child).toMatchObject({ type: 'document', options: { id, type: id } });
+    expect(items[index].child).toMatchObject({ type: 'document', id, options: { id, type: id } });
     const actions = source.document.actions({ documentId: id, schemaType: id, versionType: 'published', releaseId: undefined });
     expect(actions.map(action => action.action)).toContain('publish');
     expect(actions.map(action => action.action)).not.toContain('duplicate');
