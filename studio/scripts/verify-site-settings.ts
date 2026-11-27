@@ -118,9 +118,10 @@ async function verify() {
       .patch(draftId, patch => patch.ifRevisionId(draft._rev).set({ verificationCleanup: true }))
       .delete(draftId)
       .commit();
-    if (await client.getDocument(draftId)) throw new Error('Draft still present.');
     stage = verificationStage;
   }
+  stage = 'verify draft removal';
+  if (await client.getDocument(draftId)) throw new Error('Draft still present.');
   console.log('PASS: Site settings seed parity, six signed route entries, private draft reads, public isolation, exit and owned draft cleanup.');
 }
 
