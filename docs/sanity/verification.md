@@ -16,11 +16,13 @@
   published origin within 90 attempts. A later read-only check matched the
   published revision on its first request. Exact propagation time is unknown.
   The full verifier subsequently passed with a current CDN response.
-- **145 tests** passed. The combined frontend/server/Studio build and its
+- **148 tests** passed on 2026-11-27. The combined frontend/server/Studio build and its
   configured-credential scan passed, and maintained-code lint was clean.
   TypeGen reproduced seven queries and 38 schema types byte for byte. Home
   lifecycle tests used GSAP and SplitText in jsdom with controlled fonts and a
-  pressure stub. They verified revision ownership, cleanup and literal CMS labels.
+  pressure stub. They verified revision ownership, cleanup, literal CMS labels
+  and authored nonbreaking spaces during the animated split. The long-copy regression
+  checks that the hero actions are visible at 2.5 seconds in the GSAP timeline.
 - The browser access host was unavailable. Studio sign-in and iframe cookies,
   desktop/375px layout, reduced motion, and real GSAP teardown remain open.
 - Vercel CLI and MCP authentication succeeded. The accessible Vercel account

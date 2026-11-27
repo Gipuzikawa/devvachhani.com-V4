@@ -15,4 +15,7 @@
 - Development import created one Home singleton. The [rerun report](fixtures/phase-4-rerun-report.json)
   records zero creates, zero updates and zero differences. The signed preview
   check passed for all three draft lines and draft-only project references.
+- The review fix preserved authored nonbreaking spaces in animated hero text.
+  A cap on the cumulative stagger keeps the actions reachable with long copy.
+  The final combined build passed all 148 tests.
 - See the [verification record](verification.md) for the migration and acceptance results.
