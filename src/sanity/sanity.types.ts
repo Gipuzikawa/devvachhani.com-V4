@@ -401,6 +401,26 @@ export type HeroLine = {
   >;
 };
 
+export type SiteSettings = {
+  _id: string;
+  _type: "siteSettings";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  sourceKey?: string;
+  wordmark?: string;
+  contactEmail?: string;
+  footerSignoff?: string;
+  footerMeta?: string;
+  footerColophon?: string;
+  socialLinks?: Array<{
+    label?: string;
+    href?: string;
+    _type: "socialLink";
+    _key: string;
+  }>;
+};
+
 export type SanityImagePaletteSwatch = {
   _type: "sanity.imagePaletteSwatch";
   background?: string;
@@ -529,6 +549,7 @@ export type AllSanitySchemaTypes =
   | HomeLink
   | HeroRun
   | HeroLine
+  | SiteSettings
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
@@ -537,6 +558,27 @@ export type AllSanitySchemaTypes =
   | SanityAssetSourceData
   | SanityImageAsset
   | Geopoint;
+
+// Source: ../src/sanity/queries.ts
+// Variable: SITE_SETTINGS_QUERY
+// Query: *[_type == "siteSettings" && _id == "siteSettings"]{  _id, _rev, wordmark, contactEmail, footerSignoff, footerMeta, footerColophon,  "socialLinks": select(socialLinks != null && socialLinks[] == null => false, socialLinks[]{_key, label, href})}
+export type SITE_SETTINGS_QUERY_RESULT = Array<{
+  _id: "siteSettings";
+  _rev: string;
+  wordmark: string | null;
+  contactEmail: string | null;
+  footerSignoff: string | null;
+  footerMeta: string | null;
+  footerColophon: string | null;
+  socialLinks:
+    | Array<{
+        _key: string;
+        label: string | null;
+        href: string | null;
+      }>
+    | false
+    | null;
+}>;
 
 // Source: ../src/sanity/queries.ts
 // Variable: HOME_PAGE_QUERY
@@ -890,6 +932,7 @@ export type PROJECT_PAGE_QUERY_RESULT = {
 // Query TypeMap
 declare global {
   interface SanityQueries {
+    '*[_type == "siteSettings" && _id == "siteSettings"]{\n  _id, _rev, wordmark, contactEmail, footerSignoff, footerMeta, footerColophon,\n  "socialLinks": select(socialLinks != null && socialLinks[] == null => false, socialLinks[]{_key, label, href})\n}': SITE_SETTINGS_QUERY_RESULT;
     '{\n  "settings": *[_type == "homePage" && _id == "homePage"]{\n    _id, _rev, metaAccent, metaMuted, heroLead,\n    heroLines[]{_key, runs[]{_key, text, emphasis}},\n    primaryCta{label, href}, contactCta{label, href},\n    workHeading{eyebrow, title}, archiveLink{label, href},\n    aboutHeading{eyebrow, title}, aboutIntro, aboutLink{label, href},\n    featuredProjects[]{_key, _ref,\n      "project": *[_type == "project" && _id == ^._ref][0]{_id, _rev, title, summary, tags, slug, detailEnabled}\n    }\n  },\n  "order": *[_type == "project"] | order(sortOrder asc, _id asc){_id}\n}': HOME_PAGE_QUERY_RESULT;
     '*[_type == "aboutPage" && _id == "aboutPage"]{\n  _id, _rev, heading, toolkitHeading, approachHeading, lead, biography, facts, skillGroups, principles\n}': ABOUT_PAGE_QUERY_RESULT;
     '{\n  "settings": *[_type == "writingPage" && _id == "writingPage"]{_id, _rev, heading, intro, plannedHeading, planned},\n  "articles": *[_type == "article"] | order(publishedAt desc, _id asc){\n    _id, _rev, title, slug, dek, publishedAt, category, contentStatus, readingTimeOverride, body\n  }\n}': WRITING_INDEX_QUERY_RESULT;
