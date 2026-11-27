@@ -4,7 +4,8 @@ For a new session, start with [the handoff](session-handoff.md), then verify the
 live branch and PR state. Historical acceptance evidence is in `verification.md`.
 
 Studio, typed transport and authenticated preview serve Work/project, Writing/article,
-About and Home. Shell copy migrates in Phase 5.
+About, Home and the persistent site shell. Edit the wordmark, contact email,
+footer copy and ordered social links in Site settings.
 
 Task 1.1 is now seeded in development. Project and Work editing schemas are
 available, and task 1.2 has connected the page readers. See `content-inventory.md` for
@@ -126,6 +127,19 @@ The verifier creates two temporary development drafts atomically and deletes
 them using their exact created revisions. An existing Home draft prevents the
 creation. Add `-- --published-only` for a read-only origin and CDN check.
 
+Run the site settings verifier after the guarded development import and with the
+local HTTPS preview server running:
+
+```sh
+cd studio
+node node_modules/@sanity/cli/bin/run.js exec scripts/verify-site-settings.ts --with-user-token
+```
+
+This compares the source seed, published origin and the exact CDN query. It
+checks signed entry for all six route patterns and verifies that draft settings
+stay private. The verifier creates the settings draft only if the ID is free and
+cleans up using its exact revision. Use `-- --published-only` for a read-only
+check, or `-- --prime` before an initial seed to prime the exact CDN query.
 ## Checks and deployment boundary
 
 `npm run typegen` regenerates schema/query types. `npm run build:deploy` checks the
