@@ -1,9 +1,15 @@
 import type { StructureResolver } from 'sanity/structure';
+
+export const singletonDocuments = [
+  { id: 'home', documentId: 'homePage', schemaType: 'homePage', title: 'Home' },
+  { id: 'about', documentId: 'aboutPage', schemaType: 'aboutPage', title: 'About' },
+  { id: 'workArchive', documentId: 'workPage', schemaType: 'workPage', title: 'Work archive' },
+  { id: 'writingIndex', documentId: 'writingPage', schemaType: 'writingPage', title: 'Writing index' },
+  { id: 'siteSettings', documentId: 'siteSettings', schemaType: 'siteSettings', title: 'Site settings' },
+];
+
 export const structure: StructureResolver = S => S.list().title('Portfolio').items([
-  S.listItem().title('Home').child(S.document().schemaType('homePage').documentId('homePage')),
-  S.listItem().title('About').child(S.document().schemaType('aboutPage').documentId('aboutPage')),
-  S.listItem().title('Work archive').child(S.document().schemaType('workPage').documentId('workPage')),
-  S.listItem().title('Writing index').child(S.document().schemaType('writingPage').documentId('writingPage')),
+  ...singletonDocuments.map(({ id }) => S.listItem().singleton(id)),
   S.divider(),
   S.documentTypeListItem('project').title('Projects'),
   S.documentTypeListItem('article').title('Articles'),
