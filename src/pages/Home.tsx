@@ -108,7 +108,9 @@ function HomeHero({ page }: { page: HomeView }) {
         // The outer line spans drive the scroll scrub. Retain their split
         // children for pressure and let the heading speak the full headline.
         headline.setAttribute('aria-label', lines.map(line => line.textContent?.trim()).join(' '));
-        context.ignore(() => { split = SplitText.create(lines, { type: 'chars', tag: 'span', aria: 'hidden' }); });
+        context.ignore(() => {
+          split = SplitText.create(lines, { type: 'chars', tag: 'span', aria: 'hidden', reduceWhiteSpace: false });
+        });
         const chars = split!.chars as HTMLElement[];
         gsap.set(chars, { display: 'inline-block', position: 'relative', yPercent: 120 });
         gsap.set(headline, { autoAlpha: 1 });

@@ -193,6 +193,20 @@ describe('Home content route', () => {
     expect(split.mock.calls.filter(([targets]) => Array.isArray(targets))).toHaveLength(1);
   });
 
+  it('preserves an authored nonbreaking space while the hero stays split', async () => {
+    const fonts = withDelayedFonts();
+    const data = homeQuery();
+    const text = 'Measuring\u00a0the';
+    data.settings[0].heroLines![0].runs![0].text = text;
+    const view = render(tree(source(() => data)));
+    await screen.findByText('An introduction.');
+    const line = view.container.querySelector('[data-hero-line]')!;
+    expect(line.textContent).toBe(text);
+    await act(async () => fonts.resolve());
+    expect(line.querySelector('span')).toBeTruthy();
+    expect(line.textContent).toBe(text);
+  });
+
   it('reverts split DOM and disposes pressure when the hero revision changes', async () => {
     const fonts = withDelayedFonts();
     const transport = source(() => state.preview.revision ? homeQuery({ _rev: 'new-hero', heroLead: 'New lead' }) : homeQuery());
