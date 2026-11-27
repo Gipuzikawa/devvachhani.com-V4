@@ -141,7 +141,9 @@ function HomeHero({ page }: { page: HomeView }) {
           );
         });
 
-        tl.to(chars, { yPercent: 0, duration: DUR.hero, stagger: 0.014 }, 0.25)
+        // Keep the original cadence while limiting how long copy can delay the actions.
+        const stagger = Math.min(0.014, DUR.slow / Math.max(1, chars.length - 1));
+        tl.to(chars, { yPercent: 0, duration: DUR.hero, stagger }, 0.25)
           .to('[data-hero-lead]', { opacity: 1, y: 0, duration: DUR.slow }, '-=0.55')
           .to('[data-hero-cta]', { opacity: 1, y: 0, duration: DUR.slow }, '-=0.45');
       });

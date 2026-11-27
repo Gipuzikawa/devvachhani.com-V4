@@ -207,6 +207,30 @@ describe('Home content route', () => {
     expect(line.textContent).toBe(text);
   });
 
+  it('finishes revealing the hero actions within 2.5 seconds for a long headline', async () => {
+    const fonts = withDelayedFonts();
+    const data = homeQuery();
+    data.settings[0].heroLines![0].runs![0].text = 'Measuring'.repeat(13);
+    const view = render(tree(source(() => data)));
+    await screen.findByText('An introduction.');
+    const actions = view.container.querySelector<HTMLElement>('[data-hero-cta]')!;
+    expect(actions.style.opacity).toBe('0');
+    await act(async () => fonts.resolve());
+    const entrance = heroEntrance(view.container.querySelector('[data-hero-decode]')!);
+    expect(entrance).toBeTruthy();
+    act(() => { entrance?.pause(2.5); });
+    expect(actions.style.opacity).toBe('1');
+  });
+
+  it('keeps the original entrance duration for the seeded headline', async () => {
+    const fonts = withDelayedFonts();
+    const view = render(tree(source(() => homeQuery())));
+    await screen.findByText('An introduction.');
+    await act(async () => fonts.resolve());
+    const entrance = heroEntrance(view.container.querySelector('[data-hero-decode]')!);
+    expect(entrance?.duration()).toBeCloseTo(2.338, 3);
+  });
+
   it('reverts split DOM and disposes pressure when the hero revision changes', async () => {
     const fonts = withDelayedFonts();
     const transport = source(() => state.preview.revision ? homeQuery({ _rev: 'new-hero', heroLead: 'New lead' }) : homeQuery());
