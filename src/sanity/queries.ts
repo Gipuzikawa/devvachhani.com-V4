@@ -1,5 +1,19 @@
 import { defineQuery } from 'groq';
 
+export const HOME_PAGE_QUERY = defineQuery(`{
+  "settings": *[_type == "homePage" && _id == "homePage"]{
+    _id, _rev, metaAccent, metaMuted, heroLead,
+    heroLines[]{_key, runs[]{_key, text, emphasis}},
+    primaryCta{label, href}, contactCta{label, href},
+    workHeading{eyebrow, title}, archiveLink{label, href},
+    aboutHeading{eyebrow, title}, aboutIntro, aboutLink{label, href},
+    featuredProjects[]{_key, _ref,
+      "project": *[_type == "project" && _id == ^._ref][0]{_id, _rev, title, summary, tags, slug, detailEnabled}
+    }
+  },
+  "order": *[_type == "project"] | order(sortOrder asc, _id asc){_id}
+}`);
+
 export const ABOUT_PAGE_QUERY = defineQuery(`*[_type == "aboutPage" && _id == "aboutPage"]{
   _id, _rev, heading, toolkitHeading, approachHeading, lead, biography, facts, skillGroups, principles
 }`);

@@ -1,9 +1,9 @@
-import { ABOUT_PAGE_QUERY, DISCIPLINES_QUERY, WORK_ARCHIVE_QUERY, PROJECT_PAGE_QUERY, WRITING_INDEX_QUERY, ARTICLE_PAGE_QUERY } from './queries';
-import type { ABOUT_PAGE_QUERY_RESULT, DISCIPLINES_QUERY_RESULT, WORK_ARCHIVE_QUERY_RESULT, PROJECT_PAGE_QUERY_RESULT, WRITING_INDEX_QUERY_RESULT, ARTICLE_PAGE_QUERY_RESULT } from './sanity.types';
+import { HOME_PAGE_QUERY, ABOUT_PAGE_QUERY, DISCIPLINES_QUERY, WORK_ARCHIVE_QUERY, PROJECT_PAGE_QUERY, WRITING_INDEX_QUERY, ARTICLE_PAGE_QUERY } from './queries';
+import type { HOME_PAGE_QUERY_RESULT, ABOUT_PAGE_QUERY_RESULT, DISCIPLINES_QUERY_RESULT, WORK_ARCHIVE_QUERY_RESULT, PROJECT_PAGE_QUERY_RESULT, WRITING_INDEX_QUERY_RESULT, ARTICLE_PAGE_QUERY_RESULT } from './sanity.types';
 
-export type QueryName = 'aboutPage' | 'disciplines' | 'workArchive' | 'projectPage' | 'writingIndex' | 'articlePage';
-export type QueryResults = { aboutPage: ABOUT_PAGE_QUERY_RESULT; disciplines: DISCIPLINES_QUERY_RESULT; workArchive: WORK_ARCHIVE_QUERY_RESULT; projectPage: PROJECT_PAGE_QUERY_RESULT; writingIndex: WRITING_INDEX_QUERY_RESULT; articlePage: ARTICLE_PAGE_QUERY_RESULT };
-export const queryRegistry = { aboutPage: ABOUT_PAGE_QUERY, disciplines: DISCIPLINES_QUERY, workArchive: WORK_ARCHIVE_QUERY, projectPage: PROJECT_PAGE_QUERY, writingIndex: WRITING_INDEX_QUERY, articlePage: ARTICLE_PAGE_QUERY } as const;
+export type QueryName = 'homePage' | 'aboutPage' | 'disciplines' | 'workArchive' | 'projectPage' | 'writingIndex' | 'articlePage';
+export type QueryResults = { homePage: HOME_PAGE_QUERY_RESULT; aboutPage: ABOUT_PAGE_QUERY_RESULT; disciplines: DISCIPLINES_QUERY_RESULT; workArchive: WORK_ARCHIVE_QUERY_RESULT; projectPage: PROJECT_PAGE_QUERY_RESULT; writingIndex: WRITING_INDEX_QUERY_RESULT; articlePage: ARTICLE_PAGE_QUERY_RESULT };
+export const queryRegistry = { homePage: HOME_PAGE_QUERY, aboutPage: ABOUT_PAGE_QUERY, disciplines: DISCIPLINES_QUERY, workArchive: WORK_ARCHIVE_QUERY, projectPage: PROJECT_PAGE_QUERY, writingIndex: WRITING_INDEX_QUERY, articlePage: ARTICLE_PAGE_QUERY } as const;
 
 export function parseQueryRequest(value: unknown): { name: QueryName; params: Record<string, string> } {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid query request');
@@ -27,6 +27,7 @@ export function validResult(name: QueryName, value: unknown) {
   if (name === 'aboutPage' || name === 'disciplines' || name === 'articlePage') return Array.isArray(value);
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const result = value as Record<string, unknown>;
+  if (name === 'homePage') return Array.isArray(result.settings) && Array.isArray(result.order);
   if (name === 'writingIndex') return Array.isArray(result.settings) && Array.isArray(result.articles);
   return Array.isArray(result.projects) && (name === 'workArchive' ? Array.isArray(result.settings) && Array.isArray(result.disciplines) : Array.isArray(result.order));
 }

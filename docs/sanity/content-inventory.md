@@ -1,5 +1,13 @@
 # Phase 1 source inventory and mapping
 
+## Phase 4 Home
+
+The [Phase 4 log](phase-4-migration.md) identifies the source snapshots and field
+mapping. Run the development import with `--phase 4`. It writes one managed
+`homePage` singleton and resolves its three featured project IDs by source key.
+The run requires an unambiguous published project for each source key. It
+preserves existing project data and reports differences in the Home singleton.
+
 ## Phase 3 About
 
 The [Phase 3 migration log](phase-3-migration.md) identifies the source snapshots,

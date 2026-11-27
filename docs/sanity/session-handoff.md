@@ -1,36 +1,31 @@
 # Sanity session handoff
 
-## Phase 3 review gate — 2026-11-24
+## Phase 4 review gate — 2026-11-26
 
-PR #14 merged into `development-Area` at `d388558`. Phase 3 branched there as
-`feature/sanity-about`. Review its PR before merging. After authorization and a
-confirmed merge, fetch integration and start Phase 4 on a fresh branch.
+PR #15 merged into `development-Area` at `b221438`. The Phase 4 worktree started
+there as `feature/sanity-home`. Review and merge the Phase 4 PR before fetching
+integration and branching Phase 5.
 
-About now owns three headings, the lead, biography paragraphs, ordered facts,
-toolkit groups and principles in one singleton. Home displays its selected facts
-in authored order. The rest of Home, including the hero, still uses its original
-source. Settings and the persistent shell follow in Phase 5.
+Home now reads its hero, links, section copy and featured project references
+from Sanity. About supplies the facts selected for Home. The hero remounts when
+its own document revision changes. The featured list also tracks project revisions
+and archive positions.
 
-The development schema deployed and the guarded importer created one document in
-`oir24qey/development`. The rerun skipped the singleton with zero differences.
-The signed HTTP check showed the revised draft lead and Home fact in preview,
-confirmed published origin/CDN isolation, checked exit, and removed the temporary
-draft using a revision guard. See the [progress log](phase-3-migration.md),
-[rerun report](fixtures/phase-3-rerun-report.json) and [verification](verification.md).
+The development schema deployed and the guarded importer created one Home
+singleton. Its rerun skipped it with zero differences. Live signed preview and
+public isolation passed. The primed Home query was still stale at the end of the
+90-attempt window and later matched origin. See the [progress log](phase-4-migration.md)
+and [verification record](verification.md).
 
 ## Continue from here
 
-1. Read `AGENTS.md`, the approved design/plan and verification. Follow the same
-   branch, checklist, checks, evidence, handoff and review cycle for each phase.
-2. Phase 4 covers the editable three-line hero and emphasis, Home copy and CTAs,
-   and ordered project references. Preserve the original line containers and
-   motion. Verify delayed font resolution, cleanup across revisions and unpublished
-   reference handling. Phase 5 covers settings and the persistent shell.
-3. Recheck browser access and Vercel authentication before staging. The local
-   browser access host was unavailable and Vercel rejected the current CLI token.
-   Human sign-in/iframe cookies, responsive and reduced-motion visuals, real GSAP
-   cleanup and staging Functions/routing/log handling still need evidence.
-4. Prepare separate frontend and dataset rollback points, a production backup,
+1. Read `AGENTS.md`, the approved design and plan, and verification. Phase 5
+   migrates site settings and the persistent shell. Start on a fresh branch
+   after Phase 4 receives human review and is merged.
+2. Vercel CLI and MCP authentication were verified. Select and link the portfolio
+   staging project during Phase 6. Recheck browser access for Studio sign-in,
+   iframe cookies, narrow/wide layouts, reduced motion and real GSAP cleanup.
+3. Prepare separate frontend and dataset rollback points, a production backup,
    migration reports and staging verification in Phase 6. Obtain explicit user
    approval before production writes, production deployment or DNS changes.
 

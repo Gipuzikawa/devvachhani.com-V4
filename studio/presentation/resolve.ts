@@ -1,6 +1,8 @@
-import { defineLocations, type PresentationPluginOptions } from 'sanity/presentation';
+import { defineDocuments, defineLocations, type PresentationPluginOptions } from 'sanity/presentation';
 export const resolve: PresentationPluginOptions['resolve'] = {
+  mainDocuments: defineDocuments([{ route: '/', filter: '_type == "homePage" && _id == "homePage"' }]),
   locations: {
+    homePage: defineLocations({ locations: [{ title: 'Home', href: '/' }] }),
     aboutPage: defineLocations({ locations: [{ title: 'About', href: '/about' }, { title: 'Home facts', href: '/' }] }),
     writingPage: defineLocations({ locations: [{ title: 'Writing index', href: '/writing' }] }),
     article: defineLocations({ select: { title: 'title', slug: 'slug.current' },

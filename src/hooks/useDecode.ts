@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { DUR, EASE, DECODE_CHARS, prefersReducedMotion } from '../motion/core';
+import { DUR, EASE, DECODE_CHARS, prefersReducedMotion, scrambleTextTarget } from '../motion/core';
 
 export interface DecodeOptions {
   /** Scramble-settle duration in seconds. */
@@ -35,6 +35,7 @@ export function useDecode<T extends HTMLElement = HTMLDivElement>({
       const root = ref.current;
       if (!root || prefersReducedMotion()) return;
       const items = gsap.utils.toArray<HTMLElement>('[data-decode]', root);
+      const restoreLabels: Array<() => void> = [];
 
       /* Items whose triggers fire together (same scroll position) queue up
          a shared cascade offset so simultaneous labels still print in
@@ -59,17 +60,24 @@ export function useDecode<T extends HTMLElement = HTMLDivElement>({
             queued += 1;
 
             el.setAttribute('aria-label', text);
+            const target = scrambleTextTarget(el);
+            const restore = () => {
+              target.textContent = text;
+              el.removeAttribute('aria-label');
+            };
+            restoreLabels.push(restore);
             gsap.to(el, { opacity: 1, duration: DUR.fast, ease: EASE.out, delay });
-            gsap.to(el, {
+            gsap.to(target, {
               duration,
               delay,
               ease: 'none',
               scrambleText: { text, chars: DECODE_CHARS, speed: 0.4 },
-              onComplete: () => el.removeAttribute('aria-label'),
+              onComplete: restore,
             });
           },
         });
       });
+      return () => restoreLabels.forEach(restore => restore());
     },
     { scope: ref },
   );

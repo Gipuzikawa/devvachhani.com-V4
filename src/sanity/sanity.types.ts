@@ -351,6 +351,56 @@ export type AboutFact = {
   emphasized?: boolean;
 };
 
+export type HomePage = {
+  _id: string;
+  _type: "homePage";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  sourceKey?: string;
+  metaAccent?: string;
+  metaMuted?: string;
+  heroLines?: Array<
+    {
+      _key: string;
+    } & HeroLine
+  >;
+  heroLead?: string;
+  primaryCta?: HomeLink;
+  contactCta?: HomeLink;
+  workHeading?: SectionHeading;
+  featuredProjects?: Array<
+    {
+      _key: string;
+    } & ProjectReference
+  >;
+  archiveLink?: HomeLink;
+  aboutHeading?: SectionHeading;
+  aboutIntro?: string;
+  aboutLink?: HomeLink;
+};
+
+export type HomeLink = {
+  _type: "homeLink";
+  label?: string;
+  href?: string;
+};
+
+export type HeroRun = {
+  _type: "heroRun";
+  text?: string;
+  emphasis?: boolean;
+};
+
+export type HeroLine = {
+  _type: "heroLine";
+  runs?: Array<
+    {
+      _key: string;
+    } & HeroRun
+  >;
+};
+
 export type SanityImagePaletteSwatch = {
   _type: "sanity.imagePaletteSwatch";
   background?: string;
@@ -475,6 +525,10 @@ export type AllSanitySchemaTypes =
   | Principle
   | AboutPage
   | AboutFact
+  | HomePage
+  | HomeLink
+  | HeroRun
+  | HeroLine
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
@@ -483,6 +537,68 @@ export type AllSanitySchemaTypes =
   | SanityAssetSourceData
   | SanityImageAsset
   | Geopoint;
+
+// Source: ../src/sanity/queries.ts
+// Variable: HOME_PAGE_QUERY
+// Query: {  "settings": *[_type == "homePage" && _id == "homePage"]{    _id, _rev, metaAccent, metaMuted, heroLead,    heroLines[]{_key, runs[]{_key, text, emphasis}},    primaryCta{label, href}, contactCta{label, href},    workHeading{eyebrow, title}, archiveLink{label, href},    aboutHeading{eyebrow, title}, aboutIntro, aboutLink{label, href},    featuredProjects[]{_key, _ref,      "project": *[_type == "project" && _id == ^._ref][0]{_id, _rev, title, summary, tags, slug, detailEnabled}    }  },  "order": *[_type == "project"] | order(sortOrder asc, _id asc){_id}}
+export type HOME_PAGE_QUERY_RESULT = {
+  settings: Array<{
+    _id: "homePage";
+    _rev: string;
+    metaAccent: string | null;
+    metaMuted: string | null;
+    heroLead: string | null;
+    heroLines: Array<{
+      _key: string;
+      runs: Array<{
+        _key: string;
+        text: string | null;
+        emphasis: boolean | null;
+      }> | null;
+    }> | null;
+    primaryCta: {
+      label: string | null;
+      href: string | null;
+    } | null;
+    contactCta: {
+      label: string | null;
+      href: string | null;
+    } | null;
+    workHeading: {
+      eyebrow: string | null;
+      title: string | null;
+    } | null;
+    archiveLink: {
+      label: string | null;
+      href: string | null;
+    } | null;
+    aboutHeading: {
+      eyebrow: string | null;
+      title: string | null;
+    } | null;
+    aboutIntro: string | null;
+    aboutLink: {
+      label: string | null;
+      href: string | null;
+    } | null;
+    featuredProjects: Array<{
+      _key: string;
+      _ref: string;
+      project: {
+        _id: string;
+        _rev: string;
+        title: string | null;
+        summary: string | null;
+        tags: Array<string> | null;
+        slug: Slug | null;
+        detailEnabled: boolean | null;
+      } | null;
+    }> | null;
+  }>;
+  order: Array<{
+    _id: string;
+  }>;
+};
 
 // Source: ../src/sanity/queries.ts
 // Variable: ABOUT_PAGE_QUERY
@@ -774,6 +890,7 @@ export type PROJECT_PAGE_QUERY_RESULT = {
 // Query TypeMap
 declare global {
   interface SanityQueries {
+    '{\n  "settings": *[_type == "homePage" && _id == "homePage"]{\n    _id, _rev, metaAccent, metaMuted, heroLead,\n    heroLines[]{_key, runs[]{_key, text, emphasis}},\n    primaryCta{label, href}, contactCta{label, href},\n    workHeading{eyebrow, title}, archiveLink{label, href},\n    aboutHeading{eyebrow, title}, aboutIntro, aboutLink{label, href},\n    featuredProjects[]{_key, _ref,\n      "project": *[_type == "project" && _id == ^._ref][0]{_id, _rev, title, summary, tags, slug, detailEnabled}\n    }\n  },\n  "order": *[_type == "project"] | order(sortOrder asc, _id asc){_id}\n}': HOME_PAGE_QUERY_RESULT;
     '*[_type == "aboutPage" && _id == "aboutPage"]{\n  _id, _rev, heading, toolkitHeading, approachHeading, lead, biography, facts, skillGroups, principles\n}': ABOUT_PAGE_QUERY_RESULT;
     '{\n  "settings": *[_type == "writingPage" && _id == "writingPage"]{_id, _rev, heading, intro, plannedHeading, planned},\n  "articles": *[_type == "article"] | order(publishedAt desc, _id asc){\n    _id, _rev, title, slug, dek, publishedAt, category, contentStatus, readingTimeOverride, body\n  }\n}': WRITING_INDEX_QUERY_RESULT;
     '*[_type == "article" && slug.current == $slug]{\n  _id, _rev, title, slug, dek, publishedAt, category, contentStatus, readingTimeOverride,\n  relatedProject->{_id, title, slug, detailEnabled},\n  body[]{..., _type == "figure" => {image{..., "assetId": asset->_id}}}\n}': ARTICLE_PAGE_QUERY_RESULT;

@@ -44,12 +44,11 @@ active gate).
 ### Content: Sanity with phased static domains
 
 Sanity Studio 6.21.0 builds separately at `/studio`; the Vite/React SPA is retained.
-Work/project and Writing/article pages consume generated GROQ contracts and strict adapters. Published
+Work/project, Writing/article, About and Home consume generated GROQ contracts and adapters. Published
 browser reads use the Sanity CDN without tokens. Drafts use signed sessions and
 allowlisted Vercel Functions. Credentials stay outside browser code.
 
-About, Home and shell settings remain in static TypeScript until their planned
-phases. `@portabletext/react` renders restricted rich article bodies;
+Shell settings migrate in Phase 5. `@portabletext/react` renders restricted rich article bodies;
 `@sanity/image-url` handles responsive crop/hotspot images.
 Studio's required styled-components dependency is confined to Studio; the portfolio
 keeps its existing plain CSS conventions. See `docs/sanity/setup.md`.

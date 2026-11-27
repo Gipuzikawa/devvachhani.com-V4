@@ -1,5 +1,34 @@
 # Sanity implementation verification
 
+## Phase 4 — 2026-11-26
+
+- PR #15 merged at `b221438`. The Phase 4 feature worktree started from that
+  integration commit.
+- Deployed the Home schema to `oir24qey/development`. The dry run found one
+  missing singleton. Create-missing inserted `homePage` with the three published
+  project references. A rerun skipped it and found zero creates, updates,
+  differences or drafts. See the [rerun report](fixtures/phase-4-rerun-report.json).
+- The local HTTPS signed read showed edits to all three hero lines, resolved a
+  draft-only project reference, and reported an unresolved reference. Published
+  origin and CDN excluded draft data. The shared About query and preview exit
+  passed, and cleanup removed the two temporary drafts under revision guards.
+- The exact Home CDN query was primed before seeding and did not match the
+  published origin within 90 attempts. A later read-only check matched the
+  published revision on its first request. Exact propagation time is unknown.
+  The full verifier subsequently passed with a current CDN response.
+- **148 tests** passed on 2026-11-27. The combined frontend/server/Studio build and its
+  configured-credential scan passed, and maintained-code lint was clean.
+  TypeGen reproduced seven queries and 38 schema types byte for byte. Home
+  lifecycle tests used GSAP and SplitText in jsdom with controlled fonts and a
+  pressure stub. They verified revision ownership, cleanup, literal CMS labels
+  and authored nonbreaking spaces during the animated split. The long-copy regression
+  checks that the hero actions are visible at 2.5 seconds in the GSAP timeline.
+- The browser access host was unavailable. Studio sign-in and iframe cookies,
+  desktop/375px layout, reduced motion, and real GSAP teardown remain open.
+- Vercel CLI and MCP authentication succeeded. The accessible Vercel account
+  has no portfolio project and this checkout has no Vercel project link.
+  Staging verification is pending Phase 6.
+
 ## Phase 3 — 2026-11-24
 
 - GitHub confirmed PR #14 merged into `development-Area` at `d388558`. About

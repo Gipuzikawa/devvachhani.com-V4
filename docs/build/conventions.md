@@ -3,8 +3,7 @@
 Phase 0 addition: `studio/` owns Studio and its separate install; `server/` and
 `api/` own authenticated preview, and `src/sanity/` owns shared query contracts
 and browser content state. Keep credentials out of `src/` and Studio environment
-variables. Work/project, Writing/article, About and shared Home facts use Sanity. Other domains remain static until their
-migrations. See [setup](../sanity/setup.md) before CMS work.
+variables. Work/project, Writing/article, About and Home use Sanity. Shell copy migrates in Phase 5. See [setup](../sanity/setup.md) before CMS work.
 
 Read before editing source.
 
