@@ -249,21 +249,26 @@ describe('persistent site settings', () => {
     expect(scrollIntoView.mock.contexts).toEqual([footer]);
   });
 
-  it('keeps Contact in view when the routed page expands and stops following on user scroll', async () => {
+  it('re-arms Contact following on a second native click after user scroll', async () => {
     let resizePage = () => {};
     const descriptor = Object.getOwnPropertyDescriptor(window, 'ResizeObserver');
     Object.defineProperty(window, 'ResizeObserver', { configurable: true, value: class {
-      constructor(callback: () => void) { resizePage = callback; }
-      observe() {}
+      constructor(private readonly callback: () => void) {}
+      observe() { resizePage = this.callback; }
       disconnect() { resizePage = () => {}; }
     } });
+    let scrollPosition = 0;
+    const scrollDescriptor = Object.getOwnPropertyDescriptor(window, 'scrollY')!;
+    Object.defineProperty(window, 'scrollY', { configurable: true, get: () => scrollPosition });
     try {
       let top = 240;
       const getRect = HTMLElement.prototype.getBoundingClientRect;
       vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
-        return this.id === 'contact' ? new DOMRect(0, top, 450, 120) : getRect.call(this);
+        return this.id === 'contact' ? new DOMRect(0, top - scrollPosition, 450, 120) : getRect.call(this);
       });
-      const view = render(<MemoryRouter initialEntries={['/#contact']}>{shell(source(() => settings('Delayed route')))}</MemoryRouter>);
+      window.history.replaceState(null, '', '/#contact');
+      const view = render(<BrowserRouter>{shell(source(() => settings('Delayed route')))}</BrowserRouter>);
+      const contact = screen.getByRole('link', { name: 'Contact' });
       await waitFor(() => expect(scrollIntoView).toHaveBeenCalledOnce());
       top = 1600;
       resizePage();
@@ -274,10 +279,32 @@ describe('persistent site settings', () => {
       top = 1600;
       resizePage();
       expect(scrollIntoView).toHaveBeenCalledTimes(2);
+
+      top = 260;
+      fireEvent.click(contact, { ctrlKey: true });
+      fireEvent.click(screen.getByRole('button', { name: 'Refresh preview' }));
+      top = 1600;
+      resizePage();
+      expect(scrollIntoView).toHaveBeenCalledTimes(2);
+
+      expect(fireEvent.click(contact)).toBe(true);
+      expect(window.location.hash).toBe('#contact');
+      expect(scrollIntoView).toHaveBeenCalledTimes(2);
+      scrollPosition = 1450;
+      top = 2800;
+      resizePage();
+      expect(scrollIntoView).toHaveBeenCalledTimes(3);
+
+      scrollPosition = 2650;
+      window.history.replaceState(null, '', '/#overview');
+      top = 4000;
+      resizePage();
+      expect(scrollIntoView).toHaveBeenCalledTimes(3);
       view.unmount();
     } finally {
       if (descriptor) Object.defineProperty(window, 'ResizeObserver', descriptor);
       else Reflect.deleteProperty(window, 'ResizeObserver');
+      Object.defineProperty(window, 'scrollY', scrollDescriptor);
     }
   });
 
