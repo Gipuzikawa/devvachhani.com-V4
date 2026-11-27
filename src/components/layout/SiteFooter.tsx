@@ -1,71 +1,63 @@
-import { useState, type CSSProperties } from 'react';
+import { useState, type CSSProperties, type RefObject } from 'react';
+import { useContentLayout } from '../../hooks/useContentLayout';
 import { useReveal } from '../../hooks/useReveal';
 import { useSplitReveal } from '../../hooks/useSplitReveal';
 import { useDecode } from '../../hooks/useDecode';
+import type { SiteSettingsView } from '../../sanity/siteSettings';
+import type { ContentResult } from '../../sanity/types';
 import type { FooterLink } from '../../types';
+import { ContentState } from '../ui/ContentState';
 
-interface SiteFooterProps {
-  signoff?: string;
-  email?: string;
-  links?: FooterLink[];
-  meta?: string;
-  invert?: boolean;
-  style?: CSSProperties;
+export function SiteFooter({ footerRef, result, retry }: {
+  footerRef: RefObject<HTMLElement | null>; result: ContentResult<SiteSettingsView>; retry: () => void;
+}) {
+  const settings = result.status === 'ready' ? result.data : null;
+  // SplitText and decode own their rendered text. Rebuild their subtree
+  // only when the authored footer presentation changes.
+  const footerKey = settings && JSON.stringify([
+    settings.footerSignoff, settings.contactEmail, settings.footerMeta, settings.footerColophon,
+    settings.socialLinks.map(({ label, href }) => [label, href]),
+  ]);
+  useContentLayout(footerRef, JSON.stringify([footerKey, settings?.wordmark, result.status, result.status === 'error' && result.message]));
+
+  return (
+    <footer
+      ref={footerRef}
+      id="contact"
+      style={{
+        background: 'var(--bg-invert)',
+        color: 'var(--text-invert)',
+        padding: 'var(--s-9) var(--page-margin) var(--s-6)',
+        scrollMarginTop: '88px',
+      }}
+    >
+      {settings ? <FooterContent key={footerKey} settings={settings} /> :
+        <div style={{ maxWidth: 'var(--measure-wide)', margin: '0 auto' }}>
+          <ContentState result={result} retry={retry} loadingMessage="Loading site settings…" />
+        </div>
+      }
+    </footer>
+  );
 }
 
-/**
- * SiteFooter — the closing colophon. A large serif sign-off / contact
- * line, a row of mono index links, and a baseline of metadata (year,
- * location, "built with"). Sits on a full top rule; optionally inverts
- * to ink ground.
- */
-export function SiteFooter({
-  signoff = 'Let’s build something.',
-  email = 'hello@devvachhani.com',
-  links = [
-    { label: 'GitHub', href: '#' },
-    { label: 'LinkedIn', href: '#' },
-    { label: 'Email', href: '#' },
-  ],
-  meta = '© 2026 Dev Vachhani',
-  invert = false,
-  style,
-}: SiteFooterProps) {
-  const fg = invert ? 'var(--text-invert)' : 'var(--text-strong)';
-  const muted = invert ? 'color-mix(in srgb, var(--text-invert) 60%, transparent)' : 'var(--text-muted)';
-
-  /* Once-per-visit entrance (the footer persists across routes). Trigger
-     positions are kept honest by the ScrollTrigger.refresh() that
-     RouteTransition runs on every route change. The sign-off carries the
-     signature (set line-by-line); the colophon prints. */
-  const ref = useReveal<HTMLElement>();
+function FooterContent({ settings }: { settings: SiteSettingsView }) {
+  const ref = useReveal<HTMLDivElement>();
   const signoffRef = useSplitReveal<HTMLHeadingElement>();
   const colophonRef = useDecode<HTMLDivElement>();
 
   return (
-    <footer
-      ref={ref}
-      id="contact"
-      style={{
-        background: invert ? 'var(--bg-invert)' : 'transparent',
-        color: fg,
-        borderTop: invert ? 'none' : '1px solid var(--border-strong)',
-        padding: 'var(--s-9) var(--page-margin) var(--s-6)',
-        scrollMarginTop: '88px',
-        ...style,
-      }}
-    >
+    <div ref={ref}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px', justifyContent: 'space-between', alignItems: 'flex-end', maxWidth: 'var(--measure-wide)', margin: '0 auto' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <h2
             ref={signoffRef}
-            style={{ fontSize: 'var(--t-xxl)', fontWeight: 'var(--w-light)' as CSSProperties['fontWeight'], letterSpacing: 'var(--track-tight)', lineHeight: 'var(--lh-tight)', color: fg }}
+            style={{ fontSize: 'var(--t-xxl)', fontWeight: 'var(--w-light)' as CSSProperties['fontWeight'], letterSpacing: 'var(--track-tight)', lineHeight: 'var(--lh-tight)', color: 'var(--text-invert)' }}
           >
-            {signoff}
+            {settings.footerSignoff}
           </h2>
           <a
             data-reveal
-            href={`mailto:${email}`}
+            href={settings.emailHref}
             style={{
               fontFamily: 'var(--font-serif)',
               fontSize: 'var(--t-md)',
@@ -77,13 +69,14 @@ export function SiteFooter({
               paddingBottom: '2px',
             }}
           >
-            {email}
+            {settings.contactEmail}
           </a>
         </div>
         <div data-reveal style={{ display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'flex-start' }}>
-          {links.map((l) => (
-            <FooterLinkItem key={l.label} link={l} fg={fg} />
+          {settings.socialLinks.map(link => (
+            <FooterLinkItem key={link.key} link={link} />
           ))}
+          <FooterLinkItem link={{ label: 'Email', href: settings.emailHref }} />
         </div>
       </div>
       <div
@@ -93,7 +86,7 @@ export function SiteFooter({
           margin: '0 auto',
           marginTop: 'var(--s-8)',
           paddingTop: '18px',
-          borderTop: `1px solid ${invert ? 'rgba(255,255,255,0.16)' : 'var(--border-hairline)'}`,
+          borderTop: '1px solid rgba(255,255,255,0.16)',
           display: 'flex',
           justifyContent: 'space-between',
           gap: '16px',
@@ -102,17 +95,17 @@ export function SiteFooter({
           fontSize: 'var(--t-micro)',
           letterSpacing: 'var(--track-wide)',
           textTransform: 'uppercase',
-          color: muted,
+          color: 'color-mix(in srgb, var(--text-invert) 60%, transparent)',
         }}
       >
-        <span data-decode>{meta}</span>
-        <span data-decode>Set in Newsreader & IBM Plex Mono</span>
+        <span data-decode>{settings.footerMeta}</span>
+        <span data-decode>{settings.footerColophon}</span>
       </div>
-    </footer>
+    </div>
   );
 }
 
-function FooterLinkItem({ link, fg }: { link: FooterLink; fg: string }) {
+function FooterLinkItem({ link }: { link: FooterLink }) {
   const [hover, setHover] = useState(false);
   return (
     <a
@@ -125,7 +118,7 @@ function FooterLinkItem({ link, fg }: { link: FooterLink; fg: string }) {
         letterSpacing: 'var(--track-wide)',
         textTransform: 'uppercase',
         textDecoration: 'none',
-        color: hover ? 'var(--text-accent)' : fg,
+        color: hover ? 'var(--text-accent)' : 'var(--text-invert)',
         transition: 'color var(--dur-fast) var(--ease-out)',
       }}
     >
