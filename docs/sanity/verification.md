@@ -1,5 +1,53 @@
 # Sanity implementation verification
 
+## Phase 5 — 2026-11-27
+
+- GitHub confirmed PR #16 merged Phase 4 into `development-Area` at
+  `8d0cee2`. Phase 5 started from that fetched commit in the isolated
+  `feature/sanity-site-settings` worktree.
+- Deployed the `portfolio` schema to `oir24qey/development` and verified that
+  the registry contains all eight editorial document types. The dry run found
+  one missing record and no drafts. Create-missing created `siteSettings`.
+  The rerun skipped one, created and updated zero, and found zero differences
+  or drafts. See the [revision and source hash](fixtures/phase-5-rerun-report.json).
+- **Published HTTP and CDN:** The fresh origin matched the source. The exact
+  CDN query returned zero records when primed before import and matched origin
+  on the first post-import verification request. This observation leaves the
+  exact propagation interval unknown.
+- **Signed local HTTPS:** All six route entry paths returned clean redirects,
+  including the About Contact hash. Each signed session returned private,
+  no-store and noindex settings with edited wordmark, email, footer and socials.
+  Token-free origin and CDN retained the published version. Exit cleared the
+  cookie, a cookieless settings request returned 401, and revision-guarded
+  draft cleanup succeeded. The six route responses served the portfolio HTML.
+  A separate token-free origin check passed each route through its frontend
+  content adapter.
+
+- **Studio configuration:** Eight tests use the installed Sanity API to check
+  five fixed singleton editors before Projects, Articles and Disciplines,
+  creation-template and action protections, and Presentation across all six
+  route patterns. Site settings has preview links to the four stable entry pages.
+  The native Structure child resolver opens each singleton by its fixed ID,
+  including the four where legacy menu IDs previously differed.
+- **Automated:** All 214 tests in 19 files passed. The combined frontend,
+  server and Studio deployment build passed. Its bundle scan found neither
+  configured server credential. Maintained-code lint passed. TypeGen reproduced
+  both generated files byte for byte, with eight queries and 39 schema types.
+  The source scan found no active import of `src/data/content.ts`.
+- **Local routing:** The Studio root and nested Site settings URL served the
+  built Studio HTML and matched its JavaScript asset. The portfolio detail
+  route served the portfolio HTML. An unknown API path returned 404.
+- **Local Chromium:** With synthetic preview data in the portfolio app, a
+  delayed Home response initially displaced the Contact footer. After the fix,
+  both a direct `#contact` entry and the native Contact link kept the footer in
+  the viewport through the layout change. Preview refresh after the reader
+  scrolled away preserved their scroll position. A BrowserRouter regression
+  covers repeat native Contact activation and switching to an article outline
+  fragment. It failed on the earlier implementation and passed after the fix.
+- **Browser and staging:** The browser access host was unavailable on both
+  checks. Account-backed Studio sign-in, iframe cookies, the desktop/375px
+  matrix and full browser motion checks are pending Phase 6.
+
 ## Phase 4 — 2026-11-26
 
 - PR #15 merged at `b221438`. The Phase 4 feature worktree started from that

@@ -1,8 +1,7 @@
 import { useRef } from 'react';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { DUR, EASE, DECODE_CHARS, prefersReducedMotion, scrambleTextTarget } from '../motion/core';
+import { DUR, EASE, DECODE_CHARS, ScrollTrigger, prefersReducedMotion, scrambleTextTarget } from '../motion/core';
 
 export interface DecodeOptions {
   /** Scramble-settle duration in seconds. */
@@ -31,7 +30,7 @@ export function useDecode<T extends HTMLElement = HTMLDivElement>({
   const ref = useRef<T>(null);
 
   useGSAP(
-    () => {
+    (context) => {
       const root = ref.current;
       if (!root || prefersReducedMotion()) return;
       const items = gsap.utils.toArray<HTMLElement>('[data-decode]', root);
@@ -52,7 +51,7 @@ export function useDecode<T extends HTMLElement = HTMLDivElement>({
           trigger: el,
           start,
           once: true,
-          onEnter: () => {
+          onEnter: () => context.add(() => {
             const now = gsap.ticker.time;
             if (now - flushAt > 0.05) queued = 0;
             flushAt = now;
@@ -74,7 +73,7 @@ export function useDecode<T extends HTMLElement = HTMLDivElement>({
               scrambleText: { text, chars: DECODE_CHARS, speed: 0.4 },
               onComplete: restore,
             });
-          },
+          }),
         });
       });
       return () => restoreLabels.forEach(restore => restore());

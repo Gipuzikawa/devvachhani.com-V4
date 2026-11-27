@@ -1,5 +1,14 @@
 # Phase 1 source inventory and mapping
 
+## Phase 5 site settings
+
+The frozen content and SiteFooter snapshots supply the wordmark, contact email,
+sign-off, copyright, typography credit and two ordered social links. The
+`--phase 5` importer seeds one managed `siteSettings` document with source key
+`site-settings` and stable social keys. Both social destinations remain the
+literal `#`. The footer derives its two email links from the validated mailbox.
+The seed has no reference or asset dependencies and requires no route redirects.
+Use the same development dry run and create-missing commands below with phase 5.
 ## Phase 4 Home
 
 The [Phase 4 log](phase-4-migration.md) identifies the source snapshots and field

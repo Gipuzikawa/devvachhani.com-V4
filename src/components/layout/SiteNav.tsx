@@ -6,23 +6,22 @@ import { useMagnetic } from '../../hooks/useMagnetic';
 import { DUR, EASE, prefersReducedMotion } from '../../motion/core';
 import type { NavLink as NavLinkData } from '../../types';
 
-interface SiteNavProps {
-  brand?: string;
-  links?: NavLinkData[];
-  cta?: NavLinkData;
-  style?: CSSProperties;
-}
+const links = [
+  { label: 'About', href: '/about' },
+  { label: 'Work', href: '/work' },
+  { label: 'Writing', href: '/writing' },
+];
 
 /**
  * SiteNav — the fixed top bar. A wordmark set in serif on the left, mono
  * index links on the right. Hairline bottom rule; background is a paper
  * wash with backdrop blur so content scrolls under it cleanly.
  */
-export function SiteNav({ brand = 'Dev Vachhani', links = [], cta, style }: SiteNavProps) {
+export function SiteNav({ wordmark = 'Home' }: { wordmark?: string }) {
   const ref = useRef<HTMLElement>(null);
   const ctaMagnet = useMagnetic<HTMLAnchorElement>({ strength: 0.3 });
   const { pathname } = useLocation();
-  const firstRoute = useRef(true);
+  const previousPathname = useRef(pathname);
 
   /* One-off entrance on first load (the nav persists across routes): the
      wordmark settles, the cobalt tick stamps in, the index links follow. */
@@ -42,14 +41,12 @@ export function SiteNav({ brand = 'Dev Vachhani', links = [], cta, style }: Site
      which belongs to the entrance timeline above. */
   useGSAP(
     () => {
-      if (firstRoute.current) {
-        firstRoute.current = false;
-        return;
-      }
+      if (previousPathname.current === pathname) return;
+      previousPathname.current = pathname;
       if (prefersReducedMotion()) return;
       gsap.fromTo('[data-nav-tick]', { scale: 0.4 }, { scale: 1, duration: DUR.slow, ease: EASE.spring });
     },
-    { scope: ref, dependencies: [pathname] },
+    { scope: ref, dependencies: [pathname], revertOnUpdate: true },
   );
 
   return (
@@ -67,7 +64,6 @@ export function SiteNav({ brand = 'Dev Vachhani', links = [], cta, style }: Site
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
         borderBottom: '1px solid var(--border-hairline)',
-        ...style,
       }}
     >
       <Link to="/" style={{ display: 'flex', alignItems: 'baseline', gap: '10px', textDecoration: 'none' }}>
@@ -82,7 +78,7 @@ export function SiteNav({ brand = 'Dev Vachhani', links = [], cta, style }: Site
             color: 'var(--text-strong)',
           }}
         >
-          {brand}
+          {wordmark}
         </span>
         <span data-nav-tick aria-hidden="true" style={{ width: '7px', height: '7px', background: 'var(--accent)', display: 'inline-block', transform: 'translateY(-2px)' }} />
       </Link>
@@ -91,26 +87,24 @@ export function SiteNav({ brand = 'Dev Vachhani', links = [], cta, style }: Site
         {links.map((l) => (
           <NavItem key={l.href} link={l} />
         ))}
-        {cta && (
-          <a
-            ref={ctaMagnet}
-            data-nav-item
-            href={cta.href}
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 'var(--t-meta)',
-              letterSpacing: 'var(--track-wide)',
-              textTransform: 'uppercase',
-              textDecoration: 'none',
-              color: 'var(--text-invert)',
-              background: 'var(--ink-0)',
-              padding: '9px 15px',
-              borderRadius: 'var(--r-1)',
-            }}
-          >
-            {cta.label}
-          </a>
-        )}
+        <a
+          ref={ctaMagnet}
+          data-nav-item
+          href="#contact"
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: 'var(--t-meta)',
+            letterSpacing: 'var(--track-wide)',
+            textTransform: 'uppercase',
+            textDecoration: 'none',
+            color: 'var(--text-invert)',
+            background: 'var(--ink-0)',
+            padding: '9px 15px',
+            borderRadius: 'var(--r-1)',
+          }}
+        >
+          Contact
+        </a>
       </div>
     </nav>
   );

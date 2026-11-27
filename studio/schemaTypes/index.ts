@@ -1,3 +1,4 @@
+import { siteSettings } from './documents/siteSettings';
 import { heroLine, heroRun, homeLink, homePage } from './documents/homePage';
 import { aboutFact, aboutPage, principle } from './documents/aboutPage';
 import { discipline } from './documents/discipline';
@@ -7,4 +8,4 @@ import { article } from './documents/article';
 import { writingPage } from './documents/writingPage';
 import { articleBody, articleHeading, articleParagraph, pullQuote, plannedWriting } from './objects/articleBody';
 import { sectionHeading, figure, toolGroup, projectMilestone, specification, reflections, projectDetail } from './objects/projectContent';
-export const schemaTypes = [heroLine, heroRun, homeLink, homePage, aboutFact, aboutPage, principle, discipline, project, workPage, article, writingPage, articleBody, articleHeading, articleParagraph, pullQuote, plannedWriting, sectionHeading, figure, toolGroup, projectMilestone, specification, reflections, projectDetail];
+export const schemaTypes = [siteSettings, heroLine, heroRun, homeLink, homePage, aboutFact, aboutPage, principle, discipline, project, workPage, article, writingPage, articleBody, articleHeading, articleParagraph, pullQuote, plannedWriting, sectionHeading, figure, toolGroup, projectMilestone, specification, reflections, projectDetail];

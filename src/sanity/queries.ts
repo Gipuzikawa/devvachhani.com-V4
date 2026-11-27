@@ -1,5 +1,11 @@
 import { defineQuery } from 'groq';
 
+// Preserve a malformed list as a validation failure without projecting its contents.
+export const SITE_SETTINGS_QUERY = defineQuery(`*[_type == "siteSettings" && _id == "siteSettings"]{
+  _id, _rev, wordmark, contactEmail, footerSignoff, footerMeta, footerColophon,
+  "socialLinks": select(socialLinks != null && socialLinks[] == null => false, socialLinks[]{_key, label, href})
+}`);
+
 export const HOME_PAGE_QUERY = defineQuery(`{
   "settings": *[_type == "homePage" && _id == "homePage"]{
     _id, _rev, metaAccent, metaMuted, heroLead,

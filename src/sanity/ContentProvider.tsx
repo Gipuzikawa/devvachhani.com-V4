@@ -12,12 +12,17 @@ export function ContentProvider({ children, transport = fetchContent }: { childr
   return <TransportContext.Provider value={transport}>{children}</TransportContext.Provider>;
 }
 
-export function useContent<N extends QueryName>(name: N, params: Record<string, string> = {}): ContentResult<QueryResults[N]> {
+export function useContent<N extends QueryName>(
+  name: N,
+  params: Record<string, string> = {},
+  { scope = 'route' }: { scope?: 'route' | 'site' } = {},
+): ContentResult<QueryResults[N]> {
   const preview = usePreview();
   const location = useLocation();
   const transport = useContext(TransportContext);
   const config = publicConfig();
-  const key = JSON.stringify([config?.projectId, config?.dataset, preview.status, location.key, name, params]);
+  const routeKey = scope === 'route' ? location.key : null;
+  const key = JSON.stringify([config?.projectId, config?.dataset, preview.status, routeKey, name, params]);
   const [snapshot, setSnapshot] = useState<{ key: string; result: ContentResult<QueryResults[N]> }>();
   const canFetch = preview.status === 'active' || preview.status === 'public';
   useEffect(() => {

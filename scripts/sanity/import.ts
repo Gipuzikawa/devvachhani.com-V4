@@ -1,3 +1,4 @@
+import { SITE_SETTINGS_ID, SITE_SETTINGS_SOURCE_KEY, validateSiteSettings } from '../../src/sanity/siteSettingsValidation';
 import { validateHome } from '../../src/sanity/homeValidation';
 import { readAbout } from '../../src/sanity/aboutContent';
 import { randomUUID } from 'node:crypto';
@@ -14,7 +15,7 @@ export interface Store {
   lock: (owner: string) => Promise<() => Promise<void>>;
 }
 export type ImportRow = { sourceKey: string; action: 'create' | 'skip' | 'update'; id?: string; revision?: string; sourceHash: string; differs: boolean; draft: boolean };
-export type ImportPhase = 1 | 2 | 3 | 4;
+export type ImportPhase = 1 | 2 | 3 | 4 | 5;
 export type ImportReport = { phase: ImportPhase; dataset: 'development'; mode: 'dry-run' | 'create-missing' | 'update-reviewed'; rows: ImportRow[] };
 
 function readPublishedProjectId(existing: Existing[], sourceKey: string): string {
@@ -36,9 +37,13 @@ function readPublishedProjectId(existing: Existing[], sourceKey: string): string
 export async function runImport(store: Store, seeds: Seed[], options: {
   phase: ImportPhase; dataset: 'development'; mode: ImportReport['mode']; approvals?: UpdateApproval[];
 }): Promise<ImportReport> {
-  if (![1, 2, 3, 4].includes(options.phase) || options.dataset !== 'development' || !['dry-run', 'create-missing', 'update-reviewed'].includes(options.mode)) throw new Error('Only explicit Phase 1–4 development imports are supported.');
-  const allowedTypes = { 1: ['discipline', 'project', 'workPage'], 2: ['article', 'writingPage'], 3: ['aboutPage'], 4: ['homePage'] }[options.phase];
+  if (![1, 2, 3, 4, 5].includes(options.phase) || options.dataset !== 'development' || !['dry-run', 'create-missing', 'update-reviewed'].includes(options.mode)) throw new Error('Only explicit Phase 1–5 development imports are supported.');
+  const allowedTypes = { 1: ['discipline', 'project', 'workPage'], 2: ['article', 'writingPage'], 3: ['aboutPage'], 4: ['homePage'], 5: ['siteSettings'] }[options.phase];
   if (seeds.some(seed => !allowedTypes.includes(seed.type))) throw new Error('Source types do not match the selected phase.');
+  if (options.phase === 5 && seeds.some(seed => seed.singletonId !== SITE_SETTINGS_ID ||
+    seed.sourceKey !== SITE_SETTINGS_SOURCE_KEY || seed.dependencies.length)) {
+    throw new Error('Phase 5 requires the fixed site-settings singleton without dependencies.');
+  }
   if (new Set(seeds.map(seed => seed.sourceKey)).size !== seeds.length) throw new Error('Duplicate source keys in import input.');
   const approvals = options.approvals ?? [];
   if (options.mode === 'update-reviewed' && !approvals.length) throw new Error('Reviewed update manifest is required.');
@@ -57,6 +62,7 @@ export async function runImport(store: Store, seeds: Seed[], options: {
       const body = seed.build(provisional);
       if (body._type !== seed.type || body.sourceKey !== seed.sourceKey ||
         (body._type === 'project' && validateEnabledDetail(body) !== true) ||
+        (body._type === 'siteSettings' && validateSiteSettings(body) !== true) ||
         (body._type === 'homePage' && validateHome(body) !== true) ||
         (body._type === 'aboutPage' && readAbout(body).gaps.length > 0) ||
         (body._type === 'article' && validateArticle(body) !== true) ||

@@ -1,19 +1,51 @@
-import { defineDocuments, defineLocations, type PresentationPluginOptions } from 'sanity/presentation';
-export const resolve: PresentationPluginOptions['resolve'] = {
-  mainDocuments: defineDocuments([{ route: '/', filter: '_type == "homePage" && _id == "homePage"' }]),
+import { defineDocuments, defineLocations, type DocumentResolver, type PresentationPluginOptions } from 'sanity/presentation';
+
+const home = { title: 'Home', href: '/' };
+const about = { title: 'About', href: '/about' };
+const work = { title: 'Work archive', href: '/work' };
+const writing = { title: 'Writing index', href: '/writing' };
+
+function validSlug(slug: unknown): slug is string {
+  return typeof slug === 'string' && slug.length <= 160 && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug);
+}
+
+function fixedDocument(route: string, id: string): DocumentResolver {
+  return { route, filter: '_type == $type && _id == $id', params: { type: id, id } };
+}
+
+export const resolve = {
+  mainDocuments: defineDocuments([
+    fixedDocument(home.href, 'homePage'),
+    fixedDocument(about.href, 'aboutPage'),
+    fixedDocument(work.href, 'workPage'),
+    fixedDocument(writing.href, 'writingPage'),
+    {
+      route: '/work/:slug',
+      resolve: ({ params: { slug } }) => validSlug(slug)
+        ? { filter: '_type == "project" && detailEnabled == true && slug.current == $slug', params: { slug } }
+        : undefined,
+    },
+    {
+      route: '/writing/:slug',
+      resolve: ({ params: { slug } }) => validSlug(slug)
+        ? { filter: '_type == "article" && slug.current == $slug', params: { slug } }
+        : undefined,
+    },
+  ]),
   locations: {
-    homePage: defineLocations({ locations: [{ title: 'Home', href: '/' }] }),
-    aboutPage: defineLocations({ locations: [{ title: 'About', href: '/about' }, { title: 'Home facts', href: '/' }] }),
-    writingPage: defineLocations({ locations: [{ title: 'Writing index', href: '/writing' }] }),
+    homePage: defineLocations({ locations: [home] }),
+    aboutPage: defineLocations({ locations: [about, { ...home, title: 'Home facts' }] }),
+    workPage: defineLocations({ locations: [work] }),
+    writingPage: defineLocations({ locations: [writing] }),
+    siteSettings: defineLocations({ locations: [home, about, work, writing] }),
     article: defineLocations({ select: { title: 'title', slug: 'slug.current' },
-      resolve: doc => ({ locations: [{ title: 'Writing index', href: '/writing' },
-        ...(typeof doc?.slug === 'string' && doc.slug.length <= 160 && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(doc.slug) ?
+      resolve: doc => ({ locations: [writing,
+        ...(validSlug(doc?.slug) ?
           [{ title: doc.title || 'Article', href: `/writing/${doc.slug}` }] : [])] }),
     }),
-    workPage: defineLocations({ locations: [{ title: 'Work archive', href: '/work' }] }),
     project: defineLocations({ select: { title: 'title', slug: 'slug.current', detailEnabled: 'detailEnabled' },
-      resolve: doc => ({ locations: [{ title: 'Work archive', href: '/work' },
-        ...(doc?.detailEnabled && typeof doc.slug === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(doc.slug) ?
+      resolve: doc => ({ locations: [work,
+        ...(doc?.detailEnabled === true && validSlug(doc.slug) ?
           [{ title: doc.title || 'Project', href: `/work/${doc.slug}` }] : [])] }),
     }),
     discipline: defineLocations({
@@ -21,4 +53,4 @@ export const resolve: PresentationPluginOptions['resolve'] = {
       resolve: doc => ({ locations: [{ title: `${doc?.label || 'Discipline'} — preview check`, href: '/work' }] }),
     }),
   },
-};
+} satisfies PresentationPluginOptions['resolve'];

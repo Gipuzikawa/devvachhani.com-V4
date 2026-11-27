@@ -2,7 +2,7 @@ import { useGSAP } from '@gsap/react';
 import type { RefObject } from 'react';
 import { ScrollTrigger } from '../motion/core';
 
-export function useContentLayout(scope: RefObject<HTMLElement | null>) {
+export function useContentLayout(scope: RefObject<HTMLElement | null>, layoutKey?: string) {
   useGSAP(() => {
     let active = true;
     let frame = 0;
@@ -12,5 +12,5 @@ export function useContentLayout(scope: RefObject<HTMLElement | null>) {
     const root = scope.current;
     root?.addEventListener('load', refresh, true);
     return () => { active = false; cancelAnimationFrame(frame); root?.removeEventListener('load', refresh, true); };
-  }, { scope });
+  }, { scope, dependencies: [layoutKey], revertOnUpdate: true });
 }
