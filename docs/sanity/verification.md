@@ -27,6 +27,8 @@
   five fixed singleton editors before Projects, Articles and Disciplines,
   creation-template and action protections, and Presentation across all six
   route patterns. Site settings has preview links to the four stable entry pages.
+  The native Structure child resolver opens each singleton by its fixed ID,
+  including the four where legacy menu IDs previously differed.
 - **Automated:** All 214 tests in 19 files passed. The combined frontend,
   server and Studio deployment build passed. Its bundle scan found neither
   configured server credential. Maintained-code lint passed. TypeGen reproduced

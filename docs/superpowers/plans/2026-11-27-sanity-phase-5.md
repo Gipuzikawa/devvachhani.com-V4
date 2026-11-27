@@ -74,6 +74,7 @@ on a fresh branch after the merge is verified.
   draft across route entry paths, compare public data, exit and verify unauthorized
   reads. Keep secret and cookie values out of output. Remove only the owned draft.
   Recheck browser access and record what can be verified.
-- [ ] Update verification, handoff and a short committed progress log. Review the
-  complete branch independently, push and open the PR. Record that Phase 6 owns
-  staging and production cutover. Route URLs stay the same and need no redirects.
+- [x] Update verification, handoff and a short committed progress log. Review
+  the complete branch independently. Phase 6 owns staging and production
+  cutover. Public route URLs stay the same and need no redirects.
+- [ ] Push and open the PR against `development-Area` for human review.

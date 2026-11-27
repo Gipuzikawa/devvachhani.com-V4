@@ -7,6 +7,11 @@ Studio, typed transport and authenticated preview serve Work/project, Writing/ar
 About, Home and the persistent site shell. Edit the wordmark, contact email,
 footer copy and ordered social links in Site settings.
 
+Structure uses fixed pane paths so Sanity can open each singleton from an edit
+link. Update old Studio bookmarks to `/studio/structure/homePage`,
+`/studio/structure/aboutPage`, `/studio/structure/workPage`, and
+`/studio/structure/writingPage`.
+
 Task 1.1 is now seeded in development. Project and Work editing schemas are
 available, and task 1.2 has connected the page readers. See `content-inventory.md` for
 the explicit import commands, rerun/manifest rules and development-only scope.
