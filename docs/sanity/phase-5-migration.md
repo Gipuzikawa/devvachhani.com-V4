@@ -18,4 +18,4 @@
 - The full suite passed 214 tests. The combined build, credential scan,
   maintained-code lint and byte-identical TypeGen passed.
 - See [verification](verification.md) for checks and remaining browser evidence.
-  Phase 6 follows the human-reviewed Phase 5 merge.
+  Phase 6 follows the human-reviewed merge of [PR #17](https://github.com/Gipuzikawa/devvachhani.com-V4/pull/17).

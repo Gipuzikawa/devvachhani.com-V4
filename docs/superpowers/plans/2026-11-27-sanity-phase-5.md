@@ -77,4 +77,4 @@ on a fresh branch after the merge is verified.
 - [x] Update verification, handoff and a short committed progress log. Review
   the complete branch independently. Phase 6 owns staging and production
   cutover. Public route URLs stay the same and need no redirects.
-- [ ] Push and open the PR against `development-Area` for human review.
+- [x] Push and open [PR #17](https://github.com/Gipuzikawa/devvachhani.com-V4/pull/17) against `development-Area` for human review.
