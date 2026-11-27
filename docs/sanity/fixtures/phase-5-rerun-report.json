@@ -1,0 +1,20 @@
+{
+  "phase": 5,
+  "dataset": "development",
+  "mode": "create-missing",
+  "creates": 0,
+  "skips": 1,
+  "updates": 0,
+  "differences": [],
+  "rows": [
+    {
+      "sourceKey": "site-settings",
+      "action": "skip",
+      "id": "siteSettings",
+      "revision": "Tf5sPVG09CMsUNypI4vErE",
+      "sourceHash": "c81220be68a5042ea971c7467ca801c4078854e08a86798ea6fdca3c130f249d",
+      "differs": false,
+      "draft": false
+    }
+  ]
+}
